@@ -1,0 +1,510 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Profile • ELECTROCART</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(0, 255, 255, 0.10), transparent 28%),
+                radial-gradient(circle at 85% 75%, rgba(168, 85, 247, 0.12), transparent 30%),
+                #05070d;
+            color: #f5f7ff;
+            overflow-x: hidden;
+        }
+
+        .grid-bg {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: .18;
+            background-image:
+                linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+            background-size: 55px 55px;
+            mask-image: linear-gradient(to bottom, black, transparent);
+        }
+
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            animation: floatOrb 8s ease-in-out infinite;
+        }
+
+        .orb-one {
+            width: 280px;
+            height: 280px;
+            background: rgba(0, 255, 255, .08);
+            top: 5%;
+            left: -100px;
+        }
+
+        .orb-two {
+            width: 330px;
+            height: 330px;
+            background: rgba(139, 92, 246, .09);
+            right: -130px;
+            bottom: 0;
+            animation-delay: -3s;
+        }
+
+        @keyframes floatOrb {
+            0%,100% {
+                transform: translate3d(0,0,0);
+            }
+
+            50% {
+                transform: translate3d(25px,-20px,0);
+            }
+        }
+
+        .navbar {
+            position: relative;
+            z-index: 10;
+            height: 76px;
+            border-bottom: 1px solid rgba(255,255,255,.07);
+            background: rgba(5,7,13,.72);
+            backdrop-filter: blur(18px);
+        }
+
+        .brand {
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -.04em;
+        }
+
+        .brand-glow {
+            text-shadow:
+                0 0 12px rgba(34,211,238,.45),
+                0 0 35px rgba(34,211,238,.18);
+        }
+
+        .glass-card {
+            position: relative;
+            background: linear-gradient(
+                145deg,
+                rgba(255,255,255,.075),
+                rgba(255,255,255,.025)
+            );
+            border: 1px solid rgba(255,255,255,.10);
+            backdrop-filter: blur(25px);
+            box-shadow:
+                0 30px 90px rgba(0,0,0,.38),
+                inset 0 1px rgba(255,255,255,.06);
+        }
+
+        .glass-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            pointer-events: none;
+            background:
+                linear-gradient(
+                    120deg,
+                    rgba(34,211,238,.05),
+                    transparent 35%,
+                    rgba(168,85,247,.04)
+                );
+        }
+
+        .profile-orbit {
+            position: relative;
+            width: 112px;
+            height: 112px;
+            display: grid;
+            place-items: center;
+        }
+
+        .profile-orbit::before {
+            content: "";
+            position: absolute;
+            inset: -8px;
+            border-radius: 50%;
+            border: 1px solid rgba(34,211,238,.25);
+            border-top-color: rgba(34,211,238,.8);
+            animation: spin 8s linear infinite;
+        }
+
+        .profile-orbit::after {
+            content: "";
+            position: absolute;
+            inset: -16px;
+            border-radius: 50%;
+            border: 1px dashed rgba(168,85,247,.22);
+            animation: spinReverse 13s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @keyframes spinReverse {
+            to { transform: rotate(-360deg); }
+        }
+
+        .avatar {
+            width: 96px;
+            height: 96px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            background:
+                linear-gradient(145deg, rgba(34,211,238,.20), rgba(139,92,246,.20));
+            border: 1px solid rgba(255,255,255,.13);
+            box-shadow:
+                0 0 35px rgba(34,211,238,.12),
+                inset 0 0 30px rgba(255,255,255,.03);
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 17px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(103,232,249,.65);
+            pointer-events: none;
+        }
+
+        .form-input {
+            width: 100%;
+            height: 56px;
+            padding: 0 18px 0 48px;
+            border-radius: 15px;
+            outline: none;
+            color: white;
+            background: rgba(0,0,0,.25);
+            border: 1px solid rgba(255,255,255,.09);
+            transition: .25s ease;
+        }
+
+        .form-input::placeholder {
+            color: rgba(255,255,255,.28);
+        }
+
+        .form-input:focus {
+            border-color: rgba(34,211,238,.65);
+            box-shadow:
+                0 0 0 3px rgba(34,211,238,.07),
+                0 0 28px rgba(34,211,238,.08);
+            background: rgba(0,0,0,.34);
+        }
+
+        .save-btn {
+            position: relative;
+            overflow: hidden;
+            transition: .25s ease;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                0 12px 35px rgba(34,211,238,.16);
+        }
+
+        .save-btn:active {
+            transform: scale(.98);
+        }
+
+        .save-btn::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 55%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255,255,255,.18),
+                transparent
+            );
+            transform: skewX(-20deg);
+            transition: .6s;
+        }
+
+        .save-btn:hover::after {
+            left: 140%;
+        }
+
+        .back-btn {
+            transition: .2s ease;
+        }
+
+        .back-btn:hover {
+            transform: translateX(-3px);
+            color: #67e8f9;
+        }
+
+        .error-box {
+            animation: errorIn .35s ease;
+        }
+
+        @keyframes errorIn {
+            from {
+                opacity: 0;
+                transform: translateY(-7px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .navbar {
+                height: 68px;
+            }
+
+            .glass-card {
+                border-radius: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="grid-bg"></div>
+<div class="orb orb-one"></div>
+<div class="orb orb-two"></div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="max-w-7xl mx-auto h-full px-5 md:px-8 flex items-center justify-between">
+
+        <a href="/" class="brand brand-glow text-xl md:text-2xl font-bold">
+            ELECTRO<span class="text-cyan-300">CART</span>
+        </a>
+
+        <a href="{% url 'account' %}"
+           class="back-btn text-sm text-white/55 hover:text-white flex items-center gap-2">
+            <i class="fa-solid fa-arrow-left"></i>
+            <span>Back to Account</span>
+        </a>
+
+    </div>
+</nav>
+
+
+<!-- MAIN -->
+<main class="relative z-10 min-h-[calc(100vh-76px)] flex items-center justify-center px-5 py-12">
+
+    <div class="w-full max-w-2xl">
+
+        <!-- Heading -->
+        <div class="text-center mb-8">
+
+            <div class="profile-orbit mx-auto mb-7">
+                <div class="avatar">
+                    <i class="fa-solid fa-user text-3xl text-cyan-300"></i>
+                </div>
+            </div>
+
+            <p class="text-cyan-300/70 text-xs uppercase tracking-[.3em] font-semibold mb-3">
+                Account Settings
+            </p>
+
+            <h1 class="brand text-4xl md:text-5xl font-bold tracking-tight">
+                Edit Your <span class="text-cyan-300">Profile</span>
+            </h1>
+
+            <p class="mt-4 text-white/45 max-w-md mx-auto text-sm leading-6">
+                Keep your ELECTROCART account information up to date.
+            </p>
+
+        </div>
+
+
+        <!-- CARD -->
+        <div class="glass-card rounded-[28px] p-6 md:p-9">
+
+            {% if error %}
+            <div class="error-box mb-6 rounded-2xl border border-red-400/20
+                        bg-red-500/10 px-4 py-3.5 flex items-start gap-3">
+
+                <i class="fa-solid fa-circle-exclamation text-red-300 mt-0.5"></i>
+
+                <div>
+                    <p class="text-sm font-semibold text-red-200">
+                        Unable to save changes
+                    </p>
+
+                    <p class="text-xs text-red-200/65 mt-1">
+                        {{ error }}
+                    </p>
+                </div>
+            </div>
+            {% endif %}
+
+
+            <form method="POST" id="profileForm">
+                {% csrf_token %}
+
+                <div class="grid md:grid-cols-2 gap-5">
+
+                    <!-- USERNAME -->
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider
+                                      text-white/45 font-semibold mb-2.5">
+                            Username
+                        </label>
+
+                        <div class="input-wrap">
+                            <i class="input-icon fa-solid fa-user"></i>
+
+                            <input
+                                type="text"
+                                name="username"
+                                value="{{ username|default:user.username }}"
+                                class="form-input"
+                                placeholder="Your username"
+                                autocomplete="username"
+                                required
+                            >
+                        </div>
+                    </div>
+
+
+                    <!-- EMAIL -->
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider
+                                      text-white/45 font-semibold mb-2.5">
+                            Email Address
+                        </label>
+
+                        <div class="input-wrap">
+                            <i class="input-icon fa-solid fa-envelope"></i>
+
+                            <input
+                                type="email"
+                                name="email"
+                                value="{{ email|default:user.email }}"
+                                class="form-input"
+                                placeholder="you@example.com"
+                                autocomplete="email"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <!-- INFO -->
+                <div class="mt-6 rounded-2xl border border-cyan-300/10
+                            bg-cyan-300/[0.035] p-4 flex gap-3">
+
+                    <i class="fa-solid fa-shield-halved text-cyan-300/70 mt-0.5"></i>
+
+                    <div>
+                        <p class="text-xs font-semibold text-white/75">
+                            Profile security
+                        </p>
+
+                        <p class="text-xs text-white/35 mt-1 leading-5">
+                            Your password is not changed from this page.
+                            Use the dedicated security section to update it.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <!-- BUTTONS -->
+                <div class="flex flex-col-reverse sm:flex-row gap-3 mt-8">
+
+                    <a href="{% url 'account' %}"
+                       class="flex-1 h-14 rounded-2xl border border-white/10
+                              bg-white/[0.03] hover:bg-white/[0.06]
+                              flex items-center justify-center gap-2
+                              text-sm font-semibold text-white/60 hover:text-white
+                              transition">
+
+                        <i class="fa-solid fa-xmark"></i>
+                        Cancel
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        id="saveBtn"
+                        class="save-btn flex-1 h-14 rounded-2xl
+                               bg-gradient-to-r from-cyan-400 to-cyan-300
+                               text-black font-bold text-sm
+                               flex items-center justify-center gap-2">
+
+                        <span id="saveText">
+                            <i class="fa-solid fa-check mr-1"></i>
+                            Save Changes
+                        </span>
+
+                        <span id="saveLoading" class="hidden">
+                            <i class="fa-solid fa-circle-notch fa-spin mr-1"></i>
+                            Saving...
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+
+        <!-- FOOTER HINT -->
+        <p class="text-center text-[11px] text-white/25 mt-6">
+            <i class="fa-solid fa-lock mr-1"></i>
+            Your account information is securely stored.
+        </p>
+
+    </div>
+
+</main>
+
+
+<script>
+    const form = document.getElementById("profileForm");
+    const saveBtn = document.getElementById("saveBtn");
+    const saveText = document.getElementById("saveText");
+    const saveLoading = document.getElementById("saveLoading");
+
+    form.addEventListener("submit", function () {
+        saveBtn.disabled = true;
+        saveBtn.classList.add("opacity-80", "cursor-not-allowed");
+
+        saveText.classList.add("hidden");
+        saveLoading.classList.remove("hidden");
+    });
+</script>
+
+</body>
+</html>

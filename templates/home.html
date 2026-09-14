@@ -1,0 +1,2179 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ELECTROCART | Next-Gen Electronics</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #030712;
+            color: #e2e8f0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .font-heading {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .glass {
+            background: rgba(8, 15, 30, 0.78);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+        }
+
+        .hero-glow {
+            box-shadow:
+                0 0 80px rgba(14, 165, 233, 0.08),
+                inset 0 0 80px rgba(14, 165, 233, 0.03);
+        }
+
+        .text-glow {
+            text-shadow: 0 0 30px rgba(56, 189, 248, 0.45);
+        }
+
+        .grid-bg {
+            background-image:
+                linear-gradient(rgba(56, 189, 248, 0.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(56, 189, 248, 0.035) 1px, transparent 1px);
+            background-size: 45px 45px;
+        }
+
+        .hero-image {
+            filter: drop-shadow(0 0 35px rgba(14, 165, 233, 0.3));
+        }
+
+        .nav-link {
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            bottom: -8px;
+            width: 0;
+            height: 2px;
+            background: #38bdf8;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .floating {
+            animation: floating 4s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0%, 100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #030712;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<script>
+
+function addToCart(productId) {
+
+    fetch(`/add-to-cart/${productId}/`, {
+        method: "POST",
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCookie("csrftoken")
+        },
+        body: new URLSearchParams({
+            quantity: 1
+        })
+    })
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        if (data.success) {
+
+            const cartBadge = document.querySelector(
+                "[data-cart-count]"
+            );
+
+            if (cartBadge) {
+                cartBadge.textContent = data.cart_count;
+            }
+
+        }
+
+    })
+
+    .catch(error => {
+        console.error("Add to cart error:", error);
+    });
+}
+
+
+function getCookie(name) {
+
+    let cookieValue = null;
+
+    if (document.cookie && document.cookie !== "") {
+
+        const cookies = document.cookie.split(";");
+
+        for (let cookie of cookies) {
+
+            cookie = cookie.trim();
+
+            if (cookie.startsWith(name + "=")) {
+
+                cookieValue = decodeURIComponent(
+                    cookie.substring(name.length + 1)
+                );
+
+                break;
+            }
+        }
+    }
+
+    return cookieValue;
+}
+
+</script>
+
+<body class="min-h-screen bg-[#030712]">
+
+    <!-- ================= TOP BAR ================= -->
+    <div class="hidden md:block border-b border-slate-800/70 bg-[#020617]">
+        <div class="max-w-7xl mx-auto px-6 py-2 flex items-center justify-between text-[11px] text-slate-400">
+
+            <span>
+                <i class="fa-solid fa-truck-fast text-sky-400 mr-1"></i>
+                Free Shipping on Orders Above $500
+            </span>
+
+            <div class="flex items-center gap-5">
+                <span class="hover:text-white cursor-pointer">
+                    Track Order
+                </span>
+
+                <span class="text-slate-700">|</span>
+
+                <span class="hover:text-white cursor-pointer">
+                    Help & Support
+                </span>
+
+                <span class="text-slate-700">|</span>
+
+                <span>
+                    🇺🇸 USD
+                    <i class="fa-solid fa-chevron-down ml-1 text-[9px]"></i>
+                </span>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- ================= NAVBAR ================= -->
+    <header class="sticky top-0 z-50 glass border-b border-sky-500/10">
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-[76px] flex items-center gap-6">
+
+            <!-- LOGO -->
+            <a href="#" class="flex items-center gap-3 shrink-0">
+
+                <div class="w-11 h-11 rounded-xl
+                            bg-gradient-to-br from-sky-400 to-indigo-600
+                            flex items-center justify-center
+                            shadow-lg shadow-sky-500/25">
+
+                    <i class="fa-solid fa-bolt text-white text-xl"></i>
+
+                </div>
+
+                <div class="hidden sm:block">
+                    <div class="font-heading text-xl font-bold tracking-tight text-white">
+                        ELECTRO<span class="text-sky-400">CART</span>
+                    </div>
+
+                    <div class="text-[8px] uppercase tracking-[0.2em] text-slate-500">
+                        Gear Up For A Smarter Tomorrow
+                    </div>
+                </div>
+
+            </a>
+
+
+           <!-- SEARCH -->
+                <div class="flex-1 max-w-2xl mx-auto">
+
+                    <div class="relative">
+
+                        <i class="fa-solid fa-magnifying-glass
+                                absolute left-4 top-1/2 -translate-y-1/2
+                                text-slate-500 text-sm">
+                        </i>
+
+                        <form method="GET" action="{% url 'home' %}">
+
+                            <input
+                                type="text"
+                                name="search"
+                                value="{{ search_query }}"
+                                placeholder="Search for laptops, headphones, smartwatches..."
+                                class="w-full h-11 pl-11 pr-14
+                                    bg-slate-950/80
+                                    border border-slate-700/80
+                                    rounded-xl
+                                    text-sm text-white
+                                    placeholder:text-slate-500
+                                    outline-none
+                                    focus:border-sky-400
+                                    focus:ring-1 focus:ring-sky-400/30
+                                    transition">
+
+                            <button
+                                type="submit"
+                                class="absolute right-1 top-1
+                                    w-9 h-9 rounded-lg
+                                    bg-sky-400 text-slate-950
+                                    hover:bg-sky-300
+                                    transition">
+
+                                <i class="fa-solid fa-magnifying-glass"></i>
+
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+            <!-- ACTIONS -->
+            <div class="flex items-center gap-2">
+
+                <!-- Wishlist -->
+                <a
+                    href="{% url 'wishlist' %}"
+                    class="relative w-11 h-11 rounded-xl
+                           border border-slate-800
+                           bg-slate-950/70
+                           text-slate-300
+                           hover:text-rose-400
+                           hover:border-rose-500/30
+                           transition
+                           flex items-center justify-center">
+
+                    <i class="fa-regular fa-heart"></i>
+
+                    <span
+                        class="absolute -top-1 -right-1
+                               w-4 h-4 rounded-full
+                               bg-rose-500 text-white
+                               text-[9px] font-bold
+                               flex items-center justify-center">
+
+                        0
+
+                    </span>
+
+                </a>
+
+
+                <!-- Cart -->
+                <a
+                href="{% url 'cart' %}"
+                class="relative flex items-center gap-2
+                    h-11 px-4 rounded-xl
+                    border border-sky-500/30
+                    bg-sky-500/10
+                    text-sky-400
+                    font-semibold text-sm
+                    hover:bg-sky-400
+                    hover:text-slate-950
+                    transition">
+                    <i class="fa-solid fa-cart-shopping"></i>
+
+                    <span class="hidden sm:inline">
+                        Cart
+                    </span>
+
+                    <span
+                        data-cart-count
+                        class="w-5 h-5 rounded-full
+                               bg-sky-400 text-slate-950
+                               text-[10px] font-bold
+                               flex items-center justify-center">
+
+                        {{ cart_count }}
+
+                    </span>
+
+                </a>
+
+
+                <!-- Account -->
+                <a
+                    href="{% url 'account' %}"
+                    class="hidden lg:flex items-center gap-2
+                           ml-1 px-3 h-11
+                           text-slate-300
+                           hover:text-white
+                           transition">
+
+                    <i class="fa-regular fa-user text-lg"></i>
+
+                    <div class="text-left">
+                        <div class="text-[10px] text-slate-500">
+                            Account
+                        </div>
+
+                        <div class="text-xs font-semibold">
+                            Sign In
+                        </div>
+                    </div>
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- ================= CATEGORY NAV ================= -->
+
+        <div class="hidden md:block border-t border-slate-800/50">
+
+            <div class="max-w-7xl mx-auto px-6 h-12 flex items-center gap-8">
+
+                <button
+                    class="flex items-center gap-2
+                           px-3 py-2 rounded-lg
+                           border border-sky-500/30
+                           bg-sky-500/10
+                           text-sky-400
+                           text-xs font-semibold">
+
+                    <i class="fa-solid fa-bars"></i>
+                    All Categories
+
+                    <i class="fa-solid fa-chevron-down text-[9px]"></i>
+
+                </button>
+
+
+                <nav class="flex items-center gap-7 text-xs font-medium">
+
+                    <a
+                        href="{% url 'home' %}"
+                        class="nav-link text-slate-400 hover:text-white">
+                        Home
+                    </a>
+
+                    <a
+                        href="#"
+                        class="nav-link text-slate-400 hover:text-white">
+                        Deals
+                    </a>
+
+                    {% for category in categories %}
+
+                        <a
+                            href="?category={{ category.name|urlencode }}"
+                            class="nav-link text-slate-400 hover:text-white">
+
+                            {{ category.name }}
+
+                        </a>
+
+                    {% endfor %}
+
+                </nav>
+
+
+                <button
+                    class="ml-auto px-4 py-2 rounded-lg
+                           border border-indigo-500/40
+                           bg-indigo-500/10
+                           text-indigo-300
+                           text-xs font-semibold
+                           hover:bg-indigo-500/20
+                           transition">
+
+                    <i class="fa-solid fa-fire text-orange-400 mr-1"></i>
+
+                    Cyber Sale
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <!-- ================= HERO ================= -->
+
+    <main>
+
+        <section
+            class="relative overflow-hidden
+                   min-h-[570px]
+                   grid-bg
+                   border-b border-sky-500/10">
+
+            <!-- Background Glow -->
+            <div class="absolute -left-40 top-20
+                        w-[500px] h-[500px]
+                        rounded-full
+                        bg-sky-500/10
+                        blur-[120px]">
+            </div>
+
+            <div class="absolute right-0 bottom-0
+                        w-[600px] h-[500px]
+                        rounded-full
+                        bg-indigo-600/10
+                        blur-[120px]">
+            </div>
+
+
+            <div
+                class="relative z-10
+                       max-w-7xl mx-auto
+                       px-6 lg:px-8
+                       py-16 lg:py-20
+                       grid grid-cols-1 lg:grid-cols-2
+                       gap-10 items-center">
+
+
+                <!-- HERO CONTENT -->
+                <div>
+
+                    <!-- Small Badge -->
+                    <div
+                        class="inline-flex items-center gap-2
+                               px-3 py-1.5 rounded-full
+                               border border-sky-400/30
+                               bg-sky-400/10
+                               text-sky-400
+                               text-[10px]
+                               font-bold
+                               tracking-[0.18em]
+                               uppercase">
+
+                        <span class="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse"></span>
+
+                        The Future Is Now
+
+                    </div>
+
+
+                    <!-- Heading -->
+                    <h1
+                        class="font-heading
+                               text-5xl sm:text-6xl lg:text-7xl
+                               font-bold
+                               leading-[1.02]
+                               text-white
+                               mt-6">
+
+                        Next-Gen Tech
+
+                        <br>
+
+                        For a
+
+                        <span
+                            class="text-transparent
+                                   bg-clip-text
+                                   bg-gradient-to-r
+                                   from-sky-400
+                                   via-cyan-300
+                                   to-indigo-400
+                                   text-glow">
+
+                            Smarter You
+
+                        </span>
+
+                    </h1>
+
+
+                    <!-- Description -->
+                    <p
+                        class="mt-6
+                               max-w-xl
+                               text-slate-400
+                               text-sm sm:text-base
+                               leading-7">
+
+                        Explore the latest in laptops, audio, wearables
+                        and smart gear. Premium technology, unbeatable
+                        deals and a smarter digital lifestyle.
+
+                    </p>
+
+
+                    <!-- CTA -->
+                    <div class="flex flex-wrap gap-3 mt-8">
+
+                        <button
+                            class="px-6 py-3.5
+                                   rounded-xl
+                                   bg-sky-400
+                                   text-slate-950
+                                   text-sm
+                                   font-bold
+                                   hover:bg-sky-300
+                                   hover:scale-[1.02]
+                                   transition
+                                   shadow-xl
+                                   shadow-sky-500/20">
+
+                            Shop Now
+
+                            <i class="fa-solid fa-arrow-right ml-2"></i>
+
+                        </button>
+
+
+                        <button
+                            class="px-6 py-3.5
+                                   rounded-xl
+                                   border border-slate-700
+                                   bg-slate-900/50
+                                   text-white
+                                   text-sm
+                                   font-semibold
+                                   hover:border-sky-400
+                                   hover:text-sky-400
+                                   transition">
+
+                            <i class="fa-regular fa-circle-play mr-2"></i>
+
+                            Watch Video
+
+                        </button>
+
+                    </div>
+
+
+                    <!-- BENEFITS -->
+                    <div
+                        class="flex flex-wrap
+                               gap-6 mt-10
+                               pt-7
+                               border-t border-slate-800/70">
+
+                        <div class="flex items-center gap-3">
+
+                            <div class="w-9 h-9 rounded-lg
+                                        bg-sky-400/10
+                                        text-sky-400
+                                        flex items-center justify-center">
+
+                                <i class="fa-solid fa-truck-fast"></i>
+
+                            </div>
+
+                            <div>
+                                <div class="text-xs font-bold text-white">
+                                    Fast Delivery
+                                </div>
+
+                                <div class="text-[10px] text-slate-500">
+                                    Across India
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="flex items-center gap-3">
+
+                            <div class="w-9 h-9 rounded-lg
+                                        bg-indigo-400/10
+                                        text-indigo-400
+                                        flex items-center justify-center">
+
+                                <i class="fa-solid fa-shield-halved"></i>
+
+                            </div>
+
+                            <div>
+                                <div class="text-xs font-bold text-white">
+                                    1 Year Warranty
+                                </div>
+
+                                <div class="text-[10px] text-slate-500">
+                                    On All Products
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="flex items-center gap-3">
+
+                            <div class="w-9 h-9 rounded-lg
+                                        bg-cyan-400/10
+                                        text-cyan-400
+                                        flex items-center justify-center">
+
+                                <i class="fa-solid fa-headset"></i>
+
+                            </div>
+
+                            <div>
+                                <div class="text-xs font-bold text-white">
+                                    24/7 Support
+                                </div>
+
+                                <div class="text-[10px] text-slate-500">
+                                    We're Here To Help
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- HERO VISUAL -->
+                <div class="relative flex justify-center items-center">
+
+                    <!-- Glow behind products -->
+                    <div
+                        class="absolute
+                               w-[380px] h-[380px]
+                               rounded-full
+                               bg-sky-500/20
+                               blur-[100px]">
+                    </div>
+
+
+                    <div class="relative floating">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=1000&q=85"
+                            alt="Next Gen Smartphone"
+                            class="hero-image
+                                   w-[420px]
+                                   h-[470px]
+                                   object-cover
+                                   rounded-[40px]
+                                   border border-sky-400/20
+                                   opacity-90">
+
+                        <!-- Floating Tech Card -->
+                        <div
+                            class="absolute
+                                   -left-8 bottom-10
+                                   glass
+                                   border border-sky-400/20
+                                   rounded-2xl
+                                   px-4 py-3
+                                   shadow-2xl">
+
+                            <div class="flex items-center gap-3">
+
+                                <div
+                                    class="w-10 h-10 rounded-xl
+                                           bg-sky-400/10
+                                           text-sky-400
+                                           flex items-center justify-center">
+
+                                    <i class="fa-solid fa-microchip"></i>
+
+                                </div>
+
+                                <div>
+                                    <div class="text-[10px] text-slate-500">
+                                        PERFORMANCE
+                                    </div>
+
+                                    <div class="text-sm font-bold text-white">
+                                        Ultra Fast
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Floating Rating -->
+                        <div
+                            class="absolute
+                                   -right-5 top-12
+                                   glass
+                                   border border-slate-700
+                                   rounded-2xl
+                                   px-4 py-3">
+
+                            <div class="flex items-center gap-1 text-amber-400">
+
+                                <i class="fa-solid fa-star text-xs"></i>
+                                <span class="text-sm font-bold">4.9</span>
+
+                            </div>
+
+                            <div class="text-[9px] text-slate-500 mt-1">
+                                12K+ Happy Customers
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- ================= SHOP BY CATEGORY ================= -->
+
+<section class="relative py-20 border-t border-slate-800/50">
+
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+
+        <!-- Section Heading -->
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-10">
+
+            <div>
+                <div class="flex items-center gap-2 text-sky-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-3">
+                    <span class="w-6 h-px bg-sky-400"></span>
+                    Explore Collection
+                </div>
+
+                <h2 class="font-heading text-3xl sm:text-4xl font-bold text-white">
+                    Shop By <span class="text-sky-400">Category</span>
+                </h2>
+
+                <p class="mt-3 text-sm text-slate-500 max-w-xl">
+                    Discover premium technology designed for your everyday digital lifestyle.
+                </p>
+            </div>
+
+            <button class="text-xs font-semibold text-sky-400 hover:text-sky-300 transition">
+                View All Categories
+                <i class="fa-solid fa-arrow-right ml-1"></i>
+            </button>
+
+        </div>
+
+
+        <!-- Category Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4">
+
+            {% for category in categories %}
+
+            <a href="?category={{ category.name|urlencode }}"
+               class="group relative h-48 rounded-2xl overflow-hidden
+                      border border-slate-800
+                      hover:border-sky-400/40
+                      transition-all duration-300">
+
+                <img
+                    src="{% if forloop.counter == 1 %}https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=700&q=85{% elif forloop.counter == 2 %}https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=700&q=85{% elif forloop.counter == 3 %}https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=700&q=85{% elif forloop.counter == 4 %}https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=700&q=85{% else %}https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=700&q=85{% endif %}"
+                    alt="{{ category.name }}"
+                    class="absolute inset-0 w-full h-full object-cover
+                           opacity-35 group-hover:opacity-55
+                           group-hover:scale-105
+                           transition-all duration-500">
+
+                <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent"></div>
+
+                <div class="absolute bottom-0 left-0 right-0 p-5">
+
+                    <div class="w-9 h-9 rounded-lg
+                                {% cycle 'bg-sky-400/10 border-sky-400/20 text-sky-400' 'bg-indigo-400/10 border-indigo-400/20 text-indigo-400' 'bg-cyan-400/10 border-cyan-400/20 text-cyan-400' 'bg-purple-400/10 border-purple-400/20 text-purple-400' 'bg-emerald-400/10 border-emerald-400/20 text-emerald-400' %}
+                                border
+                                flex items-center justify-center mb-3">
+
+                        <i class="{% cycle 'fa-solid fa-laptop' 'fa-solid fa-headphones' 'fa-solid fa-clock' 'fa-solid fa-vr-cardboard' 'fa-solid fa-computer-mouse' %}"></i>
+
+                    </div>
+
+                    <h3 class="font-heading text-base font-bold text-white">
+                        {{ category.name }}
+                    </h3>
+
+                    <p class="text-[10px] text-slate-500 mt-1">
+                        {{ category.description|default:"Explore premium technology" }}
+                    </p>
+
+                </div>
+
+                <div class="absolute top-4 right-4
+                            w-7 h-7 rounded-full
+                            bg-slate-950/70
+                            border border-slate-700
+                            flex items-center justify-center
+                            text-slate-400
+                            group-hover:text-sky-400
+                            transition">
+
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+
+                </div>
+
+            </a>
+
+            {% empty %}
+
+            <p class="text-slate-500 col-span-full">
+                No categories available yet.
+            </p>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ================= TRENDING PRODUCTS ================= -->
+
+<section class="relative py-20 bg-slate-950/40 border-t border-slate-800/50">
+
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+
+        <!-- Heading -->
+        <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-5 mb-10">
+
+            <div>
+
+                <div class="flex items-center gap-2 text-indigo-400 text-[10px] font-bold uppercase tracking-[0.2em] mb-3">
+
+                    <span class="w-6 h-px bg-indigo-400"></span>
+
+                    Most Wanted
+
+                </div>
+
+                <h2 class="font-heading text-3xl sm:text-4xl font-bold text-white">
+
+                    Trending <span class="text-indigo-400">Products</span>
+
+                </h2>
+
+                <p class="mt-3 text-sm text-slate-500">
+
+                    The tech everyone's talking about right now.
+
+                </p>
+
+            </div>
+
+
+            <!-- Filter Pills -->
+            <div class="flex items-center gap-2 overflow-x-auto">
+
+                <form method="GET"
+                      action="{% url 'home' %}"
+                      class="flex items-center gap-2">
+
+                    <!-- Preserve current search -->
+                    <input type="hidden"
+                           name="search"
+                           value="{{ search_query }}">
+
+                    <!-- Preserve current category -->
+                    <input type="hidden"
+                           name="category"
+                           value="{{ category_name }}">
+
+                    <!-- Minimum Price -->
+                    <input
+                        type="number"
+                        name="min_price"
+                        value="{{ min_price }}"
+                        placeholder="Min Price"
+                        min="0"
+                        class="w-28 px-3 py-2 rounded-lg
+                               bg-slate-900
+                               border border-slate-800
+                               text-white text-[11px]
+                               placeholder:text-slate-500
+                               focus:outline-none
+                               focus:border-sky-400">
+
+                    <!-- Maximum Price -->
+                    <input
+                        type="number"
+                        name="max_price"
+                        value="{{ max_price }}"
+                        placeholder="Max Price"
+                        min="0"
+                        class="w-28 px-3 py-2 rounded-lg
+                               bg-slate-900
+                               border border-slate-800
+                               text-white text-[11px]
+                               placeholder:text-slate-500
+                               focus:outline-none
+                               focus:border-sky-400">
+
+                    <!-- Minimum Rating -->
+                    <select
+                        name="rating"
+                        class="px-3 py-2 rounded-lg
+                               bg-slate-900
+                               border border-slate-800
+                               text-slate-300
+                               text-[11px]
+                               focus:outline-none
+                               focus:border-sky-400">
+
+                        <option value="">Any Rating</option>
+
+                        <option value="4"
+                            {% if rating == "4" %}selected{% endif %}>
+                            4★ & above
+                        </option>
+
+                        <option value="3"
+                            {% if rating == "3" %}selected{% endif %}>
+                            3★ & above
+                        </option>
+
+                        <option value="2"
+                            {% if rating == "2" %}selected{% endif %}>
+                            2★ & above
+                        </option>
+
+                    </select>
+
+                    <!-- Sorting -->
+                    <select
+                        name="sort"
+                        class="px-3 py-2 rounded-lg
+                               bg-slate-900
+                               border border-slate-800
+                               text-slate-300
+                               text-[11px]
+                               focus:outline-none
+                               focus:border-sky-400">
+
+                        <option value="">Sort By</option>
+
+                        <option value="price_asc"
+                            {% if sort == "price_asc" %}selected{% endif %}>
+                            Price: Low → High
+                        </option>
+
+                        <option value="price_desc"
+                            {% if sort == "price_desc" %}selected{% endif %}>
+                            Price: High → Low
+                        </option>
+
+                        <option value="rating"
+                            {% if sort == "rating" %}selected{% endif %}>
+                            Rating: High → Low
+                        </option>
+
+                        <option value="newest"
+                            {% if sort == "newest" %}selected{% endif %}>
+                            Newest First
+                        </option>
+
+                    </select>
+
+                    <button
+                        type="submit"
+                        class="px-4 py-2 rounded-lg
+                               bg-sky-400
+                               text-slate-950
+                               text-[11px]
+                               font-bold
+                               whitespace-nowrap
+                               hover:bg-sky-300
+                               transition">
+
+                        Filter
+
+                    </button>
+
+                </form>
+
+                <button
+                    type="button"
+                    onclick="window.location.href='{% url 'home' %}'"
+                    class="px-4 py-2 rounded-lg
+                           bg-slate-900
+                           border border-slate-800
+                           text-slate-400
+                           text-[11px]
+                           font-semibold
+                           whitespace-nowrap
+                           hover:text-white
+                           hover:border-sky-400/40
+                           transition">
+
+                    Clear
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- Products Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+            {% for product in products %}
+
+           <a
+    href="{% url 'product_detail' product.id %}"
+    class="block group relative rounded-2xl
+           bg-slate-900/80
+           border border-slate-800
+           overflow-hidden
+           hover:border-sky-400/40
+           hover:-translate-y-1
+           transition-all duration-300">
+
+                <div class="relative h-56 bg-slate-950 overflow-hidden">
+
+                    <img
+                        src="{{ product.image|default:'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=700&q=85' }}"
+                        alt="{{ product.name }}"
+                        class="w-full h-full object-cover
+                               group-hover:scale-105
+                               transition-transform duration-500">
+
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/50 to-transparent"></div>
+
+                    <span
+                        class="absolute top-3 left-3
+                               px-2.5 py-1
+                               rounded-full
+                               bg-sky-400
+                               text-slate-950
+                               text-[9px]
+                               font-bold
+                               uppercase">
+
+                        {{ product.get_badge_display }}
+
+                    </span>
+
+                    <button
+                        type="button"
+                        class="absolute top-3 right-3
+                               w-9 h-9 rounded-full
+                               bg-slate-950/80
+                               border border-slate-700
+                               text-slate-300
+                               hover:text-rose-400
+                               hover:border-rose-400/40
+                               transition">
+
+                        <i class="fa-regular fa-heart text-sm"></i>
+
+                    </button>
+
+                </div>
+
+                <div class="p-5">
+
+                    <div class="flex items-center justify-between mb-2">
+
+                        <span class="text-[10px] uppercase tracking-wider text-slate-500">
+                            {{ product.category.name }}
+                        </span>
+
+                        <span class="flex items-center gap-1 text-amber-400 text-[10px] font-bold">
+
+                            <i class="fa-solid fa-star"></i>
+
+                            {{ product.rating }}
+
+                        </span>
+
+                    </div>
+
+                    <h3 class="font-heading text-base font-bold text-white
+                               group-hover:text-sky-400 transition">
+
+                        {{ product.name }}
+
+                    </h3>
+
+                    <p class="text-[10px] text-slate-500 mt-2 line-clamp-2">
+                        {{ product.description }}
+                    </p>
+
+                    <div class="flex items-end justify-between mt-5">
+
+                        <div>
+
+                            <span class="block text-[9px] text-slate-600 uppercase">
+                                Price
+                            </span>
+
+                            <span class="font-heading text-xl font-bold text-white">
+                                ${{ product.price }}
+                            </span>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            onclick="event.preventDefault(); event.stopPropagation(); addToCart({{ product.id }})"                            class="w-10 h-10 rounded-xl
+                                {% cycle 'bg-sky-400 hover:bg-sky-300' 'bg-indigo-400 hover:bg-indigo-300' 'bg-cyan-400 hover:bg-cyan-300' 'bg-purple-400 hover:bg-purple-300' %}
+                                text-slate-950
+                                transition">
+
+                            <i class="fa-solid fa-plus"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </a>
+
+            {% empty %}
+
+            <p class="text-slate-500 col-span-full text-center py-10">
+                No products available yet.
+            </p>
+
+            {% endfor %}
+
+        </div>
+
+
+        <!-- View All -->
+        <div class="flex justify-center mt-10">
+
+            <button
+                class="px-6 py-3 rounded-xl
+                       border border-slate-700
+                       bg-slate-900
+                       text-slate-300
+                       text-xs font-semibold
+                       hover:border-sky-400
+                       hover:text-sky-400
+                       transition">
+
+                View All Products
+
+                <i class="fa-solid fa-arrow-right ml-2"></i>
+
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= CYBER TECH DEALS ================= -->
+
+<section class="relative py-20 overflow-hidden border-t border-slate-800/50">
+
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+
+        <div class="relative min-h-[390px] rounded-[28px] overflow-hidden
+                    border border-sky-500/20
+                    bg-gradient-to-br from-slate-900 via-slate-950 to-indigo-950
+                    hero-glow">
+
+            <!-- Background Effects -->
+            <div class="absolute -right-32 -top-32 w-[500px] h-[500px]
+                        rounded-full bg-sky-500/10 blur-[100px]">
+            </div>
+
+            <div class="absolute -left-32 -bottom-32 w-[450px] h-[450px]
+                        rounded-full bg-indigo-500/10 blur-[100px]">
+            </div>
+
+            <!-- Grid -->
+            <div class="absolute inset-0 opacity-40 grid-bg"></div>
+
+
+            <div class="relative z-10 grid grid-cols-1 lg:grid-cols-2
+                        min-h-[390px] items-center">
+
+                <!-- LEFT CONTENT -->
+                <div class="p-8 sm:p-12 lg:p-14">
+
+                    <div class="inline-flex items-center gap-2
+                                px-3 py-1.5 rounded-full
+                                bg-orange-400/10
+                                border border-orange-400/20
+                                text-orange-400
+                                text-[10px] font-bold
+                                uppercase tracking-[0.18em]">
+
+                        <i class="fa-solid fa-fire"></i>
+
+                        Limited Time Offer
+
+                    </div>
+
+
+                    <h2 class="font-heading text-4xl sm:text-5xl
+                               font-bold text-white mt-5 leading-tight">
+
+                        Upgrade Your Setup
+
+                        <span class="block text-transparent
+                                     bg-clip-text
+                                     bg-gradient-to-r
+                                     from-sky-400 to-indigo-400">
+
+                            Without Breaking The Bank.
+
+                        </span>
+
+                    </h2>
+
+
+                    <p class="mt-5 text-sm text-slate-400
+                              max-w-lg leading-6">
+
+                        Get exclusive Cyber Tech Fest deals on
+                        selected electronics. Premium technology,
+                        incredible prices.
+
+                    </p>
+
+
+                    <!-- Offer -->
+                    <div class="flex flex-wrap items-center gap-5 mt-7">
+
+                        <div>
+
+                            <div class="text-[10px] text-slate-500 uppercase tracking-wider">
+                                Save Up To
+                            </div>
+
+                            <div class="font-heading text-4xl font-bold text-sky-400">
+                                40%
+                            </div>
+
+                        </div>
+
+
+                        <div class="h-12 w-px bg-slate-700"></div>
+
+
+                        <div>
+
+                            <div class="text-[10px] text-slate-500 uppercase tracking-wider">
+                                Promo Code
+                            </div>
+
+                            <div class="mt-1 px-3 py-1 rounded-lg
+                                        bg-slate-950 border border-slate-700
+                                        text-white text-sm font-bold
+                                        tracking-wider">
+
+                                ELECTRO20
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CTA -->
+                    <div class="flex flex-wrap items-center gap-3 mt-8">
+
+                        <button
+                            class="px-6 py-3.5 rounded-xl
+                                   bg-sky-400 text-slate-950
+                                   text-sm font-bold
+                                   hover:bg-sky-300
+                                   hover:scale-[1.02]
+                                   transition
+                                   shadow-lg shadow-sky-500/20">
+
+                            Shop Deals
+
+                            <i class="fa-solid fa-arrow-right ml-2"></i>
+
+                        </button>
+
+
+                        <div class="flex items-center gap-2
+                                    text-[10px] text-slate-500">
+
+                            <i class="fa-regular fa-clock text-sky-400"></i>
+
+                            Offer ends soon
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RIGHT VISUAL -->
+                <div class="relative h-full min-h-[350px]
+                            flex items-center justify-center
+                            overflow-hidden">
+
+                    <!-- Glow -->
+                    <div class="absolute w-[300px] h-[300px]
+                                rounded-full bg-sky-400/20
+                                blur-[90px]">
+                    </div>
+
+
+                    <!-- Main Product -->
+                    <div class="relative floating">
+
+                        <img
+                            src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=1000&q=85"
+                            alt="Premium Laptop"
+                            class="w-[330px] sm:w-[390px]
+                                   h-[250px] sm:h-[290px]
+                                   object-cover
+                                   rounded-3xl
+                                   border border-sky-400/20
+                                   shadow-2xl
+                                   shadow-sky-500/10">
+
+                    </div>
+
+
+                    <!-- Discount Badge -->
+                    <div class="absolute top-16 right-8 sm:right-16
+                                w-20 h-20 rounded-full
+                                bg-gradient-to-br
+                                from-sky-400 to-indigo-500
+                                text-slate-950
+                                flex flex-col items-center justify-center
+                                shadow-xl shadow-sky-500/20
+                                rotate-6">
+
+                        <span class="text-[9px] font-bold">
+                            UP TO
+                        </span>
+
+                        <span class="font-heading text-2xl font-bold">
+                            40%
+                        </span>
+
+                        <span class="text-[8px] font-bold">
+                            OFF
+                        </span>
+
+                    </div>
+
+
+                    <!-- Floating Specs -->
+                    <div class="absolute bottom-12 left-5 sm:left-12
+                                px-4 py-3 rounded-xl
+                                bg-slate-950/85
+                                backdrop-blur-xl
+                                border border-slate-700
+                                shadow-xl">
+
+                        <div class="flex items-center gap-3">
+
+                            <div class="w-9 h-9 rounded-lg
+                                        bg-indigo-400/10
+                                        text-indigo-400
+                                        flex items-center justify-center">
+
+                                <i class="fa-solid fa-bolt"></i>
+
+                            </div>
+
+                            <div>
+
+                                <div class="text-[9px] text-slate-500">
+                                    CYBER DEAL
+                                </div>
+
+                                <div class="text-xs font-bold text-white">
+                                    Next-Level Performance
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- ================= WHY CHOOSE ELECTROCART ================= -->
+
+<section class="relative py-20 border-t border-slate-800/50">
+
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+
+        <!-- Heading -->
+        <div class="text-center max-w-2xl mx-auto">
+
+            <div class="flex items-center justify-center gap-2
+                        text-sky-400 text-[10px] font-bold
+                        uppercase tracking-[0.2em] mb-3">
+
+                <span class="w-6 h-px bg-sky-400"></span>
+
+                Why ELECTROCART
+
+                <span class="w-6 h-px bg-sky-400"></span>
+
+            </div>
+
+
+            <h2 class="font-heading text-3xl sm:text-4xl
+                       font-bold text-white">
+
+                Technology You Can
+                <span class="text-sky-400">
+                    Trust.
+                </span>
+
+            </h2>
+
+
+            <p class="mt-4 text-sm text-slate-500 leading-6">
+
+                From secure checkout to reliable delivery,
+                we're committed to giving you a premium shopping experience.
+
+            </p>
+
+        </div>
+
+
+        <!-- Feature Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4
+                    gap-4 mt-12">
+
+
+            <!-- Feature 1 -->
+            <div class="group p-6 rounded-2xl
+                        bg-slate-900/60
+                        border border-slate-800
+                        hover:border-sky-400/30
+                        hover:bg-slate-900
+                        transition-all duration-300">
+
+                <div class="w-12 h-12 rounded-xl
+                            bg-sky-400/10
+                            border border-sky-400/20
+                            text-sky-400
+                            flex items-center justify-center
+                            text-lg
+                            group-hover:scale-110
+                            transition">
+
+                    <i class="fa-solid fa-truck-fast"></i>
+
+                </div>
+
+
+                <h3 class="font-heading text-base font-bold
+                           text-white mt-5">
+
+                    Fast & Reliable Delivery
+
+                </h3>
+
+
+                <p class="text-[11px] text-slate-500
+                          leading-5 mt-2">
+
+                    Get your tech delivered safely and quickly
+                    across India.
+
+                </p>
+
+
+                <div class="flex items-center gap-1
+                            text-[9px] text-sky-400
+                            font-bold mt-4">
+
+                    <i class="fa-solid fa-check"></i>
+                    Express Shipping Available
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Feature 2 -->
+            <div class="group p-6 rounded-2xl
+                        bg-slate-900/60
+                        border border-slate-800
+                        hover:border-indigo-400/30
+                        hover:bg-slate-900
+                        transition-all duration-300">
+
+                <div class="w-12 h-12 rounded-xl
+                            bg-indigo-400/10
+                            border border-indigo-400/20
+                            text-indigo-400
+                            flex items-center justify-center
+                            text-lg
+                            group-hover:scale-110
+                            transition">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                </div>
+
+
+                <h3 class="font-heading text-base font-bold
+                           text-white mt-5">
+
+                    Secure Payments
+
+                </h3>
+
+
+                <p class="text-[11px] text-slate-500
+                          leading-5 mt-2">
+
+                    Your transactions are protected with
+                    industry-standard security.
+
+                </p>
+
+
+                <div class="flex items-center gap-1
+                            text-[9px] text-indigo-400
+                            font-bold mt-4">
+
+                    <i class="fa-solid fa-check"></i>
+                    100% Secure Checkout
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Feature 3 -->
+            <div class="group p-6 rounded-2xl
+                        bg-slate-900/60
+                        border border-slate-800
+                        hover:border-emerald-400/30
+                        hover:bg-slate-900
+                        transition-all duration-300">
+
+                <div class="w-12 h-12 rounded-xl
+                            bg-emerald-400/10
+                            border border-emerald-400/20
+                            text-emerald-400
+                            flex items-center justify-center
+                            text-lg
+                            group-hover:scale-110
+                            transition">
+
+                    <i class="fa-solid fa-rotate-left"></i>
+
+                </div>
+
+
+                <h3 class="font-heading text-base font-bold
+                           text-white mt-5">
+
+                    Easy Returns
+
+                </h3>
+
+
+                <p class="text-[11px] text-slate-500
+                          leading-5 mt-2">
+
+                    Changed your mind? Enjoy a simple and
+                    hassle-free return experience.
+
+                </p>
+
+
+                <div class="flex items-center gap-1
+                            text-[9px] text-emerald-400
+                            font-bold mt-4">
+
+                    <i class="fa-solid fa-check"></i>
+                    Simple Return Process
+
+                </div>
+
+            </div>
+
+
+
+            <!-- Feature 4 -->
+            <div class="group p-6 rounded-2xl
+                        bg-slate-900/60
+                        border border-slate-800
+                        hover:border-purple-400/30
+                        hover:bg-slate-900
+                        transition-all duration-300">
+
+                <div class="w-12 h-12 rounded-xl
+                            bg-purple-400/10
+                            border border-purple-400/20
+                            text-purple-400
+                            flex items-center justify-center
+                            text-lg
+                            group-hover:scale-110
+                            transition">
+
+                    <i class="fa-solid fa-headset"></i>
+
+                </div>
+
+
+                <h3 class="font-heading text-base font-bold
+                           text-white mt-5">
+
+                    Expert Support
+
+                </h3>
+
+
+                <p class="text-[11px] text-slate-500
+                          leading-5 mt-2">
+
+                    Our support team is always ready to
+                    help with your technology needs.
+
+                </p>
+
+
+                <div class="flex items-center gap-1
+                            text-[9px] text-purple-400
+                            font-bold mt-4">
+
+                    <i class="fa-solid fa-check"></i>
+                    24/7 Customer Support
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+<!-- ================= NEWSLETTER ================= -->
+
+<section class="relative py-20 border-t border-slate-800/50 overflow-hidden">
+
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+
+        <div class="relative rounded-3xl overflow-hidden
+                    border border-sky-500/20
+                    bg-gradient-to-r from-slate-900 via-slate-950 to-indigo-950
+                    p-8 sm:p-12 text-center">
+
+            <!-- Glow -->
+            <div class="absolute -top-32 left-1/2 -translate-x-1/2
+                        w-96 h-96 bg-sky-500/10
+                        rounded-full blur-[100px]">
+            </div>
+
+            <div class="relative z-10 max-w-2xl mx-auto">
+
+                <div class="w-12 h-12 mx-auto rounded-2xl
+                            bg-sky-400/10
+                            border border-sky-400/20
+                            text-sky-400
+                            flex items-center justify-center text-lg">
+
+                    <i class="fa-regular fa-envelope"></i>
+
+                </div>
+
+                <h2 class="font-heading text-3xl sm:text-4xl
+                           font-bold text-white mt-5">
+
+                    Stay Ahead of the
+                    <span class="text-sky-400">Tech Curve.</span>
+
+                </h2>
+
+                <p class="text-sm text-slate-500 mt-3">
+                    Get exclusive deals, new arrivals and the latest
+                    technology updates straight to your inbox.
+                </p>
+
+                <form class="flex flex-col sm:flex-row gap-3
+                             mt-7 max-w-xl mx-auto"
+                      onsubmit="event.preventDefault(); showToast('Welcome to ELECTROCART!', 'success');">
+
+                    <input
+                        type="email"
+                        required
+                        placeholder="Enter your email address"
+                        class="flex-1 bg-slate-950
+                               border border-slate-800
+                               rounded-xl px-4 py-3
+                               text-sm text-white
+                               placeholder-slate-600
+                               focus:outline-none
+                               focus:border-sky-400">
+
+                    <button
+                        type="submit"
+                        class="px-6 py-3 rounded-xl
+                               bg-sky-400 text-slate-950
+                               font-bold text-sm
+                               hover:bg-sky-300
+                               transition-all">
+
+                        Subscribe
+                        <i class="fa-solid fa-arrow-right ml-1"></i>
+
+                    </button>
+
+                </form>
+
+                <p class="text-[10px] text-slate-600 mt-4">
+                    No spam. Just premium tech updates and exclusive offers.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= PAYMENT & SECURITY ================= -->
+
+<section class="border-y border-slate-800/70 bg-slate-950/50">
+
+    <div class="max-w-7xl mx-auto px-6 lg:px-8 py-6">
+
+        <div class="flex flex-col lg:flex-row
+                    items-center justify-between gap-5">
+
+            <div class="flex items-center gap-3">
+
+                <div class="w-10 h-10 rounded-xl
+                            bg-emerald-400/10
+                            border border-emerald-400/20
+                            text-emerald-400
+                            flex items-center justify-center">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                </div>
+
+                <div>
+
+                    <div class="text-xs font-bold text-white">
+                        Secure & Protected
+                    </div>
+
+                    <div class="text-[10px] text-slate-500">
+                        Your payment information is always protected.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="flex flex-wrap items-center justify-center gap-3">
+
+                <span class="px-4 py-2 rounded-lg
+                             bg-slate-900
+                             border border-slate-800
+                             text-xs text-slate-400">
+
+                    <i class="fa-brands fa-cc-visa text-lg mr-1"></i>
+                    Visa
+
+                </span>
+
+                <span class="px-4 py-2 rounded-lg
+                             bg-slate-900
+                             border border-slate-800
+                             text-xs text-slate-400">
+
+                    <i class="fa-brands fa-cc-mastercard text-lg mr-1"></i>
+                    Mastercard
+
+                </span>
+
+                <span class="px-4 py-2 rounded-lg
+                             bg-slate-900
+                             border border-slate-800
+                             text-xs text-slate-400">
+
+                    <i class="fa-brands fa-google-pay text-lg mr-1"></i>
+                    Google Pay
+
+                </span>
+
+                <span class="px-4 py-2 rounded-lg
+                             bg-slate-900
+                             border border-slate-800
+                             text-xs text-slate-400">
+
+                    <i class="fa-solid fa-building-columns text-lg mr-1"></i>
+                    UPI
+
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= PREMIUM FOOTER ================= -->
+
+<footer class="bg-[#020617] pt-16">
+
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+
+        <div class="grid grid-cols-1
+                    sm:grid-cols-2
+                    lg:grid-cols-5 gap-10 pb-12">
+
+            <!-- Brand -->
+            <div class="lg:col-span-2">
+
+                <div class="flex items-center gap-3">
+
+                    <div class="w-11 h-11 rounded-xl
+                                bg-gradient-to-tr
+                                from-sky-500 to-indigo-600
+                                flex items-center justify-center
+                                text-white shadow-lg shadow-sky-500/20">
+
+                        <i class="fa-solid fa-bolt text-lg"></i>
+
+                    </div>
+
+                    <div>
+
+                        <div class="font-heading text-xl
+                                    font-extrabold text-white">
+
+                            ELECTRO<span class="text-sky-400">CART</span>
+
+                        </div>
+
+                        <div class="text-[8px] text-slate-600
+                                    uppercase tracking-[0.25em]">
+
+                            Gear Up For A Smarter Tomorrow
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <p class="text-xs text-slate-500
+                          leading-6 max-w-sm mt-5">
+
+                    Your destination for premium electronics,
+                    smart gadgets and next-generation technology.
+                    Discover better tech for a smarter lifestyle.
+
+                </p>
+
+
+                <!-- Social -->
+                <div class="flex items-center gap-2 mt-6">
+
+                    <button class="w-9 h-9 rounded-lg
+                                   bg-slate-900
+                                   border border-slate-800
+                                   text-slate-400
+                                   hover:text-sky-400
+                                   hover:border-sky-400/30
+                                   transition">
+
+                        <i class="fa-brands fa-instagram"></i>
+
+                    </button>
+
+                    <button class="w-9 h-9 rounded-lg
+                                   bg-slate-900
+                                   border border-slate-800
+                                   text-slate-400
+                                   hover:text-sky-400
+                                   hover:border-sky-400/30
+                                   transition">
+
+                        <i class="fa-brands fa-x-twitter"></i>
+
+                    </button>
+
+                    <button class="w-9 h-9 rounded-lg
+                                   bg-slate-900
+                                   border border-slate-800
+                                   text-slate-400
+                                   hover:text-sky-400
+                                   hover:border-sky-400/30
+                                   transition">
+
+                        <i class="fa-brands fa-facebook-f"></i>
+
+                    </button>
+
+                    <button class="w-9 h-9 rounded-lg
+                                   bg-slate-900
+                                   border border-slate-800
+                                   text-slate-400
+                                   hover:text-sky-400
+                                   hover:border-sky-400/30
+                                   transition">
+
+                        <i class="fa-brands fa-youtube"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- Shop -->
+            <div>
+
+                <h3 class="text-sm font-bold text-white mb-5">
+                    Shop
+                </h3>
+
+                <ul class="space-y-3 text-xs text-slate-500">
+
+                    <li>
+                        <a href="#" class="hover:text-sky-400 transition">
+                            Laptops
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="hover:text-sky-400 transition">
+                            Audio
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="hover:text-sky-400 transition">
+                            Wearables
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="hover:text-sky-400 transition">
+                            Smart Gear
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="hover:text-sky-400 transition">
+                            Accessories
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <!-- Customer -->
+            <div>
+
+                <h3 class="text-sm font-bold text-white mb-5">
+                    Customer Care
+                </h3>
+
+                <ul class="space-y-3 text-xs text-slate-500">
+
+                    <li>
+                        <a href="#" class="hover:text-sky-400 transition">
+                            Track Order
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="hover:text-sky-400 transition">
+                            Shipping & Delivery
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="hover:text-sky-400 transition">
+                            Returns & Refunds
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="hover:text-sky-400 transition">
+                            Help Center
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="hover:text-sky-400 transition">
+                            Contact Us
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <!-- Company -->
+            <div>
+
+                <h3 class="text-sm font-bold text-white mb-5">
+                    Company
+                </h3>
+
+                <ul class="space-y-3 text-xs text-slate-500">
+
+                    <li>
+                        <a href="#" class="hover:text-sky-400 transition">
+                            About ELECTROCART
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="hover:text-sky-400 transition">
+                            Careers
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="hover:text-sky-400 transition">
+                            Privacy Policy
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="hover:text-sky-400 transition">
+                            Terms & Conditions
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="#" class="hover:text-sky-400 transition">
+                            Sitemap
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+
+        <!-- Bottom -->
+        <div class="border-t border-slate-800
+                    py-6 flex flex-col sm:flex-row
+                    items-center justify-between gap-3">
+
+            <p class="text-[10px] text-slate-600">
+                © 2026 ELECTROCART. All rights reserved.
+            </p>
+
+            <div class="flex items-center gap-4
+                        text-[10px] text-slate-600">
+
+                <span class="flex items-center gap-1">
+                    <i class="fa-solid fa-lock text-emerald-400"></i>
+                    Secure Shopping
+                </span>
+
+                <span class="flex items-center gap-1">
+                    <i class="fa-solid fa-bolt text-sky-400"></i>
+                    Next-Gen Commerce
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</footer>
+
+</body>
+</html>

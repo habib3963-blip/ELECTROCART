@@ -1,0 +1,566 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>My Orders | ELECTROCART</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+    <style>
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at 20% 10%,
+                    rgba(99, 102, 241, 0.14),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 80% 50%,
+                    rgba(168, 85, 247, 0.10),
+                    transparent 30%
+                ),
+                #050509;
+
+            color: #f8fafc;
+        }
+
+        .font-space {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .glass {
+            background: rgba(15, 15, 25, 0.72);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .order-card {
+            transition: all 0.25s ease;
+        }
+
+        .order-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(99, 102, 241, 0.35);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+        }
+
+    </style>
+
+</head>
+
+
+<body class="min-h-screen">
+
+
+    <!-- NAVBAR -->
+
+    <nav class="border-b border-white/10 bg-black/30 backdrop-blur-xl">
+
+        <div class="max-w-7xl mx-auto px-6 py-5
+                    flex items-center justify-between">
+
+            <a href="{% url 'home' %}"
+               class="font-space text-2xl font-bold">
+
+                ELECTRO<span class="text-indigo-400">CART</span>
+
+            </a>
+
+
+            <div class="flex items-center gap-5">
+
+                <a href="{% url 'wishlist' %}"
+                   class="text-gray-400 hover:text-white transition"
+                   title="Wishlist">
+
+                    <i class="fa-regular fa-heart text-lg"></i>
+
+                </a>
+
+
+                <a href="{% url 'cart' %}"
+                   class="text-gray-400 hover:text-white transition"
+                   title="Cart">
+
+                    <i class="fa-solid fa-cart-shopping text-lg"></i>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- MAIN -->
+
+    <main class="max-w-7xl mx-auto px-6 py-12">
+
+
+        <!-- HEADER -->
+
+        <div class="mb-10">
+
+            <p class="text-indigo-400 uppercase
+                      tracking-[0.2em]
+                      text-xs font-bold mb-3">
+
+                Account
+
+            </p>
+
+            <h1 class="font-space
+                       text-4xl md:text-5xl
+                       font-bold">
+
+                My Orders
+
+            </h1>
+
+            <p class="text-gray-400 mt-3">
+
+                Track and manage your ELECTROCART purchases.
+
+            </p>
+
+        </div>
+
+
+        {% if orders %}
+
+
+            <!-- ORDER LIST -->
+
+            <div class="space-y-5">
+
+
+                {% for order in orders %}
+
+
+                    <div class="order-card glass
+                                rounded-2xl p-6">
+
+
+                        <!-- TOP -->
+
+                        <div class="flex flex-col
+                                    md:flex-row
+                                    md:items-center
+                                    md:justify-between
+                                    gap-5">
+
+
+                            <div>
+
+                                <p class="text-xs
+                                          uppercase
+                                          tracking-wider
+                                          text-gray-500 mb-2">
+
+                                    Order ID
+
+                                </p>
+
+                                <h2 class="font-space
+                                           text-2xl
+                                           font-bold">
+
+                                    #{{ order.id }}
+
+                                </h2>
+
+                            </div>
+
+
+                            <!-- STATUS -->
+
+                            <div>
+
+                                {% if order.status == "Pending" %}
+
+                                    <span class="inline-flex
+                                                 items-center gap-2
+                                                 px-4 py-2
+                                                 rounded-full
+                                                 bg-yellow-500/10
+                                                 text-yellow-400
+                                                 text-sm
+                                                 font-semibold">
+
+                                        <i class="fa-solid fa-clock"></i>
+
+                                        {{ order.status }}
+
+                                    </span>
+
+
+                                {% elif order.status == "Confirmed" %}
+
+                                    <span class="inline-flex
+                                                 items-center gap-2
+                                                 px-4 py-2
+                                                 rounded-full
+                                                 bg-blue-500/10
+                                                 text-blue-400
+                                                 text-sm
+                                                 font-semibold">
+
+                                        <i class="fa-solid fa-circle-check"></i>
+
+                                        {{ order.status }}
+
+                                    </span>
+
+
+                                {% elif order.status == "Shipped" %}
+
+                                    <span class="inline-flex
+                                                 items-center gap-2
+                                                 px-4 py-2
+                                                 rounded-full
+                                                 bg-purple-500/10
+                                                 text-purple-400
+                                                 text-sm
+                                                 font-semibold">
+
+                                        <i class="fa-solid fa-truck"></i>
+
+                                        {{ order.status }}
+
+                                    </span>
+
+
+                                {% elif order.status == "Delivered" %}
+
+                                    <span class="inline-flex
+                                                 items-center gap-2
+                                                 px-4 py-2
+                                                 rounded-full
+                                                 bg-green-500/10
+                                                 text-green-400
+                                                 text-sm
+                                                 font-semibold">
+
+                                        <i class="fa-solid fa-check"></i>
+
+                                        {{ order.status }}
+
+                                    </span>
+
+
+                                {% else %}
+
+                                    <span class="inline-flex
+                                                 items-center gap-2
+                                                 px-4 py-2
+                                                 rounded-full
+                                                 bg-red-500/10
+                                                 text-red-400
+                                                 text-sm
+                                                 font-semibold">
+
+                                        <i class="fa-solid fa-xmark"></i>
+
+                                        {{ order.status }}
+
+                                    </span>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- DIVIDER -->
+
+                        <div class="border-t
+                                    border-white/10
+                                    my-6">
+                        </div>
+
+
+                        <!-- DETAILS -->
+
+                        <div class="grid
+                            grid-cols-1
+                            sm:grid-cols-2
+                            lg:grid-cols-4
+                            gap-6">
+
+
+                            <div>
+
+                                <p class="text-xs
+                                          uppercase
+                                          tracking-wider
+                                          text-gray-500 mb-1">
+
+                                    Order Date
+
+                                </p>
+
+                                <p class="text-gray-200">
+
+                                    {{ order.created_at|date:"d M Y" }}
+
+                                </p>
+
+                            </div>
+
+
+                            <div>
+
+                                <p class="text-xs
+                                          uppercase
+                                          tracking-wider
+                                          text-gray-500 mb-1">
+
+                                    Total Amount
+
+                                </p>
+
+                                <p class="font-semibold
+                                          text-white">
+
+                                    ₹{{ order.total_amount }}
+
+                                </p>
+
+                            </div>
+
+
+                            <div>
+
+                                <p class="text-xs
+                                          uppercase
+                                          tracking-wider
+                                          text-gray-500 mb-1">
+
+                                    Customer
+
+                                </p>
+
+                                <p class="text-gray-200">
+
+                                    {{ order.customer_name }}
+
+                                </p>
+
+                            </div>
+
+
+                            <div>
+
+                                <p class="text-xs
+                                          uppercase
+                                          tracking-wider
+                                          text-gray-500 mb-1">
+                                    Payment
+                                </p>
+
+                                {% if order.payment %}
+
+                                    <p class="text-gray-200">
+                                        {{ order.payment.get_payment_method_display }}
+                                    </p>
+
+                                    <p class="text-xs mt-1
+                                              {% if order.payment.payment_status == 'PAID' %}
+                                                  text-green-400
+                                              {% elif order.payment.payment_status == 'FAILED' %}
+                                                  text-red-400
+                                              {% else %}
+                                                  text-yellow-400
+                                              {% endif %}">
+                                        {{ order.payment.get_payment_status_display }}
+                                    </p>
+
+                                {% else %}
+
+                                    <p class="text-gray-500">
+                                        Not available
+                                    </p>
+
+                                {% endif %}
+
+                            </div>
+
+
+                        </div>
+
+
+                        <!-- BOTTOM -->
+
+                        <div class="mt-6
+                                    flex flex-col
+                                    sm:flex-row
+                                    sm:items-center
+                                    sm:justify-between
+                                    gap-4">
+
+
+                            <p class="text-sm
+                                      text-gray-500">
+
+                                Placed on
+                                {{ order.created_at|date:"d M Y, h:i A" }}
+
+                            </p>
+
+
+                            <a href="{% url 'order_detail' order.id %}"
+                                class="inline-flex
+                                        items-center
+                                        justify-center
+                                        gap-2
+                                        rounded-xl
+                                        bg-indigo-600
+                                        hover:bg-indigo-500
+                                        px-5 py-3
+                                        font-semibold
+                                        transition">
+
+                                    View Details
+
+                                    <i class="fa-solid fa-arrow-right text-xs"></i>
+
+                                </a>
+
+                        </div>
+
+
+                    </div>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+        {% else %}
+
+
+            <!-- EMPTY STATE -->
+
+            <div class="glass
+                        rounded-3xl
+                        p-12
+                        text-center">
+
+
+                <div class="w-20 h-20
+                            mx-auto mb-6
+                            rounded-full
+                            bg-indigo-500/10
+                            flex items-center justify-center">
+
+                    <i class="fa-solid fa-box-open
+                              text-3xl
+                              text-indigo-400"></i>
+
+                </div>
+
+
+                <h2 class="font-space
+                           text-2xl
+                           font-bold
+                           mb-3">
+
+                    No Orders Yet
+
+                </h2>
+
+
+                <p class="text-gray-400
+                          max-w-md
+                          mx-auto
+                          mb-7">
+
+                    You haven't placed any orders yet.
+                    Explore our latest electronics and
+                    find something you love.
+
+                </p>
+
+
+                <a href="{% url 'home' %}"
+                   class="inline-flex
+                          items-center
+                          gap-2
+                          rounded-xl
+                          bg-indigo-600
+                          hover:bg-indigo-500
+                          px-6 py-3
+                          font-semibold
+                          transition">
+
+                    <i class="fa-solid fa-store"></i>
+
+                    Start Shopping
+
+                </a>
+
+
+            </div>
+
+
+        {% endif %}
+
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer class="border-t
+                   border-white/10
+                   mt-10">
+
+        <div class="max-w-7xl
+                    mx-auto
+                    px-6 py-8
+                    text-center">
+
+            <p class="text-gray-600 text-sm">
+
+                © 2026 ELECTROCART.
+                All rights reserved.
+
+            </p>
+
+        </div>
+
+    </footer>
+
+
+</body>
+
+</html>

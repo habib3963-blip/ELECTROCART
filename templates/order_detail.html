@@ -1,0 +1,1664 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Order #{{ order.id }} | ELECTROCART</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+    <style>
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at 20% 10%,
+                    rgba(99, 102, 241, 0.14),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 80% 50%,
+                    rgba(168, 85, 247, 0.10),
+                    transparent 30%
+                ),
+                #050509;
+
+            color: #f8fafc;
+        }
+
+        .font-space {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .glass {
+            background: rgba(15, 15, 25, 0.72);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .product-row {
+            transition: all 0.25s ease;
+        }
+
+        .product-row:hover {
+            background: rgba(255,255,255,0.025);
+        }
+
+        .tracking-line {
+            position: absolute;
+            left: 19px;
+            top: 40px;
+            bottom: -24px;
+            width: 2px;
+            background: rgba(255,255,255,0.08);
+        }
+
+        .tracking-line.done {
+            background: rgba(99,102,241,0.55);
+        }
+
+        .tracking-step:last-child .tracking-line {
+            display: none;
+        }
+
+        .tracking-icon {
+            position: relative;
+            z-index: 2;
+            width: 40px;
+            height: 40px;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border: 1px solid rgba(255,255,255,0.10);
+            background: rgba(255,255,255,0.035);
+            color: #6b7280;
+            transition: all 0.25s ease;
+        }
+
+        .tracking-step.completed .tracking-icon {
+            background: rgba(99,102,241,0.12);
+            border-color: rgba(99,102,241,0.30);
+            color: #818cf8;
+        }
+
+        .tracking-step.current .tracking-icon {
+            background: rgba(99,102,241,0.18);
+            border-color: rgba(129,140,248,0.65);
+            color: #a5b4fc;
+            box-shadow: 0 0 24px rgba(99,102,241,0.18);
+        }
+
+        .tracking-step.current .tracking-title {
+            color: #fff;
+        }
+
+        .tracking-step.completed .tracking-title {
+            color: #e5e7eb;
+        }
+
+        .tracking-step.upcoming .tracking-title {
+            color: #6b7280;
+        }
+
+        .tracking-step.current .tracking-subtitle {
+            color: #818cf8;
+        }
+
+        /* =========================================================
+           CANCEL ORDER
+           ========================================================= */
+
+        .cancel-order-card {
+            background: rgba(239, 68, 68, 0.045);
+            border: 1px solid rgba(239, 68, 68, 0.16);
+            transition: all 0.25s ease;
+        }
+
+        .cancel-order-card:hover {
+            border-color: rgba(239, 68, 68, 0.28);
+            background: rgba(239, 68, 68, 0.06);
+        }
+
+        .cancel-order-btn {
+            transition: all 0.2s ease;
+        }
+
+        .cancel-order-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 10px 28px rgba(239, 68, 68, 0.16);
+        }
+
+        .cancel-order-btn:active {
+            transform: translateY(0);
+        }
+
+        /* =========================================================
+           TRACKING ID
+           ========================================================= */
+
+        .tracking-id-card {
+            background: rgba(99, 102, 241, 0.045);
+            border: 1px solid rgba(99, 102, 241, 0.16);
+            transition: all 0.25s ease;
+        }
+
+        .tracking-id-card:hover {
+            border-color: rgba(129, 140, 248, 0.28);
+            background: rgba(99, 102, 241, 0.06);
+        }
+
+        .tracking-id-value {
+            letter-spacing: 0.08em;
+            word-break: break-all;
+        }
+
+    </style>
+
+</head>
+
+
+<body class="min-h-screen">
+
+
+    <!-- NAVBAR -->
+
+    <nav class="border-b border-white/10
+                bg-black/30
+                backdrop-blur-xl">
+
+        <div class="max-w-7xl mx-auto
+                    px-6 py-5
+                    flex items-center
+                    justify-between">
+
+
+            <!-- LOGO -->
+
+            <a href="{% url 'home' %}"
+               class="font-space
+                      text-2xl
+                      font-bold">
+
+                ELECTRO<span class="text-indigo-400">CART</span>
+
+            </a>
+
+
+            <!-- NAV ACTIONS -->
+
+            <div class="flex items-center gap-5">
+
+                <a href="{% url 'wishlist' %}"
+                   class="text-gray-400
+                          hover:text-white
+                          transition"
+                   title="Wishlist">
+
+                    <i class="fa-regular fa-heart text-lg"></i>
+
+                </a>
+
+
+                <a href="{% url 'cart' %}"
+                   class="text-gray-400
+                          hover:text-white
+                          transition"
+                   title="Cart">
+
+                    <i class="fa-solid fa-cart-shopping text-lg"></i>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- MAIN -->
+
+    <main class="max-w-7xl
+                 mx-auto
+                 px-6
+                 py-10">
+
+
+        <!-- BACK -->
+
+        <a href="{% url 'my_orders' %}"
+           class="inline-flex
+                  items-center
+                  gap-2
+                  text-gray-400
+                  hover:text-white
+                  transition
+                  mb-8">
+
+            <i class="fa-solid fa-arrow-left text-sm"></i>
+
+            Back to My Orders
+
+        </a>
+
+
+        <!-- HEADER -->
+
+        <div class="flex flex-col
+                    lg:flex-row
+                    lg:items-center
+                    lg:justify-between
+                    gap-6
+                    mb-8">
+
+
+            <div>
+
+                <p class="text-indigo-400
+                          uppercase
+                          tracking-[0.2em]
+                          text-xs
+                          font-bold
+                          mb-3">
+
+                    Order Details
+
+                </p>
+
+
+                <h1 class="font-space
+                           text-4xl
+                           md:text-5xl
+                           font-bold">
+
+                    Order #{{ order.id }}
+
+                </h1>
+
+
+                <p class="text-gray-400 mt-3">
+
+                    Placed on
+                    {{ order.created_at|date:"d M Y, h:i A" }}
+
+                </p>
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div>
+
+                {% if order.status == "Pending" %}
+
+                    <span class="inline-flex
+                                 items-center
+                                 gap-2
+                                 px-5 py-3
+                                 rounded-full
+                                 bg-yellow-500/10
+                                 text-yellow-400
+                                 border border-yellow-500/20
+                                 font-semibold">
+
+                        <i class="fa-solid fa-clock"></i>
+
+                        {{ order.get_status_display }}
+
+                    </span>
+
+                {% elif order.status == "Confirmed" %}
+
+                    <span class="inline-flex
+                                 items-center
+                                 gap-2
+                                 px-5 py-3
+                                 rounded-full
+                                 bg-blue-500/10
+                                 text-blue-400
+                                 border border-blue-500/20
+                                 font-semibold">
+
+                        <i class="fa-solid fa-circle-check"></i>
+
+                        {{ order.get_status_display }}
+
+                    </span>
+
+                {% elif order.status == "Processing" %}
+
+                    <span class="inline-flex
+                                 items-center
+                                 gap-2
+                                 px-5 py-3
+                                 rounded-full
+                                 bg-cyan-500/10
+                                 text-cyan-400
+                                 border border-cyan-500/20
+                                 font-semibold">
+
+                        <i class="fa-solid fa-gears"></i>
+
+                        {{ order.get_status_display }}
+
+                    </span>
+
+                {% elif order.status == "Shipped" %}
+
+                    <span class="inline-flex
+                                 items-center
+                                 gap-2
+                                 px-5 py-3
+                                 rounded-full
+                                 bg-purple-500/10
+                                 text-purple-400
+                                 border border-purple-500/20
+                                 font-semibold">
+
+                        <i class="fa-solid fa-truck"></i>
+
+                        {{ order.get_status_display }}
+
+                    </span>
+
+                {% elif order.status == "Out for Delivery" %}
+
+                    <span class="inline-flex
+                                 items-center
+                                 gap-2
+                                 px-5 py-3
+                                 rounded-full
+                                 bg-orange-500/10
+                                 text-orange-400
+                                 border border-orange-500/20
+                                 font-semibold">
+
+                        <i class="fa-solid fa-truck-fast"></i>
+
+                        {{ order.get_status_display }}
+
+                    </span>
+
+                {% elif order.status == "Delivered" %}
+
+                    <span class="inline-flex
+                                 items-center
+                                 gap-2
+                                 px-5 py-3
+                                 rounded-full
+                                 bg-green-500/10
+                                 text-green-400
+                                 border border-green-500/20
+                                 font-semibold">
+
+                        <i class="fa-solid fa-check"></i>
+
+                        {{ order.get_status_display }}
+
+                    </span>
+
+                {% else %}
+
+                    <span class="inline-flex
+                                 items-center
+                                 gap-2
+                                 px-5 py-3
+                                 rounded-full
+                                 bg-red-500/10
+                                 text-red-400
+                                 border border-red-500/20
+                                 font-semibold">
+
+                        <i class="fa-solid fa-xmark"></i>
+
+                        {{ order.get_status_display }}
+
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <!-- CANCEL ORDER -->
+
+        {% if order.status == "Pending" or order.status == "Confirmed" or order.status == "Processing" %}
+            {% if order.payment %}
+                {% if order.payment.payment_status != "PAID" %}
+
+                    <div class="cancel-order-card rounded-2xl p-4 sm:p-5 mt-2 mb-8">
+                        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+                            <div class="flex items-start gap-3">
+                                <div class="w-10 h-10
+                                            rounded-xl
+                                            bg-red-500/10
+                                            border border-red-500/10
+                                            flex items-center
+                                            justify-center
+                                            flex-shrink-0">
+
+                                    <i class="fa-solid fa-ban text-red-400"></i>
+
+                                </div>
+
+                                <div>
+                                    <p class="font-semibold text-white">
+                                        Want to cancel this order?
+                                    </p>
+
+                                    <p class="text-xs text-gray-500 mt-1 leading-relaxed">
+                                        Cancellation is available before your order is shipped.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <form method="post"
+                                  action="{% url 'cancel_order' order.id %}"
+                                  onsubmit="return confirm('Are you sure you want to cancel this order?');">
+
+                                {% csrf_token %}
+
+                                <button type="submit"
+                                        class="cancel-order-btn
+                                               inline-flex
+                                               items-center
+                                               justify-center
+                                               gap-2
+                                               w-full
+                                               sm:w-auto
+                                               px-5
+                                               py-3
+                                               rounded-xl
+                                               bg-red-500/10
+                                               hover:bg-red-500/15
+                                               border border-red-500/20
+                                               hover:border-red-500/30
+                                               text-red-400
+                                               hover:text-red-300
+                                               text-sm
+                                               font-semibold">
+
+                                    <i class="fa-solid fa-xmark"></i>
+                                    Cancel Order
+
+                                </button>
+
+                            </form>
+
+                        </div>
+                    </div>
+
+                {% endif %}
+            {% endif %}
+        {% endif %}
+
+
+        <!-- TRACKING ID -->
+
+        {% if order.tracking_id %}
+            <div class="tracking-id-card rounded-2xl p-4 sm:p-5 mb-8">
+
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+                    <div class="flex items-start gap-3">
+
+                        <div class="w-11 h-11
+                                    rounded-xl
+                                    bg-indigo-500/10
+                                    border border-indigo-500/10
+                                    flex items-center
+                                    justify-center
+                                    flex-shrink-0">
+
+                            <i class="fa-solid fa-barcode text-indigo-400"></i>
+
+                        </div>
+
+                        <div>
+
+                            <p class="text-xs
+                                      uppercase
+                                      tracking-[0.16em]
+                                      text-gray-500
+                                      font-semibold">
+
+                                Shipment Tracking ID
+
+                            </p>
+
+                            <p class="tracking-id-value
+                                      font-space
+                                      text-lg
+                                      sm:text-xl
+                                      font-bold
+                                      text-white
+                                      mt-1">
+
+                                {{ order.tracking_id }}
+
+                            </p>
+
+                            <p class="text-xs text-gray-500 mt-1">
+
+                                Use this ID to identify your shipment.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="inline-flex
+                                items-center
+                                gap-2
+                                px-4
+                                py-2
+                                rounded-full
+                                bg-green-500/10
+                                border border-green-500/15
+                                text-green-400
+                                text-xs
+                                font-semibold
+                                whitespace-nowrap">
+
+                        <i class="fa-solid fa-circle-check"></i>
+                        Tracking Assigned
+
+                    </div>
+
+                </div>
+
+            </div>
+        {% endif %}
+
+
+        <!-- ORDER TRACKING -->
+
+        <div class="glass rounded-2xl p-6 mb-8">
+
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-7">
+
+                <div class="flex items-center gap-3">
+
+                    <div class="w-11 h-11
+                                rounded-xl
+                                bg-indigo-500/10
+                                flex items-center
+                                justify-center">
+
+                        <i class="fa-solid fa-route text-indigo-400"></i>
+
+                    </div>
+
+                    <div>
+
+                        <h2 class="font-space text-xl font-bold">
+                            Order Tracking
+                        </h2>
+
+                        <p class="text-gray-500 text-sm mt-1">
+                            Follow your order journey
+                        </p>
+
+                    </div>
+
+                </div>
+
+                {% if order.status != "Cancelled" %}
+
+                    <span class="text-xs
+                                 uppercase
+                                 tracking-wider
+                                 text-gray-500
+                                 bg-white/5
+                                 border border-white/10
+                                 rounded-full
+                                 px-4 py-2">
+
+                        Live Order Status
+
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            {% if order.status == "Cancelled" %}
+
+                <div class="rounded-2xl
+                            border border-red-500/20
+                            bg-red-500/5
+                            p-5">
+
+                    <div class="flex items-start gap-4">
+
+                        <div class="w-11 h-11
+                                    rounded-full
+                                    bg-red-500/10
+                                    border border-red-500/20
+                                    flex items-center
+                                    justify-center
+                                    flex-shrink-0">
+
+                            <i class="fa-solid fa-xmark text-red-400"></i>
+
+                        </div>
+
+                        <div>
+
+                            <h3 class="font-semibold text-white">
+                                Order Cancelled
+                            </h3>
+
+                            <p class="text-sm text-gray-500 mt-1 leading-relaxed">
+                                This order has been cancelled and will not proceed through delivery.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% else %}
+
+                <div class="space-y-0">
+
+                    <!-- ORDER PLACED -->
+
+                    <div class="tracking-step
+                                {% if order.status == "Pending" %}current{% else %}completed{% endif %}
+                                relative flex gap-4 pb-6">
+
+                        <div class="tracking-icon">
+
+                            {% if order.status == "Pending" %}
+                                <i class="fa-solid fa-clock"></i>
+                            {% else %}
+                                <i class="fa-solid fa-check"></i>
+                            {% endif %}
+
+                        </div>
+
+                        {% if order.status != "Pending" %}
+                            <div class="tracking-line done"></div>
+                        {% else %}
+                            <div class="tracking-line"></div>
+                        {% endif %}
+
+                        <div class="pt-1">
+
+                            <p class="tracking-title font-semibold">
+                                Order Placed
+                            </p>
+
+                            <p class="tracking-subtitle text-xs mt-1">
+                                {% if order.status == "Pending" %}
+                                    Your order has been placed successfully.
+                                {% else %}
+                                    Order received successfully.
+                                {% endif %}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CONFIRMED -->
+
+                    <div class="tracking-step
+                                {% if order.status == "Confirmed" %}current
+                                {% elif order.status == "Processing" or order.status == "Shipped" or order.status == "Out for Delivery" or order.status == "Delivered" %}completed
+                                {% else %}upcoming{% endif %}
+                                relative flex gap-4 pb-6">
+
+                        <div class="tracking-icon">
+
+                            {% if order.status == "Confirmed" %}
+                                <i class="fa-solid fa-circle-check"></i>
+                            {% elif order.status == "Processing" or order.status == "Shipped" or order.status == "Out for Delivery" or order.status == "Delivered" %}
+                                <i class="fa-solid fa-check"></i>
+                            {% else %}
+                                <i class="fa-solid fa-circle"></i>
+                            {% endif %}
+
+                        </div>
+
+                        {% if order.status == "Processing" or order.status == "Shipped" or order.status == "Out for Delivery" or order.status == "Delivered" %}
+                            <div class="tracking-line done"></div>
+                        {% else %}
+                            <div class="tracking-line"></div>
+                        {% endif %}
+
+                        <div class="pt-1">
+
+                            <p class="tracking-title font-semibold">
+                                Confirmed
+                            </p>
+
+                            <p class="tracking-subtitle text-xs mt-1">
+                                {% if order.status == "Confirmed" %}
+                                    Your order has been confirmed.
+                                {% elif order.status == "Processing" or order.status == "Shipped" or order.status == "Out for Delivery" or order.status == "Delivered" %}
+                                    Order confirmed successfully.
+                                {% else %}
+                                    Waiting for order confirmation.
+                                {% endif %}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PROCESSING -->
+
+                    <div class="tracking-step
+                                {% if order.status == "Processing" %}current
+                                {% elif order.status == "Shipped" or order.status == "Out for Delivery" or order.status == "Delivered" %}completed
+                                {% else %}upcoming{% endif %}
+                                relative flex gap-4 pb-6">
+
+                        <div class="tracking-icon">
+
+                            {% if order.status == "Processing" %}
+                                <i class="fa-solid fa-gears"></i>
+                            {% elif order.status == "Shipped" or order.status == "Out for Delivery" or order.status == "Delivered" %}
+                                <i class="fa-solid fa-check"></i>
+                            {% else %}
+                                <i class="fa-solid fa-circle"></i>
+                            {% endif %}
+
+                        </div>
+
+                        {% if order.status == "Shipped" or order.status == "Out for Delivery" or order.status == "Delivered" %}
+                            <div class="tracking-line done"></div>
+                        {% else %}
+                            <div class="tracking-line"></div>
+                        {% endif %}
+
+                        <div class="pt-1">
+
+                            <p class="tracking-title font-semibold">
+                                Processing
+                            </p>
+
+                            <p class="tracking-subtitle text-xs mt-1">
+                                {% if order.status == "Processing" %}
+                                    Your order is being prepared.
+                                {% elif order.status == "Shipped" or order.status == "Out for Delivery" or order.status == "Delivered" %}
+                                    Order was prepared for shipment.
+                                {% else %}
+                                    Your order will be prepared soon.
+                                {% endif %}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- SHIPPED -->
+
+                    <div class="tracking-step
+                                {% if order.status == "Shipped" %}current
+                                {% elif order.status == "Out for Delivery" or order.status == "Delivered" %}completed
+                                {% else %}upcoming{% endif %}
+                                relative flex gap-4 pb-6">
+
+                        <div class="tracking-icon">
+
+                            {% if order.status == "Shipped" %}
+                                <i class="fa-solid fa-truck"></i>
+                            {% elif order.status == "Out for Delivery" or order.status == "Delivered" %}
+                                <i class="fa-solid fa-check"></i>
+                            {% else %}
+                                <i class="fa-solid fa-circle"></i>
+                            {% endif %}
+
+                        </div>
+
+                        {% if order.status == "Out for Delivery" or order.status == "Delivered" %}
+                            <div class="tracking-line done"></div>
+                        {% else %}
+                            <div class="tracking-line"></div>
+                        {% endif %}
+
+                        <div class="pt-1">
+
+                            <p class="tracking-title font-semibold">
+                                Shipped
+                            </p>
+
+                            <p class="tracking-subtitle text-xs mt-1">
+                                {% if order.status == "Shipped" %}
+                                    Your order is on the way.
+                                {% elif order.status == "Out for Delivery" or order.status == "Delivered" %}
+                                    Order has been shipped.
+                                {% else %}
+                                    Shipment will begin after processing.
+                                {% endif %}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- OUT FOR DELIVERY -->
+
+                    <div class="tracking-step
+                                {% if order.status == "Out for Delivery" %}current
+                                {% elif order.status == "Delivered" %}completed
+                                {% else %}upcoming{% endif %}
+                                relative flex gap-4 pb-6">
+
+                        <div class="tracking-icon">
+
+                            {% if order.status == "Out for Delivery" %}
+                                <i class="fa-solid fa-truck-fast"></i>
+                            {% elif order.status == "Delivered" %}
+                                <i class="fa-solid fa-check"></i>
+                            {% else %}
+                                <i class="fa-solid fa-circle"></i>
+                            {% endif %}
+
+                        </div>
+
+                        {% if order.status == "Delivered" %}
+                            <div class="tracking-line done"></div>
+                        {% else %}
+                            <div class="tracking-line"></div>
+                        {% endif %}
+
+                        <div class="pt-1">
+
+                            <p class="tracking-title font-semibold">
+                                Out for Delivery
+                            </p>
+
+                            <p class="tracking-subtitle text-xs mt-1">
+                                {% if order.status == "Out for Delivery" %}
+                                    Your order is out for delivery.
+                                {% elif order.status == "Delivered" %}
+                                    Order was out for delivery.
+                                {% else %}
+                                    Your order will be out for delivery after shipping.
+                                {% endif %}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- DELIVERED -->
+
+                    <div class="tracking-step
+                                {% if order.status == "Delivered" %}current{% else %}upcoming{% endif %}
+                                relative flex gap-4">
+
+                        <div class="tracking-icon">
+
+                            {% if order.status == "Delivered" %}
+                                <i class="fa-solid fa-check"></i>
+                            {% else %}
+                                <i class="fa-solid fa-circle"></i>
+                            {% endif %}
+
+                        </div>
+
+                        <div class="pt-1">
+
+                            <p class="tracking-title font-semibold">
+                                Delivered
+                            </p>
+
+                            <p class="tracking-subtitle text-xs mt-1">
+                                {% if order.status == "Delivered" %}
+                                    Your order has been delivered successfully.
+                                {% else %}
+                                    Delivery will be completed at your address.
+                                {% endif %}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- CONTENT GRID -->
+
+        <div class="grid
+                    grid-cols-1
+                    lg:grid-cols-3
+                    gap-6">
+
+
+            <!-- LEFT -->
+
+            <div class="lg:col-span-2
+                        space-y-6">
+
+
+                <!-- ORDERED PRODUCTS -->
+
+                <div class="glass
+                            rounded-2xl
+                            p-6">
+
+
+                    <div class="flex items-center
+                                justify-between
+                                mb-6">
+
+                        <div>
+
+                            <h2 class="font-space
+                                       text-xl
+                                       font-bold">
+
+                                Ordered Products
+
+                            </h2>
+
+                            <p class="text-gray-500
+                                      text-sm mt-1">
+
+                                Items included in this order
+
+                            </p>
+
+                        </div>
+
+
+                        <div class="w-10 h-10
+                                    rounded-xl
+                                    bg-indigo-500/10
+                                    flex items-center
+                                    justify-center">
+
+                            <i class="fa-solid fa-box
+                                      text-indigo-400"></i>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="space-y-2">
+
+
+                        {% for item in order.items.all %}
+
+
+                            <div class="product-row
+                                        rounded-xl
+                                        p-4
+                                        flex flex-col
+                                        sm:flex-row
+                                        sm:items-center
+                                        gap-4">
+
+
+                                <!-- IMAGE -->
+
+                                <div class="w-20 h-20
+                                            rounded-xl
+                                            bg-white/5
+                                            border
+                                            border-white/10
+                                            overflow-hidden
+                                            flex-shrink-0">
+
+                                    {% if item.product.image %}
+
+                                        <img src="{{ item.product.image }}"
+                                             alt="{{ item.product.name }}"
+                                             class="w-full
+                                                    h-full
+                                                    object-cover">
+
+                                    {% else %}
+
+                                        <div class="w-full
+                                                    h-full
+                                                    flex
+                                                    items-center
+                                                    justify-center">
+
+                                            <i class="fa-solid fa-cube
+                                                      text-gray-600
+                                                      text-xl"></i>
+
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+
+                                <!-- PRODUCT INFO -->
+
+                                <div class="flex-1 min-w-0">
+
+                                    <h3 class="font-semibold
+                                               text-white
+                                               truncate">
+
+                                        {{ item.product.name }}
+
+                                    </h3>
+
+
+                                    <p class="text-sm
+                                              text-gray-500
+                                              mt-1">
+
+                                        {{ item.product.category.name }}
+
+                                    </p>
+
+
+                                    <p class="text-sm
+                                              text-gray-400
+                                              mt-2">
+
+                                        ₹{{ item.price }}
+                                        ×
+                                        {{ item.quantity }}
+
+                                    </p>
+
+                                </div>
+
+
+                                <!-- ITEM TOTAL -->
+
+                                <div class="text-left
+                                            sm:text-right">
+
+                                    <p class="text-xs
+                                              text-gray-500
+                                              uppercase
+                                              tracking-wider">
+
+                                        Total
+
+                                    </p>
+
+                                    <p class="font-space
+                                              text-lg
+                                              font-bold
+                                              text-white
+                                              mt-1">
+
+                                        ₹{{ item.total_price }}
+
+                                    </p>
+
+                                </div>
+
+
+                            </div>
+
+
+                            {% if not forloop.last %}
+
+                                <div class="border-t
+                                            border-white/5">
+                                </div>
+
+                            {% endif %}
+
+
+                        {% endfor %}
+
+
+                    </div>
+
+                </div>
+
+
+                <!-- DELIVERY INFORMATION -->
+
+                <div class="glass
+                            rounded-2xl
+                            p-6">
+
+
+                    <div class="flex items-center
+                                gap-3
+                                mb-6">
+
+                        <div class="w-10 h-10
+                                    rounded-xl
+                                    bg-indigo-500/10
+                                    flex items-center
+                                    justify-center">
+
+                            <i class="fa-solid fa-location-dot
+                                      text-indigo-400"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <h2 class="font-space
+                                       text-xl
+                                       font-bold">
+
+                                Delivery Address
+
+                            </h2>
+
+                            <p class="text-gray-500
+                                      text-sm">
+
+                                Shipping information
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="grid
+                                grid-cols-1
+                                md:grid-cols-2
+                                gap-5">
+
+
+                        <div>
+
+                            <p class="text-xs
+                                      uppercase
+                                      tracking-wider
+                                      text-gray-500
+                                      mb-1">
+
+                                Name
+
+                            </p>
+
+                            <p class="text-gray-200">
+
+                                {{ order.customer_name }}
+
+                            </p>
+
+                        </div>
+
+
+                        <div>
+
+                            <p class="text-xs
+                                      uppercase
+                                      tracking-wider
+                                      text-gray-500
+                                      mb-1">
+
+                                Phone
+
+                            </p>
+
+                            <p class="text-gray-200">
+
+                                {{ order.phone }}
+
+                            </p>
+
+                        </div>
+
+
+                        <div class="md:col-span-2">
+
+                            <p class="text-xs
+                                      uppercase
+                                      tracking-wider
+                                      text-gray-500
+                                      mb-1">
+
+                                Address
+
+                            </p>
+
+                            <p class="text-gray-200
+                                      leading-relaxed">
+
+                                {{ order.address }}
+
+                            </p>
+
+                        </div>
+
+
+                        <div>
+
+                            <p class="text-xs
+                                      uppercase
+                                      tracking-wider
+                                      text-gray-500
+                                      mb-1">
+
+                                City
+
+                            </p>
+
+                            <p class="text-gray-200">
+
+                                {{ order.city }}
+
+                            </p>
+
+                        </div>
+
+
+                        <div>
+
+                            <p class="text-xs
+                                      uppercase
+                                      tracking-wider
+                                      text-gray-500
+                                      mb-1">
+
+                                State
+
+                            </p>
+
+                            <p class="text-gray-200">
+
+                                {{ order.state }}
+
+                            </p>
+
+                        </div>
+
+
+                        <div>
+
+                            <p class="text-xs
+                                      uppercase
+                                      tracking-wider
+                                      text-gray-500
+                                      mb-1">
+
+                                Pincode
+
+                            </p>
+
+                            <p class="text-gray-200">
+
+                                {{ order.pincode }}
+
+                            </p>
+
+                        </div>
+
+
+                        <div>
+
+                            <p class="text-xs
+                                      uppercase
+                                      tracking-wider
+                                      text-gray-500
+                                      mb-1">
+
+                                Email
+
+                            </p>
+
+                            <p class="text-gray-200 break-all">
+
+                                {{ order.email }}
+
+                            </p>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT -->
+
+            <div class="space-y-6">
+
+
+                <!-- ORDER SUMMARY -->
+
+                <div class="glass
+                            rounded-2xl
+                            p-6">
+
+
+                    <h2 class="font-space
+                               text-xl
+                               font-bold
+                               mb-6">
+
+                        Order Summary
+
+                    </h2>
+
+
+                    <div class="space-y-4">
+
+
+                        <div class="flex
+                                    justify-between
+                                    text-gray-400">
+
+                            <span>
+
+                                Items
+
+                            </span>
+
+                            <span>
+
+                                {{ order.items.count }}
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="mt-6
+                                    rounded-xl
+                                    border border-indigo-500/20
+                                    bg-indigo-500/5
+                                    p-5">
+
+                            <div class="flex items-center gap-3 mb-4">
+
+                                <div class="w-10 h-10
+                                            rounded-xl
+                                            bg-indigo-500/10
+                                            flex items-center
+                                            justify-center">
+
+                                    <i class="fa-solid fa-credit-card
+                                              text-indigo-400"></i>
+
+                                </div>
+
+                                <div>
+                                    <p class="text-xs
+                                              uppercase
+                                              tracking-wider
+                                              text-gray-500">
+                                        Payment Method
+                                    </p>
+
+                                    <p class="font-semibold text-white mt-1">
+                                        {% if order.payment %}
+                                            {{ order.payment.get_payment_method_display }}
+                                        {% else %}
+                                            Not available
+                                        {% endif %}
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            {% if order.payment %}
+
+                                <div class="flex
+                                            items-center
+                                            justify-between
+                                            border-t
+                                            border-white/10
+                                            pt-4">
+
+                                    <span class="text-sm text-gray-400">
+                                        Payment Status
+                                    </span>
+
+                                    <span class="text-sm font-semibold
+                                        {% if order.payment.payment_status == 'PAID' %}
+                                            text-green-400
+                                        {% elif order.payment.payment_status == 'FAILED' %}
+                                            text-red-400
+                                        {% else %}
+                                            text-yellow-400
+                                        {% endif %}">
+
+                                        {{ order.payment.get_payment_status_display }}
+
+                                    </span>
+
+                                </div>
+
+                                <div class="flex
+                                            items-center
+                                            justify-between
+                                            gap-4
+                                            mt-3">
+
+                                    <span class="text-sm text-gray-400">
+                                        Transaction ID
+                                    </span>
+
+                                    <span class="text-sm
+                                                 text-gray-300
+                                                 break-all
+                                                 text-right">
+
+                                        {% if order.payment.transaction_id %}
+                                            {{ order.payment.transaction_id }}
+                                        {% else %}
+                                            —
+                                        {% endif %}
+
+                                    </span>
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="border-t
+                                    border-white/10">
+                        </div>
+
+
+                        <div class="flex
+                                    justify-between
+                                    items-center">
+
+                            <span class="text-gray-300">
+
+                                Grand Total
+
+                            </span>
+
+                            <span class="font-space
+                                         text-2xl
+                                         font-bold
+                                         text-indigo-400">
+
+                                ₹{{ order.total_amount }}
+
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="mt-6
+                                rounded-xl
+                                bg-yellow-500/5
+                                border border-yellow-500/10
+                                p-4">
+
+                        <div class="flex
+                                    items-start
+                                    gap-3">
+
+                            <i class="fa-solid fa-circle-info
+                                      text-yellow-400
+                                      mt-1"></i>
+
+                            <p class="text-sm
+                                      text-gray-400
+                                      leading-relaxed">
+
+                                Your order is currently
+                                <span class="text-white font-semibold">
+                                    {{ order.get_status_display }}
+                                </span>.
+                                We'll keep you updated as
+                                the order progresses.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- HELP -->
+
+                <div class="glass
+                            rounded-2xl
+                            p-6">
+
+
+                    <div class="w-11 h-11
+                                rounded-xl
+                                bg-purple-500/10
+                                flex items-center
+                                justify-center
+                                mb-4">
+
+                        <i class="fa-solid fa-headset
+                                  text-purple-400"></i>
+
+                    </div>
+
+
+                    <h3 class="font-space
+                               text-lg
+                               font-bold
+                               mb-2">
+
+                        Need Help?
+
+                    </h3>
+
+
+                    <p class="text-gray-500
+                              text-sm
+                              leading-relaxed
+                              mb-5">
+
+                        Have a question about this order?
+                        Our support team will be here to help.
+
+                    </p>
+
+
+                    <a href="{% url 'home' %}"
+                       class="inline-flex
+                              items-center
+                              gap-2
+                              text-indigo-400
+                              hover:text-indigo-300
+                              text-sm
+                              font-semibold
+                              transition">
+
+                        Continue Shopping
+
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
+
+                    </a>
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer class="border-t
+                   border-white/10
+                   mt-10">
+
+        <div class="max-w-7xl
+                    mx-auto
+                    px-6 py-8
+                    text-center">
+
+            <p class="text-gray-600
+                      text-sm">
+
+                © 2026 ELECTROCART.
+                All rights reserved.
+
+            </p>
+
+        </div>
+
+    </footer>
+
+
+</body>
+
+</html>

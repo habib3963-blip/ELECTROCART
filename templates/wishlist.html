@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Wishlist | ELECTROCART</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+
+        * {
+            font-family: "Plus Jakarta Sans", sans-serif;
+        }
+
+        .brand-font {
+            font-family: "Space Grotesk", sans-serif;
+        }
+
+        .wishlist-card {
+            transition:
+                transform 0.35s ease,
+                border-color 0.35s ease,
+                box-shadow 0.35s ease;
+        }
+
+        .wishlist-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(56, 189, 248, 0.45);
+            box-shadow:
+                0 20px 50px rgba(0, 0, 0, 0.35),
+                0 0 30px rgba(56, 189, 248, 0.08);
+        }
+
+        .product-image {
+            transition: transform 0.5s ease;
+        }
+
+        .wishlist-card:hover .product-image {
+            transform: scale(1.06);
+        }
+
+        .image-area {
+            background:
+                radial-gradient(
+                    circle at center,
+                    rgba(56, 189, 248, 0.10),
+                    transparent 65%
+                );
+        }
+
+        .glass {
+            background: rgba(15, 23, 42, 0.72);
+            backdrop-filter: blur(16px);
+        }
+
+        .remove-btn:hover i {
+            transform: scale(1.15);
+        }
+
+        .remove-btn i {
+            transition: transform 0.2s ease;
+        }
+
+        .fade-out {
+            opacity: 0;
+            transform: scale(0.92);
+            transition: all 0.3s ease;
+        }
+
+    </style>
+
+</head>
+
+
+<body class="bg-slate-950 text-white min-h-screen">
+
+
+<!-- HEADER -->
+
+<header class="sticky top-0 z-50 border-b border-white/5 bg-slate-950/85 backdrop-blur-xl">
+
+    <div class="max-w-7xl mx-auto px-6 py-5
+                flex items-center justify-between">
+
+        <!-- LOGO -->
+
+        <a
+            href="{% url 'home' %}"
+            class="brand-font text-2xl font-bold tracking-tight">
+
+            ELECTRO<span class="text-sky-400">CART</span>
+
+        </a>
+
+
+        <!-- ACTIONS -->
+
+        <div class="flex items-center gap-6">
+
+            <a
+                href="{% url 'home' %}"
+                class="text-sm text-slate-400 hover:text-white transition">
+
+                <i class="fa-solid fa-arrow-left mr-2"></i>
+
+                Continue Shopping
+
+            </a>
+
+
+            <a
+                href="{% url 'cart' %}"
+                class="relative text-slate-300
+                       hover:text-sky-400 transition">
+
+                <i class="fa-solid fa-cart-shopping text-lg"></i>
+
+            </a>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+
+<!-- MAIN -->
+
+<main class="max-w-7xl mx-auto px-6 py-12">
+
+
+    <!-- PAGE HEADER -->
+
+    <div class="flex flex-col md:flex-row
+                md:items-end md:justify-between
+                gap-5 mb-12">
+
+        <div>
+
+            <div class="flex items-center gap-3 mb-3">
+
+                <span
+                    class="w-10 h-px bg-sky-400">
+                </span>
+
+                <p
+                    class="text-sky-400 text-xs
+                           font-bold uppercase
+                           tracking-[0.25em]">
+
+                    Saved Products
+
+                </p>
+
+            </div>
+
+
+            <h1
+                class="brand-font text-4xl md:text-5xl
+                       font-bold tracking-tight">
+
+                My Wishlist
+                <span class="text-sky-400">.</span>
+
+            </h1>
+
+
+            <p class="text-slate-500 mt-3">
+
+                Your favourite tech, saved for later.
+
+            </p>
+
+        </div>
+
+
+        {% if products %}
+
+            <div
+                class="px-4 py-2 rounded-full
+                       border border-slate-800
+                       bg-slate-900/70
+                       text-sm text-slate-400">
+
+                <i class="fa-regular fa-heart
+                          text-rose-400 mr-2"></i>
+
+                {{ products|length }} Saved
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+
+
+    {% if products %}
+
+
+        <!-- PRODUCT GRID -->
+
+        <div
+            id="wishlist-grid"
+            class="grid grid-cols-1
+                   sm:grid-cols-2
+                   lg:grid-cols-3
+                   xl:grid-cols-4
+                   gap-7">
+
+
+            {% for product in products %}
+
+
+                <div
+                    id="wishlist-product-{{ product.id }}"
+                    class="wishlist-card
+                           rounded-3xl overflow-hidden
+                           border border-slate-800
+                           bg-slate-900/70
+                           glass">
+
+
+                    <!-- IMAGE -->
+
+                    <div
+                        class="image-area relative
+                               h-64 overflow-hidden
+                               flex items-center justify-center">
+
+
+                        {% if product.image %}
+
+                            <img
+                                src="{{ product.image }}"
+                                alt="{{ product.name }}"
+                                class="product-image
+                                       w-full h-full
+                                       object-contain p-6">
+
+                        {% else %}
+
+                            <i
+                                class="fa-solid fa-image
+                                       text-6xl text-slate-700">
+                            </i>
+
+                        {% endif %}
+
+
+                        <!-- REMOVE -->
+
+                        <button
+                            type="button"
+                            onclick="removeWishlist(
+                                {{ product.id }},
+                                this
+                            )"
+                            class="remove-btn
+                                   absolute top-4 right-4
+                                   w-10 h-10 rounded-full
+                                   bg-slate-950/80
+                                   border border-slate-700
+                                   flex items-center
+                                   justify-center
+                                   text-rose-400
+                                   hover:bg-rose-500
+                                   hover:text-white
+                                   hover:border-rose-400
+                                   transition">
+
+                            <i class="fa-solid fa-heart"></i>
+
+                        </button>
+
+
+                        <!-- BADGE -->
+
+                        <div
+                            class="absolute bottom-4 left-4
+                                   px-3 py-1.5
+                                   rounded-full
+                                   bg-indigo-500/15
+                                   border border-indigo-400/20
+                                   text-indigo-300
+                                   text-[10px] font-bold
+                                   uppercase
+                                   tracking-wider">
+
+                            {{ product.get_badge_display }}
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- CONTENT -->
+
+                    <div class="p-5">
+
+
+                        <!-- CATEGORY -->
+
+                        <p
+                            class="text-[10px]
+                                   text-slate-500
+                                   uppercase
+                                   tracking-[0.18em]
+                                   font-bold">
+
+                            {{ product.category.name }}
+
+                        </p>
+
+
+                        <!-- NAME -->
+
+                        <h2
+                            class="brand-font
+                                   font-semibold
+                                   text-lg mt-2
+                                   line-clamp-2">
+
+                            {{ product.name }}
+
+                        </h2>
+
+
+
+                        <!-- RATING -->
+
+                        <div
+                            class="flex items-center
+                                   gap-2 mt-3">
+
+                            <div class="flex gap-0.5">
+
+                                {% for i in "12345" %}
+
+                                    <i
+                                        class="fa-solid fa-star
+                                               text-yellow-400
+                                               text-[10px]">
+                                    </i>
+
+                                {% endfor %}
+
+                            </div>
+
+                            <span
+                                class="text-xs text-slate-500">
+
+                                {{ product.rating }}
+
+                                ({{ product.reviews }})
+
+                            </span>
+
+                        </div>
+
+
+
+                        <!-- PRICE -->
+
+                        <div
+                            class="flex items-center
+                                   justify-between
+                                   mt-5">
+
+                            <div>
+
+                                <p
+                                    class="text-[10px]
+                                           text-slate-500
+                                           uppercase
+                                           tracking-wider">
+
+                                    Price
+
+                                </p>
+
+                                <p
+                                    class="text-2xl
+                                           font-bold
+                                           text-sky-400">
+
+                                    ${{ product.price }}
+
+                                </p>
+
+                            </div>
+
+
+                            {% if product.stock > 0 %}
+
+                                <span
+                                    class="text-[10px]
+                                           text-emerald-400
+                                           font-semibold">
+
+                                    <i
+                                        class="fa-solid
+                                               fa-circle
+                                               text-[6px] mr-1">
+                                    </i>
+
+                                    In Stock
+
+                                </span>
+
+                            {% else %}
+
+                                <span
+                                    class="text-[10px]
+                                           text-red-400
+                                           font-semibold">
+
+                                    Out of Stock
+
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+
+                        <!-- BUTTONS -->
+
+                        <div
+                            class="grid grid-cols-5
+                                   gap-3 mt-6">
+
+
+                            <!-- VIEW -->
+
+                            <a
+                                href="{% url 'product_detail' product.id %}"
+                                class="col-span-3
+                                       py-3 rounded-xl
+                                       bg-sky-400
+                                       text-slate-950
+                                       text-sm font-bold
+                                       text-center
+                                       hover:bg-sky-300
+                                       hover:-translate-y-0.5
+                                       transition">
+
+                                <i
+                                    class="fa-solid
+                                           fa-eye mr-2">
+                                </i>
+
+                                View Product
+
+                            </a>
+
+
+
+                            <!-- ADD CART -->
+
+                            <button
+                                type="button"
+                                {% if product.stock > 0 %}
+                                    onclick="addWishlistToCart(
+                                        {{ product.id }},
+                                        this
+                                    )"
+                                {% endif %}
+                                class="col-span-2
+                                       py-3 rounded-xl
+                                       border border-slate-700
+                                       text-slate-300
+                                       text-sm font-bold
+                                       {% if product.stock > 0 %}
+                                       hover:border-sky-400
+                                       hover:text-sky-400
+                                       {% else %}
+                                       opacity-40 cursor-not-allowed
+                                       {% endif %}
+                                       transition">
+
+                                <i
+                                    class="fa-solid
+                                           fa-cart-plus mr-1">
+                                </i>
+
+                                Cart
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            {% endfor %}
+
+        </div>
+
+
+
+    {% else %}
+
+
+        <!-- EMPTY STATE -->
+
+        <div
+            class="min-h-[55vh]
+                   flex items-center
+                   justify-center">
+
+
+            <div class="text-center max-w-md">
+
+
+                <div
+                    class="relative w-28 h-28
+                           mx-auto">
+
+
+                    <div
+                        class="absolute inset-0
+                               rounded-full
+                               bg-rose-500/10
+                               blur-2xl">
+                    </div>
+
+
+                    <div
+                        class="relative w-28 h-28
+                               rounded-full
+                               border border-slate-800
+                               bg-slate-900
+                               flex items-center
+                               justify-center">
+
+                        <i
+                            class="fa-regular fa-heart
+                                   text-4xl
+                                   text-slate-600">
+                        </i>
+
+                    </div>
+
+                </div>
+
+
+                <h2
+                    class="brand-font
+                           text-3xl font-bold mt-8">
+
+                    Nothing Saved Yet
+
+                </h2>
+
+
+                <p
+                    class="text-slate-500
+                           leading-relaxed mt-3">
+
+                    Your wishlist is waiting.
+                    Discover something amazing
+                    and save it here.
+
+                </p>
+
+
+                <a
+                    href="{% url 'home' %}"
+                    class="inline-flex items-center
+                           gap-2 mt-7
+                           px-7 py-3.5
+                           rounded-xl
+                           bg-sky-400
+                           text-slate-950
+                           font-bold
+                           hover:bg-sky-300
+                           hover:-translate-y-0.5
+                           transition">
+
+                    <i class="fa-solid fa-bolt"></i>
+
+                    Explore ELECTROCART
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+    {% endif %}
+
+
+</main>
+
+
+
+<!-- TOAST -->
+
+<div
+    id="toast"
+    class="fixed bottom-6 right-6
+           translate-y-24 opacity-0
+           pointer-events-none
+           transition-all duration-300
+           z-[100]">
+
+    <div
+        class="flex items-center gap-3
+               px-5 py-4 rounded-2xl
+               bg-slate-900
+               border border-slate-700
+               shadow-2xl">
+
+        <div
+            id="toast-icon"
+            class="w-9 h-9 rounded-full
+                   bg-emerald-500/15
+                   flex items-center
+                   justify-center
+                   text-emerald-400">
+
+            <i class="fa-solid fa-check"></i>
+
+        </div>
+
+        <p
+            id="toast-message"
+            class="text-sm font-semibold">
+
+            Done
+
+        </p>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+
+/* ================================
+   CSRF COOKIE
+================================ */
+
+function getCookie(name) {
+
+    let cookieValue = null;
+
+    if (document.cookie &&
+        document.cookie !== "") {
+
+        const cookies =
+            document.cookie.split(";");
+
+        for (let cookie of cookies) {
+
+            cookie = cookie.trim();
+
+            if (cookie.startsWith(name + "=")) {
+
+                cookieValue =
+                    decodeURIComponent(
+                        cookie.substring(
+                            name.length + 1
+                        )
+                    );
+
+                break;
+
+            }
+
+        }
+
+    }
+
+    return cookieValue;
+
+}
+
+
+
+/* ================================
+   REMOVE WISHLIST
+================================ */
+
+function removeWishlist(productId, button) {
+
+    fetch(`/wishlist/toggle/${productId}/`, {
+
+        method: "POST",
+
+        headers: {
+
+            "X-Requested-With":
+                "XMLHttpRequest",
+
+            "X-CSRFToken":
+                getCookie("csrftoken")
+
+        }
+
+    })
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        if (data.success && !data.added) {
+
+            const card =
+                document.getElementById(
+                    `wishlist-product-${productId}`
+                );
+
+            if (card) {
+
+                card.classList.add("fade-out");
+
+                setTimeout(() => {
+
+                    card.remove();
+
+                    checkEmptyWishlist();
+
+                }, 300);
+
+            }
+
+            showToast(
+                "Removed from wishlist",
+                "remove"
+            );
+
+        }
+
+    })
+
+    .catch(error => {
+
+        console.error(
+            "Wishlist remove error:",
+            error
+        );
+
+        showToast(
+            "Something went wrong",
+            "error"
+        );
+
+    });
+
+}
+
+
+
+/* ================================
+   ADD TO CART
+================================ */
+
+function addWishlistToCart(productId, button) {
+
+    const originalHTML =
+        button.innerHTML;
+
+    button.disabled = true;
+
+    button.innerHTML =
+        `<i class="fa-solid fa-spinner fa-spin"></i>`;
+
+    fetch(`/add-to-cart/${productId}/`, {
+
+        method: "POST",
+
+        headers: {
+
+            "X-Requested-With":
+                "XMLHttpRequest",
+
+            "X-CSRFToken":
+                getCookie("csrftoken")
+
+        },
+
+        body: new URLSearchParams({
+
+            quantity: 1
+
+        })
+
+    })
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        if (data.success) {
+
+            button.innerHTML =
+                `<i class="fa-solid fa-check mr-1"></i> Added`;
+
+            button.classList.add(
+                "border-emerald-400",
+                "text-emerald-400"
+            );
+
+            showToast(
+                "Product added to cart",
+                "success"
+            );
+
+            setTimeout(() => {
+
+                button.innerHTML =
+                    originalHTML;
+
+                button.disabled = false;
+
+                button.classList.remove(
+                    "border-emerald-400",
+                    "text-emerald-400"
+                );
+
+            }, 1600);
+
+        }
+
+    })
+
+    .catch(error => {
+
+        console.error(
+            "Cart error:",
+            error
+        );
+
+        button.innerHTML =
+            originalHTML;
+
+        button.disabled = false;
+
+        showToast(
+            "Could not add to cart",
+            "error"
+        );
+
+    });
+
+}
+
+
+
+/* ================================
+   EMPTY WISHLIST
+================================ */
+
+function checkEmptyWishlist() {
+
+    const grid =
+        document.getElementById(
+            "wishlist-grid"
+        );
+
+    if (!grid) return;
+
+    if (grid.children.length === 0) {
+
+        window.location.reload();
+
+    }
+
+}
+
+
+
+/* ================================
+   TOAST
+================================ */
+
+function showToast(message, type) {
+
+    const toast =
+        document.getElementById("toast");
+
+    const toastMessage =
+        document.getElementById(
+            "toast-message"
+        );
+
+    const toastIcon =
+        document.getElementById(
+            "toast-icon"
+        );
+
+    toastMessage.textContent =
+        message;
+
+
+    if (type === "remove") {
+
+        toastIcon.innerHTML =
+            `<i class="fa-solid fa-heart-crack"></i>`;
+
+        toastIcon.className =
+            "w-9 h-9 rounded-full bg-rose-500/15 flex items-center justify-center text-rose-400";
+
+    }
+
+    else if (type === "error") {
+
+        toastIcon.innerHTML =
+            `<i class="fa-solid fa-xmark"></i>`;
+
+        toastIcon.className =
+            "w-9 h-9 rounded-full bg-red-500/15 flex items-center justify-center text-red-400";
+
+    }
+
+    else {
+
+        toastIcon.innerHTML =
+            `<i class="fa-solid fa-check"></i>`;
+
+        toastIcon.className =
+            "w-9 h-9 rounded-full bg-emerald-500/15 flex items-center justify-center text-emerald-400";
+
+    }
+
+
+    toast.classList.remove(
+        "translate-y-24",
+        "opacity-0"
+    );
+
+    setTimeout(() => {
+
+        toast.classList.add(
+            "translate-y-24",
+            "opacity-0"
+        );
+
+    }, 2200);
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>

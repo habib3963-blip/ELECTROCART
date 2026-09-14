@@ -1,0 +1,903 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Address | ELECTROCART</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        jakarta: ['Plus Jakarta Sans', 'sans-serif'],
+                        space: ['Space Grotesk', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+
+            color: white;
+
+            font-family:
+                'Plus Jakarta Sans',
+                sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at 10% 10%,
+                    rgba(0,245,255,.10),
+                    transparent 25%
+                ),
+                radial-gradient(
+                    circle at 90% 15%,
+                    rgba(139,92,246,.13),
+                    transparent 28%
+                ),
+                #05070d;
+
+            overflow-x: hidden;
+        }
+
+        /* GRID */
+
+        .cyber-grid {
+            position: fixed;
+            inset: 0;
+
+            pointer-events: none;
+            z-index: 0;
+
+            background-image:
+                linear-gradient(
+                    rgba(0,245,255,.035) 1px,
+                    transparent 1px
+                ),
+                linear-gradient(
+                    90deg,
+                    rgba(0,245,255,.035) 1px,
+                    transparent 1px
+                );
+
+            background-size: 55px 55px;
+
+            animation:
+                gridMove 18s linear infinite;
+        }
+
+        @keyframes gridMove {
+
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(55px);
+            }
+
+        }
+
+        /* ORBS */
+
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(2px);
+        }
+
+        .orb-one {
+            width: 320px;
+            height: 320px;
+
+            left: -150px;
+            top: 12%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(0,245,255,.17),
+                    transparent 70%
+                );
+
+            animation:
+                floatOne 9s ease-in-out infinite;
+        }
+
+        .orb-two {
+            width: 360px;
+            height: 360px;
+
+            right: -160px;
+            top: 45%;
+
+            background:
+                radial-gradient(
+                    circle,
+                    rgba(139,92,246,.17),
+                    transparent 70%
+                );
+
+            animation:
+                floatTwo 11s ease-in-out infinite;
+        }
+
+        @keyframes floatOne {
+
+            0%,100% {
+                transform: translate(0,0);
+            }
+
+            50% {
+                transform: translate(60px,40px);
+            }
+
+        }
+
+        @keyframes floatTwo {
+
+            0%,100% {
+                transform: translate(0,0);
+            }
+
+            50% {
+                transform: translate(-60px,-35px);
+            }
+
+        }
+
+        /* NAVBAR */
+
+        .glass-nav {
+
+            background:
+                rgba(5,7,13,.72);
+
+            backdrop-filter:
+                blur(22px);
+
+            -webkit-backdrop-filter:
+                blur(22px);
+
+            border-bottom:
+                1px solid rgba(255,255,255,.07);
+        }
+
+        .brand {
+
+            font-family:
+                'Space Grotesk',
+                sans-serif;
+
+            letter-spacing:
+                -1.5px;
+
+            text-shadow:
+                0 0 12px rgba(0,245,255,.5);
+        }
+
+        /* CARD */
+
+        .glass-card {
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,.075),
+                    rgba(255,255,255,.025)
+                );
+
+            border:
+                1px solid rgba(255,255,255,.09);
+
+            backdrop-filter:
+                blur(25px);
+
+            -webkit-backdrop-filter:
+                blur(25px);
+
+            box-shadow:
+                0 25px 80px rgba(0,0,0,.45),
+                inset 0 1px 0 rgba(255,255,255,.06);
+        }
+
+        /* INPUTS */
+
+        .input-field {
+
+            width: 100%;
+
+            background:
+                rgba(255,255,255,.035);
+
+            border:
+                1px solid rgba(255,255,255,.08);
+
+            border-radius:
+                14px;
+
+            padding:
+                13px 15px;
+
+            color:
+                #f8fafc;
+
+            outline:
+                none;
+
+            transition:
+                .25s ease;
+        }
+
+        .input-field::placeholder {
+            color: #475569;
+        }
+
+        .input-field:focus {
+
+            border-color:
+                rgba(34,211,238,.55);
+
+            box-shadow:
+                0 0 0 3px rgba(34,211,238,.07);
+
+            background:
+                rgba(34,211,238,.025);
+        }
+
+        textarea.input-field {
+
+            min-height:
+                115px;
+
+            resize:
+                vertical;
+        }
+
+        /* BUTTON */
+
+        .save-btn {
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #06b6d4,
+                    #2563eb
+                );
+
+            box-shadow:
+                0 10px 35px rgba(6,182,212,.18);
+
+            transition:
+                .25s ease;
+        }
+
+        .save-btn:hover {
+
+            transform:
+                translateY(-2px);
+
+            box-shadow:
+                0 15px 45px rgba(6,182,212,.28);
+        }
+
+        .save-btn:active {
+            transform: scale(.98);
+        }
+
+        /* BACK BUTTON */
+
+        .back-btn {
+            transition: .25s ease;
+        }
+
+        .back-btn:hover {
+            border-color: rgba(34,211,238,.2);
+            color: #67e8f9;
+            background: rgba(34,211,238,.04);
+        }
+
+        /* ENTER */
+
+        .page-enter {
+
+            animation:
+                pageEnter .7s
+                cubic-bezier(.16,1,.3,1)
+                forwards;
+        }
+
+        @keyframes pageEnter {
+
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+    <!-- BACKGROUND -->
+
+    <div class="cyber-grid"></div>
+
+    <div class="orb orb-one"></div>
+    <div class="orb orb-two"></div>
+
+
+    <!-- NAVBAR -->
+
+    <nav class="glass-nav relative z-20">
+
+        <div class="max-w-5xl mx-auto px-5">
+
+            <div class="h-20 flex items-center justify-between">
+
+                <!-- LOGO -->
+
+                <a href="{% url 'home' %}"
+                   class="flex items-center gap-3 group">
+
+                    <div
+                        class="w-10 h-10 rounded-xl
+                               flex items-center justify-center
+                               bg-cyan-400/10
+                               border border-cyan-300/20
+                               group-hover:bg-cyan-400/15
+                               transition">
+
+                        <i class="fa-solid fa-bolt text-cyan-300"></i>
+
+                    </div>
+
+                    <div>
+
+                        <div class="brand text-xl sm:text-2xl font-bold">
+
+                            ELECTRO<span class="text-cyan-300">
+                                CART
+                            </span>
+
+                        </div>
+
+                        <div
+                            class="text-[8px]
+                                   uppercase
+                                   tracking-[.3em]
+                                   text-slate-600">
+
+                            Future Electronics
+
+                        </div>
+
+                    </div>
+
+                </a>
+
+
+                <!-- ACCOUNT -->
+
+                <a href="{% url 'account' %}"
+                   class="px-4 py-2 rounded-xl
+                          border border-white/[.07]
+                          text-sm text-slate-400
+                          hover:text-cyan-300
+                          hover:bg-white/[.03]
+                          transition">
+
+                    <i class="fa-solid fa-user mr-2 text-xs"></i>
+
+                    Account
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- MAIN -->
+
+    <main
+        class="relative z-10
+               max-w-3xl mx-auto
+               px-5
+               py-8 sm:py-12
+               page-enter">
+
+
+        <!-- BREADCRUMB -->
+
+        <div
+            class="flex items-center gap-2
+                   text-xs text-slate-600
+                   mb-6">
+
+            <a href="{% url 'account' %}"
+               class="hover:text-cyan-300 transition">
+
+                Account
+
+            </a>
+
+            <i class="fa-solid fa-chevron-right text-[8px]"></i>
+
+            <a href="{% url 'address_book' %}"
+               class="hover:text-cyan-300 transition">
+
+                Address Book
+
+            </a>
+
+            <i class="fa-solid fa-chevron-right text-[8px]"></i>
+
+            <span class="text-slate-500">
+                Edit Address
+            </span>
+
+        </div>
+
+
+        <!-- HEADER -->
+
+        <div class="mb-7">
+
+            <p
+                class="text-[10px]
+                       uppercase
+                       tracking-[.35em]
+                       text-cyan-400/70
+                       mb-2">
+
+                DELIVERY PROFILE
+
+            </p>
+
+            <h1
+                class="font-space
+                       text-3xl sm:text-4xl
+                       font-bold
+                       tracking-tight">
+
+                Edit <span class="text-cyan-300">
+                    Address
+                </span>
+
+            </h1>
+
+            <p
+                class="text-sm
+                       text-slate-500
+                       mt-2">
+
+                Update your saved delivery information.
+
+            </p>
+
+        </div>
+
+
+        <!-- FORM CARD -->
+
+        <section
+            class="glass-card
+                   rounded-3xl
+                   p-6 sm:p-8">
+
+
+            <!-- CARD HEADER -->
+
+            <div
+                class="flex items-center
+                       justify-between
+                       gap-4
+                       mb-7">
+
+                <div>
+
+                    <h2
+                        class="font-space
+                               font-bold
+                               text-xl">
+
+                        Delivery Details
+
+                    </h2>
+
+                    <p
+                        class="text-xs
+                               text-slate-600
+                               mt-1">
+
+                        Keep your information accurate.
+
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="w-12 h-12
+                           shrink-0
+                           rounded-2xl
+                           bg-cyan-400/10
+                           border border-cyan-400/10
+                           flex items-center
+                           justify-center">
+
+                    <i
+                        class="fa-solid fa-pen
+                               text-cyan-300">
+
+                    </i>
+
+                </div>
+
+            </div>
+
+
+            <!-- ERROR -->
+
+            {% if error %}
+
+                <div
+                    class="mb-6
+                           rounded-xl
+                           border border-red-400/20
+                           bg-red-400/[.06]
+                           px-4 py-3
+                           text-sm
+                           text-red-300">
+
+                    <i
+                        class="fa-solid fa-circle-exclamation
+                               mr-2">
+
+                    </i>
+
+                    {{ error }}
+
+                </div>
+
+            {% endif %}
+
+
+            <!-- FORM -->
+
+            <form
+                method="POST"
+                action="{% url 'edit_address' address.id %}"
+                class="space-y-5">
+
+                {% csrf_token %}
+
+
+                <!-- NAME + PHONE -->
+
+                <div
+                    class="grid
+                           sm:grid-cols-2
+                           gap-4">
+
+                    <div>
+
+                        <label
+                            class="block
+                                   text-xs
+                                   font-semibold
+                                   text-slate-400
+                                   mb-2">
+
+                            Full Name
+
+                        </label>
+
+                        <input
+                            type="text"
+                            name="full_name"
+                            required
+                            value="{{ address.full_name }}"
+                            class="input-field">
+
+                    </div>
+
+
+                    <div>
+
+                        <label
+                            class="block
+                                   text-xs
+                                   font-semibold
+                                   text-slate-400
+                                   mb-2">
+
+                            Phone Number
+
+                        </label>
+
+                        <input
+                            type="tel"
+                            name="phone"
+                            required
+                            value="{{ address.phone }}"
+                            class="input-field">
+
+                    </div>
+
+                </div>
+
+
+                <!-- ADDRESS -->
+
+                <div>
+
+                    <label
+                        class="block
+                               text-xs
+                               font-semibold
+                               text-slate-400
+                               mb-2">
+
+                        Address
+
+                    </label>
+
+                    <textarea
+                        name="address_line"
+                        required
+                        class="input-field">{{ address.address_line }}</textarea>
+
+                </div>
+
+
+                <!-- CITY + STATE -->
+
+                <div
+                    class="grid
+                           sm:grid-cols-2
+                           gap-4">
+
+                    <div>
+
+                        <label
+                            class="block
+                                   text-xs
+                                   font-semibold
+                                   text-slate-400
+                                   mb-2">
+
+                            City
+
+                        </label>
+
+                        <input
+                            type="text"
+                            name="city"
+                            required
+                            value="{{ address.city }}"
+                            class="input-field">
+
+                    </div>
+
+
+                    <div>
+
+                        <label
+                            class="block
+                                   text-xs
+                                   font-semibold
+                                   text-slate-400
+                                   mb-2">
+
+                            State
+
+                        </label>
+
+                        <input
+                            type="text"
+                            name="state"
+                            required
+                            value="{{ address.state }}"
+                            class="input-field">
+
+                    </div>
+
+                </div>
+
+
+                <!-- PIN + LANDMARK -->
+
+                <div
+                    class="grid
+                           sm:grid-cols-2
+                           gap-4">
+
+                    <div>
+
+                        <label
+                            class="block
+                                   text-xs
+                                   font-semibold
+                                   text-slate-400
+                                   mb-2">
+
+                            Pincode
+
+                        </label>
+
+                        <input
+                            type="text"
+                            name="pincode"
+                            maxlength="6"
+                            required
+                            value="{{ address.pincode }}"
+                            class="input-field">
+
+                    </div>
+
+
+                    <div>
+
+                        <label
+                            class="block
+                                   text-xs
+                                   font-semibold
+                                   text-slate-400
+                                   mb-2">
+
+                            Landmark
+
+                            <span class="text-slate-700 font-normal">
+                                (Optional)
+                            </span>
+
+                        </label>
+
+                        <input
+                            type="text"
+                            name="landmark"
+                            value="{{ address.landmark }}"
+                            class="input-field">
+
+                    </div>
+
+                </div>
+
+
+                <!-- BUTTONS -->
+
+                <div
+                    class="pt-3
+                           flex flex-col-reverse
+                           sm:flex-row
+                           gap-3">
+
+                    <a
+                        href="{% url 'address_book' %}"
+                        class="back-btn
+                               flex-1
+                               text-center
+                               rounded-xl
+                               py-3.5
+                               border border-white/[.08]
+                               text-sm
+                               font-semibold
+                               text-slate-400">
+
+                        <i
+                            class="fa-solid fa-arrow-left
+                                   mr-2">
+
+                        </i>
+
+                        Cancel
+
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        class="save-btn
+                               flex-1
+                               rounded-xl
+                               py-3.5
+                               text-sm
+                               font-bold
+                               text-white">
+
+                        <i
+                            class="fa-solid fa-floppy-disk
+                                   mr-2">
+
+                        </i>
+
+                        Save Changes
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- SECURITY NOTE -->
+
+        <div
+            class="mt-5
+                   flex items-center
+                   justify-center
+                   gap-2
+                   text-[10px]
+                   text-slate-700">
+
+            <i class="fa-solid fa-shield-halved text-cyan-400/60"></i>
+
+            Your saved address is visible only to your account.
+
+        </div>
+
+    </main>
+
+
+    <!-- FOOTER -->
+
+    <footer
+        class="relative z-10
+               text-center
+               py-8
+               text-[10px]
+               text-slate-700">
+
+        © {% now "Y" %}
+        ELECTROCART ·
+        Powering Your Digital Future
+
+    </footer>
+
+
+</body>
+</html>

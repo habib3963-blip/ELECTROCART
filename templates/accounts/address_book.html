@@ -1,0 +1,664 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Address Book | ELECTROCART</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background:
+                radial-gradient(circle at 15% 10%, rgba(34,211,238,.08), transparent 28%),
+                radial-gradient(circle at 85% 25%, rgba(168,85,247,.08), transparent 30%),
+                #05070b;
+            color: #e5e7eb;
+            font-family: "Plus Jakarta Sans", sans-serif;
+            min-height: 100vh;
+        }
+
+        .font-display {
+            font-family: "Space Grotesk", sans-serif;
+        }
+
+        .grid-bg {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            opacity: .17;
+            background-image:
+                linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+            background-size: 42px 42px;
+            mask-image: linear-gradient(to bottom, black, transparent 90%);
+        }
+
+        .orb {
+            position: fixed;
+            border-radius: 999px;
+            filter: blur(90px);
+            pointer-events: none;
+            opacity: .18;
+        }
+
+        .orb-one {
+            width: 280px;
+            height: 280px;
+            background: #06b6d4;
+            top: 12%;
+            left: -100px;
+        }
+
+        .orb-two {
+            width: 300px;
+            height: 300px;
+            background: #9333ea;
+            right: -120px;
+            top: 45%;
+        }
+
+        .glass {
+            background: rgba(10, 14, 22, .72);
+            border: 1px solid rgba(255,255,255,.07);
+            backdrop-filter: blur(22px);
+            -webkit-backdrop-filter: blur(22px);
+        }
+
+        .input-field {
+            width: 100%;
+            background: rgba(255,255,255,.035);
+            border: 1px solid rgba(255,255,255,.08);
+            border-radius: 14px;
+            padding: 13px 15px;
+            color: #f8fafc;
+            outline: none;
+            transition: .25s ease;
+        }
+
+        .input-field::placeholder {
+            color: #475569;
+        }
+
+        .input-field:focus {
+            border-color: rgba(34,211,238,.55);
+            box-shadow: 0 0 0 3px rgba(34,211,238,.07);
+            background: rgba(34,211,238,.025);
+        }
+
+        textarea.input-field {
+            min-height: 105px;
+            resize: vertical;
+        }
+
+        .address-card {
+            transition: transform .25s ease, border-color .25s ease,
+                        background .25s ease, box-shadow .25s ease;
+        }
+
+        .address-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(34,211,238,.22);
+            background: rgba(255,255,255,.035);
+            box-shadow: 0 15px 45px rgba(0,0,0,.25);
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, #06b6d4, #2563eb);
+            box-shadow: 0 10px 35px rgba(6,182,212,.18);
+            transition: .25s ease;
+        }
+
+        .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 45px rgba(6,182,212,.28);
+        }
+
+        .save-btn:active {
+            transform: scale(.98);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="grid-bg"></div>
+<div class="orb orb-one"></div>
+<div class="orb orb-two"></div>
+
+<!-- NAVBAR -->
+<nav class="relative z-20 border-b border-white/[.06] bg-black/30 backdrop-blur-xl">
+    <div class="max-w-7xl mx-auto px-5 lg:px-8 h-20 flex items-center justify-between">
+
+        <a href="{% url 'home' %}"
+           class="flex items-center gap-3 group">
+
+            <div class="w-10 h-10 rounded-xl bg-cyan-400/10
+                        border border-cyan-400/20
+                        flex items-center justify-center
+                        group-hover:bg-cyan-400/15 transition">
+
+                <i class="fa-solid fa-bolt text-cyan-300"></i>
+            </div>
+
+            <div>
+                <div class="font-display font-bold tracking-wide text-lg">
+                    ELECTRO<span class="text-cyan-300">CART</span>
+                </div>
+
+                <div class="text-[9px] tracking-[.28em] text-slate-600 uppercase">
+                    Future of Shopping
+                </div>
+            </div>
+        </a>
+
+        <div class="flex items-center gap-3">
+
+            <a href="{% url 'account' %}"
+               class="px-4 py-2 rounded-xl border border-white/[.07]
+                      bg-white/[.025] text-sm text-slate-400
+                      hover:text-cyan-300 hover:border-cyan-400/20 transition">
+
+                <i class="fa-solid fa-user mr-2 text-xs"></i>
+                Account
+            </a>
+
+            <a href="{% url 'home' %}"
+               class="w-10 h-10 rounded-xl border border-white/[.07]
+                      bg-white/[.025] flex items-center justify-center
+                      text-slate-400 hover:text-cyan-300 transition">
+
+                <i class="fa-solid fa-house text-sm"></i>
+            </a>
+
+        </div>
+    </div>
+</nav>
+
+
+<main class="relative z-10 max-w-7xl mx-auto px-5 lg:px-8 py-10">
+
+    <!-- HEADER -->
+    <div class="mb-8">
+
+        <div class="flex items-center gap-2 text-xs text-slate-600 mb-3">
+            <a href="{% url 'account' %}"
+               class="hover:text-cyan-300 transition">
+                Account
+            </a>
+
+            <i class="fa-solid fa-chevron-right text-[8px]"></i>
+
+            <span class="text-slate-500">
+                Address Book
+            </span>
+        </div>
+
+        <div class="flex flex-col md:flex-row md:items-end
+                    md:justify-between gap-5">
+
+            <div>
+                <div class="inline-flex items-center gap-2
+                            px-3 py-1.5 rounded-full
+                            bg-cyan-400/[.06]
+                            border border-cyan-400/10
+                            text-[10px] uppercase tracking-[.2em]
+                            text-cyan-300 mb-4">
+
+                    <i class="fa-solid fa-location-dot"></i>
+                    Delivery Network
+                </div>
+
+                <h1 class="font-display text-3xl md:text-4xl
+                           font-bold text-white">
+                    Your Address <span class="text-cyan-300">Book</span>
+                </h1>
+
+                <p class="text-sm text-slate-500 mt-2 max-w-xl">
+                    Save your delivery addresses and make checkout
+                    faster and easier.
+                </p>
+            </div>
+
+            <div class="text-xs text-slate-600">
+                <i class="fa-solid fa-shield-halved text-cyan-400 mr-1"></i>
+                Your addresses are private & secure
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="grid lg:grid-cols-[.9fr_1.1fr] gap-7 items-start">
+
+        <!-- ADD ADDRESS -->
+        <section class="glass rounded-3xl p-6 md:p-7">
+
+            <div class="flex items-center justify-between mb-7">
+
+                <div>
+                    <h2 class="font-display font-bold text-xl text-white">
+                        Add New Address
+                    </h2>
+
+                    <p class="text-xs text-slate-600 mt-1">
+                        Enter your delivery details
+                    </p>
+                </div>
+
+                <div class="w-11 h-11 rounded-2xl
+                            bg-cyan-400/10
+                            border border-cyan-400/10
+                            flex items-center justify-center">
+
+                    <i class="fa-solid fa-location-dot text-cyan-300"></i>
+                </div>
+
+            </div>
+
+
+            {% if error %}
+                <div class="mb-5 rounded-xl
+                            border border-red-400/20
+                            bg-red-400/[.06]
+                            px-4 py-3 text-sm text-red-300">
+
+                    <i class="fa-solid fa-circle-exclamation mr-2"></i>
+                    {{ error }}
+
+                </div>
+            {% endif %}
+
+
+            <form method="POST"
+                  action="{% url 'add_address' %}"
+                  class="space-y-5">
+
+                {% csrf_token %}
+
+                <!-- NAME + PHONE -->
+                <div class="grid sm:grid-cols-2 gap-4">
+
+                    <div>
+                        <label class="block text-xs font-semibold
+                                      text-slate-400 mb-2">
+                            Full Name
+                        </label>
+
+                        <input
+                            type="text"
+                            name="full_name"
+                            required
+                            value="{{ form_data.full_name|default:'' }}"
+                            placeholder="Enter full name"
+                            class="input-field">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold
+                                      text-slate-400 mb-2">
+                            Phone Number
+                        </label>
+
+                        <input
+                            type="tel"
+                            name="phone"
+                            required
+                            value="{{ form_data.phone|default:'' }}"
+                            placeholder="10-digit mobile number"
+                            class="input-field">
+                    </div>
+
+                </div>
+
+
+                <!-- ADDRESS -->
+                <div>
+                    <label class="block text-xs font-semibold
+                                  text-slate-400 mb-2">
+                        Address
+                    </label>
+
+                    <textarea
+                        name="address_line"
+                        required
+                        placeholder="House / Flat / Building / Street"
+                        class="input-field">{{ form_data.address_line|default:'' }}</textarea>
+                </div>
+
+
+                <!-- CITY + STATE -->
+                <div class="grid sm:grid-cols-2 gap-4">
+
+                    <div>
+                        <label class="block text-xs font-semibold
+                                      text-slate-400 mb-2">
+                            City
+                        </label>
+
+                        <input
+                            type="text"
+                            name="city"
+                            required
+                            value="{{ form_data.city|default:'' }}"
+                            placeholder="Your city"
+                            class="input-field">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold
+                                      text-slate-400 mb-2">
+                            State
+                        </label>
+
+                        <input
+                            type="text"
+                            name="state"
+                            required
+                            value="{{ form_data.state|default:'' }}"
+                            placeholder="Your state"
+                            class="input-field">
+                    </div>
+
+                </div>
+
+
+                <!-- PIN + LANDMARK -->
+                <div class="grid sm:grid-cols-2 gap-4">
+
+                    <div>
+                        <label class="block text-xs font-semibold
+                                      text-slate-400 mb-2">
+                            Pincode
+                        </label>
+
+                        <input
+                            type="text"
+                            name="pincode"
+                            maxlength="6"
+                            required
+                            value="{{ form_data.pincode|default:'' }}"
+                            placeholder="6-digit pincode"
+                            class="input-field">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold
+                                      text-slate-400 mb-2">
+                            Landmark
+                            <span class="text-slate-700 font-normal">
+                                (Optional)
+                            </span>
+                        </label>
+
+                        <input
+                            type="text"
+                            name="landmark"
+                            value="{{ form_data.landmark|default:'' }}"
+                            placeholder="Near metro, mall, etc."
+                            class="input-field">
+                    </div>
+
+                </div>
+
+
+                <button type="submit"
+                        class="save-btn w-full rounded-xl
+                               py-3.5 text-sm font-bold
+                               text-white">
+
+                    <i class="fa-solid fa-plus mr-2"></i>
+                    Save Address
+
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- SAVED ADDRESSES -->
+        <section>
+
+            <div class="flex items-center justify-between mb-5">
+
+                <div>
+                    <h2 class="font-display font-bold text-xl text-white">
+                        Saved Addresses
+                    </h2>
+
+                    <p class="text-xs text-slate-600 mt-1">
+                        Your saved delivery locations
+                    </p>
+                </div>
+
+                <div class="px-3 py-1.5 rounded-full
+                            bg-white/[.03]
+                            border border-white/[.06]
+                            text-xs text-slate-500">
+
+                    <i class="fa-solid fa-bookmark mr-1 text-cyan-300"></i>
+                    {{ addresses|length }} saved
+
+                </div>
+
+            </div>
+
+
+            {% if addresses %}
+
+                <div class="space-y-4">
+
+                    {% for address in addresses %}
+
+                        <div class="address-card glass rounded-2xl p-5">
+
+                            <div class="flex items-start justify-between gap-4">
+
+                                <div class="flex items-start gap-4">
+
+                                    <div class="w-11 h-11 shrink-0
+                                                rounded-xl
+                                                bg-cyan-400/[.07]
+                                                border border-cyan-400/10
+                                                flex items-center justify-center">
+
+                                        <i class="fa-solid fa-location-dot
+                                                  text-cyan-300"></i>
+
+                                    </div>
+
+                                    <div>
+
+                                        <div class="flex items-center gap-2 flex-wrap">
+
+                                            <h3 class="font-semibold text-white">
+                                                {{ address.full_name }}
+                                            </h3>
+
+                                            {% if address.is_default %}
+
+                                                <span class="px-2 py-1 rounded-full
+                                                             bg-cyan-400/10
+                                                             border border-cyan-400/10
+                                                             text-[9px] uppercase
+                                                             tracking-wider
+                                                             text-cyan-300">
+
+                                                    Default
+
+                                                </span>
+
+                                            {% endif %}
+
+                                        </div>
+
+                                        <p class="text-xs text-slate-500 mt-1">
+                                            <i class="fa-solid fa-phone mr-1"></i>
+                                            {{ address.phone }}
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="mt-5 pl-[60px]">
+
+                                <p class="text-sm leading-6 text-slate-400">
+                                    {{ address.address_line }}
+                                </p>
+
+                                <p class="text-sm text-slate-400 mt-1">
+                                    {{ address.city }},
+                                    {{ address.state }}
+                                    — {{ address.pincode }}
+                                </p>
+
+                                {% if address.landmark %}
+                                    <p class="text-xs text-slate-600 mt-2">
+                                        <i class="fa-solid fa-signs-post mr-1"></i>
+                                        Near {{ address.landmark }}
+                                    </p>
+                                {% endif %}
+
+                            </div>
+
+
+                            <div class="mt-5 pt-4
+                                        border-t border-white/[.05]
+                                        flex items-center gap-2">
+
+                                {% if not address.is_default %}
+
+                                    <form method="POST"
+      action="{% url 'set_default_address' address.id %}"
+      class="inline">
+
+    {% csrf_token %}
+
+    <button
+        type="submit"
+        class="px-3 py-2 rounded-lg
+               bg-white/[.03]
+               border border-white/[.06]
+               text-xs text-slate-500
+               hover:text-cyan-300
+               hover:border-cyan-400/20
+               transition">
+
+        <i class="fa-solid fa-star mr-1"></i>
+        Make Default
+
+    </button>
+
+</form>
+                                {% endif %}
+
+                                <a
+                                href="{% url 'edit_address' address.id %}"
+                                class="px-3 py-2 rounded-lg
+                                    bg-white/[.03]
+                                    border border-white/[.06]
+                                    text-xs text-slate-500
+                                    hover:text-cyan-300
+                                    hover:border-cyan-400/20
+                                    transition">
+
+                                <i class="fa-solid fa-pen mr-1"></i>
+                                Edit
+
+                            </a>
+
+                             <form method="POST"
+      action="{% url 'delete_address' address.id %}"
+      class="inline"
+      onsubmit="return confirmDelete('{{ address.full_name|escapejs }}');">
+
+    {% csrf_token %}
+
+    <button
+        type="submit"
+        class="px-3 py-2 rounded-lg
+               bg-red-400/[.04]
+               border border-red-400/10
+               text-xs text-slate-500
+               hover:text-red-300
+               hover:border-red-400/20
+               transition">
+
+        <i class="fa-solid fa-trash mr-1"></i>
+        Delete
+
+    </button>
+
+</form>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="glass rounded-2xl p-10 text-center">
+
+                    <div class="w-16 h-16 mx-auto rounded-2xl
+                                bg-cyan-400/[.06]
+                                border border-cyan-400/10
+                                flex items-center justify-center">
+
+                        <i class="fa-solid fa-location-dot
+                                  text-2xl text-cyan-300"></i>
+
+                    </div>
+
+                    <h3 class="font-display font-bold text-lg
+                               text-white mt-5">
+                        No addresses yet
+                    </h3>
+
+                    <p class="text-sm text-slate-600 mt-2">
+                        Add your first delivery address using
+                        the form on the left.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </div>
+
+</main>
+
+<script>
+    function confirmDelete(name) {
+        return confirm(
+            `Delete the address saved for "${name}"?\n\nThis action cannot be undone.`
+        );
+    }
+</script>
+
+</body>
+</html>

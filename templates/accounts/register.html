@@ -1,0 +1,1410 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account | ELECTROCART</title>
+
+    <meta name="description"
+          content="Create your ELECTROCART account and enter the future of premium electronics shopping.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        jakarta: ['Plus Jakarta Sans', 'sans-serif'],
+                        space: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        cyber: '#00f5ff',
+                        purplex: '#8b5cf6',
+                        pinkx: '#ec4899',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 15% 20%, rgba(0,245,255,.10), transparent 25%),
+                radial-gradient(circle at 85% 15%, rgba(139,92,246,.13), transparent 28%),
+                radial-gradient(circle at 70% 90%, rgba(236,72,153,.08), transparent 25%),
+                #05070d;
+            color: white;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* =========================================
+           CYBER GRID
+        ========================================= */
+
+        .cyber-grid {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+
+            background-image:
+                linear-gradient(rgba(0,245,255,.035) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,245,255,.035) 1px, transparent 1px);
+
+            background-size: 55px 55px;
+
+            mask-image: linear-gradient(
+                to bottom,
+                black 0%,
+                rgba(0,0,0,.7) 60%,
+                transparent 100%
+            );
+
+            animation: gridMove 18s linear infinite;
+        }
+
+        @keyframes gridMove {
+            from {
+                transform: translateY(0);
+            }
+
+            to {
+                transform: translateY(55px);
+            }
+        }
+
+        /* =========================================
+           GLOW ORBS
+        ========================================= */
+
+        .orb {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            filter: blur(2px);
+            z-index: 0;
+            opacity: .65;
+        }
+
+        .orb-one {
+            width: 280px;
+            height: 280px;
+            top: 5%;
+            left: -90px;
+            background: radial-gradient(
+                circle,
+                rgba(0,245,255,.22),
+                transparent 70%
+            );
+            animation: floatOne 8s ease-in-out infinite;
+        }
+
+        .orb-two {
+            width: 350px;
+            height: 350px;
+            right: -120px;
+            top: 20%;
+            background: radial-gradient(
+                circle,
+                rgba(139,92,246,.24),
+                transparent 70%
+            );
+            animation: floatTwo 10s ease-in-out infinite;
+        }
+
+        .orb-three {
+            width: 260px;
+            height: 260px;
+            left: 35%;
+            bottom: -130px;
+            background: radial-gradient(
+                circle,
+                rgba(236,72,153,.16),
+                transparent 70%
+            );
+            animation: floatThree 9s ease-in-out infinite;
+        }
+
+        @keyframes floatOne {
+            0%,100% {
+                transform: translate(0,0);
+            }
+            50% {
+                transform: translate(80px,40px);
+            }
+        }
+
+        @keyframes floatTwo {
+            0%,100% {
+                transform: translate(0,0);
+            }
+            50% {
+                transform: translate(-70px,50px);
+            }
+        }
+
+        @keyframes floatThree {
+            0%,100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-80px);
+            }
+        }
+
+        /* =========================================
+           PARTICLES
+        ========================================= */
+
+        .particle {
+            position: fixed;
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: rgba(0,245,255,.7);
+            box-shadow: 0 0 12px rgba(0,245,255,.8);
+            pointer-events: none;
+            z-index: 0;
+            animation: particleFloat linear infinite;
+        }
+
+        .p1 { left: 8%; top: 75%; animation-duration: 10s; }
+        .p2 { left: 18%; top: 35%; animation-duration: 14s; }
+        .p3 { left: 32%; top: 82%; animation-duration: 12s; }
+        .p4 { left: 52%; top: 18%; animation-duration: 16s; }
+        .p5 { left: 70%; top: 70%; animation-duration: 11s; }
+        .p6 { left: 82%; top: 38%; animation-duration: 15s; }
+        .p7 { left: 93%; top: 80%; animation-duration: 13s; }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+
+            15% {
+                opacity: 1;
+            }
+
+            85% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-180px);
+                opacity: 0;
+            }
+        }
+
+        /* =========================================
+           TOP BRAND
+        ========================================= */
+
+        .brand-logo {
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: -1.5px;
+        }
+
+        .brand-glow {
+            text-shadow:
+                0 0 10px rgba(0,245,255,.65),
+                0 0 35px rgba(0,245,255,.25);
+        }
+
+        /* =========================================
+           MAIN CARD
+        ========================================= */
+
+        .register-card {
+            position: relative;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,.075),
+                    rgba(255,255,255,.025)
+                );
+
+            border: 1px solid rgba(255,255,255,.10);
+
+            backdrop-filter: blur(28px);
+            -webkit-backdrop-filter: blur(28px);
+
+            box-shadow:
+                0 30px 100px rgba(0,0,0,.55),
+                inset 0 1px 0 rgba(255,255,255,.08);
+
+            transform-style: preserve-3d;
+
+            transition:
+                transform .18s ease-out,
+                box-shadow .3s ease;
+        }
+
+        .register-card::before {
+            content: "";
+            position: absolute;
+            inset: -1px;
+            border-radius: inherit;
+            padding: 1px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(0,245,255,.55),
+                    transparent 30%,
+                    transparent 65%,
+                    rgba(139,92,246,.55)
+                );
+
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+
+            pointer-events: none;
+        }
+
+        /* =========================================
+           INPUTS
+        ========================================= */
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(148,163,184,.75);
+            transition: .25s ease;
+            z-index: 2;
+        }
+
+        .cyber-input {
+            width: 100%;
+            height: 58px;
+
+            padding:
+                0 50px
+                0 48px;
+
+            color: white;
+
+            background: rgba(5,10,20,.62);
+
+            border: 1px solid rgba(148,163,184,.14);
+
+            border-radius: 15px;
+
+            outline: none;
+
+            font-size: 14px;
+
+            transition:
+                border-color .25s ease,
+                box-shadow .25s ease,
+                background .25s ease,
+                transform .25s ease;
+        }
+
+        .cyber-input::placeholder {
+            color: rgba(148,163,184,.50);
+        }
+
+        .cyber-input:hover {
+            background: rgba(5,10,20,.78);
+            border-color: rgba(148,163,184,.25);
+        }
+
+        .cyber-input:focus {
+            background: rgba(5,10,20,.85);
+            border-color: rgba(0,245,255,.65);
+
+            box-shadow:
+                0 0 0 3px rgba(0,245,255,.08),
+                0 0 25px rgba(0,245,255,.10);
+
+            transform: translateY(-1px);
+        }
+
+        .input-wrapper:focus-within .input-icon {
+            color: #00f5ff;
+            text-shadow: 0 0 12px rgba(0,245,255,.7);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 17px;
+            top: 50%;
+            transform: translateY(-50%);
+
+            color: rgba(148,163,184,.7);
+
+            border: none;
+            background: transparent;
+
+            cursor: pointer;
+
+            transition: .25s ease;
+            z-index: 3;
+        }
+
+        .password-toggle:hover {
+            color: #00f5ff;
+            transform: translateY(-50%) scale(1.12);
+        }
+
+        /* =========================================
+           PASSWORD STRENGTH
+        ========================================= */
+
+        .strength-bar {
+            height: 4px;
+            border-radius: 100px;
+            background: rgba(255,255,255,.08);
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: inherit;
+
+            transition:
+                width .35s ease,
+                background .35s ease,
+                box-shadow .35s ease;
+        }
+
+        .requirement {
+            transition: .25s ease;
+        }
+
+        .requirement.valid {
+            color: #34d399;
+        }
+
+        .requirement.valid i {
+            color: #34d399;
+            text-shadow: 0 0 10px rgba(52,211,153,.6);
+        }
+
+        /* =========================================
+           BUTTON
+        ========================================= */
+
+        .register-btn {
+            position: relative;
+            overflow: hidden;
+
+            width: 100%;
+            height: 58px;
+
+            border: 1px solid rgba(0,245,255,.45);
+            border-radius: 15px;
+
+            background:
+                linear-gradient(
+                    110deg,
+                    rgba(0,245,255,.12),
+                    rgba(139,92,246,.20),
+                    rgba(0,245,255,.12)
+                );
+
+            color: white;
+
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+
+            letter-spacing: .4px;
+
+            cursor: pointer;
+
+            transition:
+                transform .25s ease,
+                box-shadow .25s ease,
+                border-color .25s ease;
+        }
+
+        .register-btn::before {
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            left: -120%;
+
+            width: 100%;
+            height: 100%;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    transparent,
+                    rgba(255,255,255,.18),
+                    transparent
+                );
+
+            transform: skewX(-20deg);
+
+            transition: left .65s ease;
+        }
+
+        .register-btn:hover::before {
+            left: 120%;
+        }
+
+        .register-btn:hover {
+            transform: translateY(-2px);
+
+            border-color: rgba(0,245,255,.85);
+
+            box-shadow:
+                0 12px 35px rgba(0,245,255,.16),
+                0 0 30px rgba(139,92,246,.10);
+        }
+
+        .register-btn:active {
+            transform: translateY(1px) scale(.99);
+        }
+
+        /* =========================================
+           ERROR
+        ========================================= */
+
+        .error-box {
+            animation: errorShake .45s ease;
+        }
+
+        @keyframes errorShake {
+            0%,100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-6px);
+            }
+
+            75% {
+                transform: translateX(6px);
+            }
+        }
+
+        /* =========================================
+           ENTRY ANIMATION
+        ========================================= */
+
+        .page-enter {
+            animation: pageEnter .8s cubic-bezier(.16,1,.3,1) forwards;
+        }
+
+        @keyframes pageEnter {
+            from {
+                opacity: 0;
+                transform: translateY(35px) scale(.97);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .fade-up {
+            opacity: 0;
+            animation: fadeUp .7s ease forwards;
+        }
+
+        .delay-1 { animation-delay: .12s; }
+        .delay-2 { animation-delay: .22s; }
+        .delay-3 { animation-delay: .32s; }
+        .delay-4 { animation-delay: .42s; }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+
+        @media (max-width: 640px) {
+
+            .register-card {
+                border-radius: 22px;
+            }
+
+            .cyber-input,
+            .register-btn {
+                height: 54px;
+            }
+
+            .orb-one {
+                width: 180px;
+                height: 180px;
+            }
+
+            .orb-two {
+                width: 220px;
+                height: 220px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- BACKGROUND -->
+    <div class="cyber-grid"></div>
+
+    <div class="orb orb-one"></div>
+    <div class="orb orb-two"></div>
+    <div class="orb orb-three"></div>
+
+    <div class="particle p1"></div>
+    <div class="particle p2"></div>
+    <div class="particle p3"></div>
+    <div class="particle p4"></div>
+    <div class="particle p5"></div>
+    <div class="particle p6"></div>
+    <div class="particle p7"></div>
+
+
+    <!-- MAIN -->
+    <main class="relative z-10 min-h-screen flex items-center justify-center px-4 py-8">
+
+        <div class="w-full max-w-md page-enter">
+
+            <!-- TOP BRAND -->
+            <div class="text-center mb-7 fade-up">
+
+                <a href="{% url 'home' %}"
+                   class="inline-flex items-center gap-3 group">
+
+                    <div
+                        class="w-11 h-11 rounded-xl flex items-center justify-center
+                               bg-cyan-400/10
+                               border border-cyan-300/20
+                               shadow-[0_0_25px_rgba(0,245,255,.12)]
+                               group-hover:shadow-[0_0_35px_rgba(0,245,255,.25)]
+                               transition">
+
+                        <i class="fa-solid fa-bolt text-cyan-300 text-lg"></i>
+
+                    </div>
+
+                    <span
+                        class="brand-logo brand-glow text-2xl sm:text-3xl font-bold">
+
+                        ELECTRO<span class="text-cyan-300">CART</span>
+
+                    </span>
+
+                </a>
+
+                <div class="mt-3 text-[10px] uppercase tracking-[.35em] text-slate-500">
+                    The Future Of Electronics
+                </div>
+
+            </div>
+
+
+            <!-- CARD -->
+            <section
+                id="registerCard"
+                class="register-card rounded-[26px] p-6 sm:p-8">
+
+                <!-- HEADER -->
+                <div class="text-center mb-7 fade-up delay-1">
+
+                    <div
+                        class="mx-auto mb-4 w-14 h-14 rounded-2xl
+                               flex items-center justify-center
+                               bg-gradient-to-br from-cyan-400/15 to-purple-500/15
+                               border border-white/10
+                               shadow-[0_0_30px_rgba(0,245,255,.08)]">
+
+                        <i class="fa-solid fa-user-plus text-cyan-300 text-xl"></i>
+
+                    </div>
+
+                    <h1
+                        class="font-space text-2xl sm:text-3xl font-bold tracking-tight">
+
+                        Create Your Account
+
+                    </h1>
+
+                    <p class="text-slate-400 text-sm mt-2">
+                        Step into the next generation of shopping.
+                    </p>
+
+                </div>
+
+
+                <!-- ERROR -->
+                {% if error %}
+
+                <div
+                    class="error-box mb-5 rounded-xl
+                           border border-red-400/20
+                           bg-red-500/10
+                           px-4 py-3
+                           flex items-start gap-3">
+
+                    <i class="fa-solid fa-circle-exclamation text-red-400 mt-0.5"></i>
+
+                    <div>
+                        <p class="text-red-300 text-sm font-medium">
+                            {{ error }}
+                        </p>
+
+                        <p class="text-red-300/60 text-xs mt-1">
+                            Please check your details and try again.
+                        </p>
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+
+                <!-- FORM -->
+                <form method="POST"
+                      action="{% url 'register' %}"
+                      id="registerForm"
+                      novalidate>
+
+                    {% csrf_token %}
+
+                    <!-- USERNAME -->
+                    <div class="mb-5 fade-up delay-2">
+
+                        <label
+                            for="username"
+                            class="block text-xs font-semibold
+                                   uppercase tracking-wider
+                                   text-slate-400 mb-2">
+
+                            Username
+
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <i class="fa-regular fa-user input-icon"></i>
+
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                value="{{ username|default:'' }}"
+                                class="cyber-input"
+                                placeholder="Choose your username"
+                                autocomplete="username"
+                                minlength="3"
+                                required>
+
+                        </div>
+
+                        <p id="usernameHint"
+                           class="text-[11px] text-slate-500 mt-2 ml-1">
+
+                            At least 3 characters.
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+                    <div class="mb-5 fade-up delay-2">
+
+                        <label
+                            for="email"
+                            class="block text-xs font-semibold
+                                   uppercase tracking-wider
+                                   text-slate-400 mb-2">
+
+                            Email Address
+
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <i class="fa-regular fa-envelope input-icon"></i>
+
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                value="{{ email|default:'' }}"
+                                class="cyber-input"
+                                placeholder="you@example.com"
+                                autocomplete="email"
+                                required>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+                    <div class="mb-5 fade-up delay-3">
+
+                        <div class="flex items-center justify-between mb-2">
+
+                            <label
+                                for="password"
+                                class="block text-xs font-semibold
+                                       uppercase tracking-wider
+                                       text-slate-400">
+
+                                Password
+
+                            </label>
+
+                            <span
+                                id="strengthText"
+                                class="text-[10px] uppercase tracking-wider text-slate-500">
+
+                                Strength
+
+                            </span>
+
+                        </div>
+
+                        <div class="input-wrapper">
+
+                            <i class="fa-solid fa-lock input-icon"></i>
+
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                class="cyber-input"
+                                placeholder="Create a strong password"
+                                autocomplete="new-password"
+                                minlength="8"
+                                required>
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-target="password"
+                                aria-label="Show password">
+
+                                <i class="fa-regular fa-eye"></i>
+
+                            </button>
+
+                        </div>
+
+
+                        <!-- STRENGTH BAR -->
+                        <div class="strength-bar mt-3">
+
+                            <div
+                                id="strengthFill"
+                                class="strength-fill">
+                            </div>
+
+                        </div>
+
+
+                        <!-- REQUIREMENTS -->
+                        <div class="grid grid-cols-2 gap-x-3 gap-y-2 mt-3 text-[11px]">
+
+                            <div
+                                id="reqLength"
+                                class="requirement text-slate-500 flex items-center gap-2">
+
+                                <i class="fa-solid fa-circle text-[5px]"></i>
+                                8+ characters
+
+                            </div>
+
+                            <div
+                                id="reqUpper"
+                                class="requirement text-slate-500 flex items-center gap-2">
+
+                                <i class="fa-solid fa-circle text-[5px]"></i>
+                                Uppercase letter
+
+                            </div>
+
+                            <div
+                                id="reqNumber"
+                                class="requirement text-slate-500 flex items-center gap-2">
+
+                                <i class="fa-solid fa-circle text-[5px]"></i>
+                                Number
+
+                            </div>
+
+                            <div
+                                id="reqSpecial"
+                                class="requirement text-slate-500 flex items-center gap-2">
+
+                                <i class="fa-solid fa-circle text-[5px]"></i>
+                                Special character
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- CONFIRM PASSWORD -->
+                    <div class="mb-6 fade-up delay-3">
+
+                        <label
+                            for="confirm_password"
+                            class="block text-xs font-semibold
+                                   uppercase tracking-wider
+                                   text-slate-400 mb-2">
+
+                            Confirm Password
+
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <i class="fa-solid fa-shield-halved input-icon"></i>
+
+                            <input
+                                type="password"
+                                id="confirm_password"
+                                name="confirm_password"
+                                class="cyber-input"
+                                placeholder="Re-enter your password"
+                                autocomplete="new-password"
+                                required>
+
+                            <button
+                                type="button"
+                                class="password-toggle"
+                                data-target="confirm_password"
+                                aria-label="Show password">
+
+                                <i class="fa-regular fa-eye"></i>
+
+                            </button>
+
+                        </div>
+
+                        <p
+                            id="matchMessage"
+                            class="text-[11px] mt-2 ml-1 text-slate-500">
+
+                            Make sure both passwords match.
+
+                        </p>
+
+                    </div>
+
+
+                    <!-- SUBMIT -->
+                    <div class="fade-up delay-4">
+
+                        <button
+                            type="submit"
+                            id="registerButton"
+                            class="register-btn">
+
+                            <span
+                                id="buttonContent"
+                                class="relative z-10 flex items-center justify-center gap-3">
+
+                                <span>Create My Account</span>
+
+                                <i class="fa-solid fa-arrow-right"></i>
+
+                            </span>
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+
+                <!-- LOGIN -->
+                <div
+                    class="relative flex items-center gap-4 my-7">
+
+                    <div class="h-px flex-1 bg-white/[.07]"></div>
+
+                    <span
+                        class="text-[10px] uppercase tracking-[.2em] text-slate-600">
+
+                        Already a member?
+
+                    </span>
+
+                    <div class="h-px flex-1 bg-white/[.07]"></div>
+
+                </div>
+
+
+                <a
+                    href="{% url 'user_login' %}"
+                    class="h-12 rounded-xl
+                           border border-white/[.09]
+                           bg-white/[.025]
+                           flex items-center justify-center gap-2
+                           text-sm font-semibold text-slate-300
+                           hover:text-cyan-300
+                           hover:border-cyan-300/25
+                           hover:bg-cyan-300/[.04]
+                           transition">
+
+                    <i class="fa-solid fa-right-to-bracket text-xs"></i>
+
+                    Sign in to ELECTROCART
+
+                </a>
+
+
+                <!-- SECURITY -->
+                <div
+                    class="mt-6 flex items-center justify-center gap-2
+                           text-[10px] text-slate-600">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                    Secure account creation
+
+                    <span class="text-slate-700">•</span>
+
+                    <i class="fa-solid fa-lock"></i>
+
+                    Protected connection
+
+                </div>
+
+            </section>
+
+
+            <!-- BACK TO STORE -->
+            <div class="text-center mt-6">
+
+                <a
+                    href="{% url 'home' %}"
+                    class="inline-flex items-center gap-2
+                           text-xs text-slate-500
+                           hover:text-cyan-300 transition">
+
+                    <i class="fa-solid fa-arrow-left"></i>
+
+                    Back to ELECTROCART
+
+                </a>
+
+            </div>
+
+
+            <!-- FOOTER -->
+            <p class="text-center text-[10px] text-slate-700 mt-5">
+                © {% now "Y" %} ELECTROCART · Powering Your Digital Future
+            </p>
+
+        </div>
+
+    </main>
+
+
+    <!-- JAVASCRIPT -->
+    <script>
+
+        /* =========================================
+           PASSWORD SHOW / HIDE
+        ========================================= */
+
+        document.querySelectorAll(".password-toggle").forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                const targetId = button.dataset.target;
+                const input = document.getElementById(targetId);
+                const icon = button.querySelector("i");
+
+                if (input.type === "password") {
+
+                    input.type = "text";
+
+                    icon.classList.remove("fa-eye");
+                    icon.classList.add("fa-eye-slash");
+
+                    button.setAttribute("aria-label", "Hide password");
+
+                } else {
+
+                    input.type = "password";
+
+                    icon.classList.remove("fa-eye-slash");
+                    icon.classList.add("fa-eye");
+
+                    button.setAttribute("aria-label", "Show password");
+
+                }
+
+            });
+
+        });
+
+
+        /* =========================================
+           PASSWORD STRENGTH
+        ========================================= */
+
+        const password = document.getElementById("password");
+        const strengthFill = document.getElementById("strengthFill");
+        const strengthText = document.getElementById("strengthText");
+
+        const reqLength = document.getElementById("reqLength");
+        const reqUpper = document.getElementById("reqUpper");
+        const reqNumber = document.getElementById("reqNumber");
+        const reqSpecial = document.getElementById("reqSpecial");
+
+        function updateRequirement(element, valid) {
+
+            if (valid) {
+                element.classList.add("valid");
+
+                const icon = element.querySelector("i");
+
+                icon.classList.remove("fa-circle");
+                icon.classList.add("fa-check-circle");
+
+            } else {
+
+                element.classList.remove("valid");
+
+                const icon = element.querySelector("i");
+
+                icon.classList.remove("fa-check-circle");
+                icon.classList.add("fa-circle");
+
+            }
+
+        }
+
+
+        password.addEventListener("input", () => {
+
+            const value = password.value;
+
+            const hasLength = value.length >= 8;
+            const hasUpper = /[A-Z]/.test(value);
+            const hasNumber = /[0-9]/.test(value);
+            const hasSpecial = /[^A-Za-z0-9]/.test(value);
+
+            updateRequirement(reqLength, hasLength);
+            updateRequirement(reqUpper, hasUpper);
+            updateRequirement(reqNumber, hasNumber);
+            updateRequirement(reqSpecial, hasSpecial);
+
+            let score = 0;
+
+            if (hasLength) score++;
+            if (hasUpper) score++;
+            if (hasNumber) score++;
+            if (hasSpecial) score++;
+
+            if (!value) {
+
+                strengthFill.style.width = "0%";
+                strengthText.textContent = "Strength";
+
+            } else if (score <= 1) {
+
+                strengthFill.style.width = "25%";
+                strengthFill.style.background = "#ef4444";
+                strengthFill.style.boxShadow = "0 0 12px rgba(239,68,68,.55)";
+                strengthText.textContent = "Weak";
+
+            } else if (score === 2) {
+
+                strengthFill.style.width = "50%";
+                strengthFill.style.background = "#f59e0b";
+                strengthFill.style.boxShadow = "0 0 12px rgba(245,158,11,.55)";
+                strengthText.textContent = "Fair";
+
+            } else if (score === 3) {
+
+                strengthFill.style.width = "75%";
+                strengthFill.style.background = "#22d3ee";
+                strengthFill.style.boxShadow = "0 0 12px rgba(34,211,238,.55)";
+                strengthText.textContent = "Strong";
+
+            } else {
+
+                strengthFill.style.width = "100%";
+                strengthFill.style.background = "#34d399";
+                strengthFill.style.boxShadow = "0 0 14px rgba(52,211,153,.65)";
+                strengthText.textContent = "Excellent";
+
+            }
+
+        });
+
+
+        /* =========================================
+           PASSWORD MATCH
+        ========================================= */
+
+        const confirmPassword =
+            document.getElementById("confirm_password");
+
+        const matchMessage =
+            document.getElementById("matchMessage");
+
+
+        confirmPassword.addEventListener("input", () => {
+
+            const passwordValue = password.value;
+            const confirmValue = confirmPassword.value;
+
+            if (!confirmValue) {
+
+                matchMessage.textContent =
+                    "Make sure both passwords match.";
+
+                matchMessage.className =
+                    "text-[11px] mt-2 ml-1 text-slate-500";
+
+                return;
+            }
+
+            if (passwordValue === confirmValue) {
+
+                matchMessage.innerHTML =
+                    '<i class="fa-solid fa-circle-check mr-1"></i> Passwords match.';
+
+                matchMessage.className =
+                    "text-[11px] mt-2 ml-1 text-emerald-400";
+
+            } else {
+
+                matchMessage.innerHTML =
+                    '<i class="fa-solid fa-circle-xmark mr-1"></i> Passwords do not match.';
+
+                matchMessage.className =
+                    "text-[11px] mt-2 ml-1 text-red-400";
+
+            }
+
+        });
+
+
+        /* =========================================
+           USERNAME LIVE FEEDBACK
+        ========================================= */
+
+        const username =
+            document.getElementById("username");
+
+        const usernameHint =
+            document.getElementById("usernameHint");
+
+
+        username.addEventListener("input", () => {
+
+            const length = username.value.trim().length;
+
+            if (!length) {
+
+                usernameHint.textContent =
+                    "At least 3 characters.";
+
+                usernameHint.className =
+                    "text-[11px] text-slate-500 mt-2 ml-1";
+
+            } else if (length < 3) {
+
+                usernameHint.textContent =
+                    "Keep going — 3 characters minimum.";
+
+                usernameHint.className =
+                    "text-[11px] text-amber-400 mt-2 ml-1";
+
+            } else {
+
+                usernameHint.innerHTML =
+                    '<i class="fa-solid fa-check mr-1"></i> Username looks good.';
+
+                usernameHint.className =
+                    "text-[11px] text-emerald-400 mt-2 ml-1";
+
+            }
+
+        });
+
+
+        /* =========================================
+           CARD 3D PARALLAX
+        ========================================= */
+
+        const card =
+            document.getElementById("registerCard");
+
+        const isTouch =
+            window.matchMedia("(pointer: coarse)").matches;
+
+
+        if (!isTouch) {
+
+            document.addEventListener("mousemove", (event) => {
+
+                const rect = card.getBoundingClientRect();
+
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+
+                const rotateY =
+                    (event.clientX - centerX) / 45;
+
+                const rotateX =
+                    (centerY - event.clientY) / 45;
+
+                card.style.transform =
+                    `perspective(1200px)
+                     rotateX(${rotateX}deg)
+                     rotateY(${rotateY}deg)`;
+
+            });
+
+
+            document.addEventListener("mouseleave", () => {
+
+                card.style.transform =
+                    "perspective(1200px) rotateX(0deg) rotateY(0deg)";
+
+            });
+
+        }
+
+
+        /* =========================================
+           FORM SUBMIT ANIMATION
+        ========================================= */
+
+        const form =
+            document.getElementById("registerForm");
+
+        const button =
+            document.getElementById("registerButton");
+
+        const buttonContent =
+            document.getElementById("buttonContent");
+
+
+        form.addEventListener("submit", (event) => {
+
+            const usernameValue =
+                username.value.trim();
+
+            const emailValue =
+                document.getElementById("email").value.trim();
+
+            const passwordValue =
+                password.value;
+
+            const confirmValue =
+                confirmPassword.value;
+
+
+            if (
+                usernameValue.length < 3 ||
+                !emailValue ||
+                passwordValue.length < 8 ||
+                passwordValue !== confirmValue
+            ) {
+
+                return;
+
+            }
+
+
+            button.disabled = true;
+
+            buttonContent.innerHTML = `
+                <i class="fa-solid fa-circle-notch fa-spin"></i>
+                <span>Creating your account...</span>
+            `;
+
+            button.style.opacity = ".85";
+
+        });
+
+
+        /* =========================================
+           INPUT RIPPLE / FOCUS EFFECT
+        ========================================= */
+
+        document.querySelectorAll(".cyber-input").forEach(input => {
+
+            input.addEventListener("focus", () => {
+
+                input.parentElement.style.transform =
+                    "translateY(-1px)";
+
+            });
+
+            input.addEventListener("blur", () => {
+
+                input.parentElement.style.transform =
+                    "translateY(0)";
+
+            });
+
+        });
+
+    </script>
+
+</body>
+</html>

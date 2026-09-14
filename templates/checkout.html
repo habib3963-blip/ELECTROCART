@@ -1,0 +1,2067 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Checkout | ELECTROCART</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+    <style>
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at 15% 10%,
+                    rgba(99, 102, 241, 0.12),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 85% 30%,
+                    rgba(168, 85, 247, 0.10),
+                    transparent 30%
+                ),
+                #050509;
+
+            color: #f8fafc;
+        }
+
+
+        .font-space {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+
+        .glass {
+            background: rgba(15, 15, 25, 0.72);
+
+            backdrop-filter: blur(18px);
+
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+
+        .input-field {
+            width: 100%;
+
+            background: rgba(255,255,255,0.04);
+
+            border: 1px solid rgba(255,255,255,0.08);
+
+            border-radius: 12px;
+
+            padding: 14px 16px;
+
+            color: white;
+
+            outline: none;
+
+            transition: all 0.25s ease;
+        }
+
+
+        .input-field:focus {
+            border-color: rgba(99,102,241,0.7);
+
+            background: rgba(255,255,255,0.06);
+
+            box-shadow:
+                0 0 0 3px rgba(99,102,241,0.08);
+        }
+
+
+        .input-field::placeholder {
+            color: #6b7280;
+        }
+
+
+        .checkout-btn {
+            transition: all 0.3s ease;
+
+            box-shadow:
+                0 0 25px rgba(99,102,241,0.25);
+        }
+
+
+        .checkout-btn:hover {
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 0 35px rgba(99,102,241,0.45);
+        }
+
+
+        .product-row {
+            transition: all 0.25s ease;
+        }
+
+
+        .product-row:hover {
+            background: rgba(255,255,255,0.03);
+        }
+
+
+        /* ERROR BOX */
+
+        .checkout-error {
+            animation: errorIn 0.35s ease;
+        }
+
+
+        @keyframes errorIn {
+
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+
+        /* PAYMENT CARD */
+
+        .payment-card {
+            transition:
+                border-color 0.25s ease,
+                background 0.25s ease,
+                transform 0.25s ease,
+                box-shadow 0.25s ease;
+        }
+
+
+        .payment-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(99,102,241,0.45);
+        }
+
+
+        .payment-option:checked + .payment-card {
+            border-color: #22d3ee;
+            background: rgba(34,211,238,0.08);
+            box-shadow:
+                0 0 25px rgba(34,211,238,0.08);
+        }
+
+        /* SAVED ADDRESS CARD */
+        .saved-address-card {
+            position: relative;
+        }
+
+        .saved-address-card.saved-address-selected {
+            border-color: rgba(34,211,238,0.55);
+            background: rgba(34,211,238,0.07);
+            box-shadow:
+                0 0 28px rgba(34,211,238,0.08);
+        }
+
+        .saved-address-card.saved-address-selected .address-check {
+            border-color: rgba(34,211,238,0.7);
+            background: rgba(34,211,238,0.15);
+            color: #67e8f9;
+            box-shadow: 0 0 18px rgba(34,211,238,0.15);
+        }
+
+    </style>
+
+</head>
+
+
+<body class="min-h-screen">
+
+
+<!-- ===================================================== -->
+<!-- TOP BAR -->
+<!-- ===================================================== -->
+
+<div class="border-b border-white/5 bg-black/40">
+
+    <div class="max-w-7xl mx-auto px-6 py-2
+                flex justify-between items-center
+                text-xs text-gray-400">
+
+        <span>
+
+            <i class="fa-solid fa-truck-fast mr-2"></i>
+
+            Free shipping on orders over $500
+
+        </span>
+
+
+        <div class="hidden sm:flex gap-6">
+
+            <span>Track Order</span>
+
+            <span>Help & Support</span>
+
+            <span>USD</span>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ===================================================== -->
+<!-- NAVBAR -->
+<!-- ===================================================== -->
+
+<nav class="sticky top-0 z-50 glass">
+
+    <div class="max-w-7xl mx-auto px-6 py-5
+                flex items-center justify-between gap-8">
+
+
+        <!-- LOGO -->
+
+        <a href="{% url 'home' %}"
+           class="font-space text-2xl font-bold
+                  tracking-tight whitespace-nowrap">
+
+            ELECTRO<span class="text-indigo-400">CART</span>
+
+        </a>
+
+
+        <!-- CHECKOUT INDICATOR -->
+
+        <div class="hidden sm:flex items-center gap-3
+                    text-sm text-gray-400">
+
+            <i class="fa-solid fa-lock text-green-400"></i>
+
+            Secure Checkout
+
+        </div>
+
+
+        <!-- CART -->
+
+        <a href="{% url 'cart' %}"
+           class="relative text-indigo-400
+                  hover:text-sky-400 transition">
+
+            <i class="fa-solid fa-cart-shopping text-lg"></i>
+
+
+            {% if cart_count > 0 %}
+
+            <span
+                data-cart-count
+                class="absolute -top-2 -right-3
+                       min-w-5 h-5 px-1
+                       rounded-full
+                       bg-indigo-500
+                       text-white
+                       text-[10px]
+                       font-bold
+                       flex items-center
+                       justify-center">
+
+                {{ cart_count }}
+
+            </span>
+
+            {% endif %}
+
+        </a>
+
+    </div>
+
+</nav>
+
+
+
+<!-- ===================================================== -->
+<!-- MAIN -->
+<!-- ===================================================== -->
+
+<main class="max-w-7xl mx-auto px-6 py-12">
+
+
+    <form method="POST" id="checkout-form">
+
+        {% csrf_token %}
+
+        <!-- Selected saved address -->
+        <input type="hidden"
+               name="saved_address_id"
+               id="saved-address-id"
+               value="{{ request.POST.saved_address_id|default:'' }}">
+
+
+        <!-- ================================================= -->
+        <!-- CHECKOUT ERROR -->
+        <!-- ================================================= -->
+
+        {% if error %}
+
+        <div class="checkout-error mb-8
+                    rounded-2xl
+                    border border-red-500/30
+                    bg-red-500/10
+                    px-5 py-4
+                    flex items-start gap-4">
+
+            <div class="w-10 h-10 shrink-0
+                        rounded-xl
+                        bg-red-500/10
+                        flex items-center justify-center">
+
+                <i class="fa-solid fa-triangle-exclamation
+                          text-red-400"></i>
+
+            </div>
+
+
+            <div class="flex-1">
+
+                <p class="font-semibold text-red-300">
+
+                    Unable to place order
+
+                </p>
+
+                <p class="text-sm text-red-200/80 mt-1">
+
+                    {{ error }}
+
+                </p>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+
+
+        <!-- ================================================= -->
+        <!-- HEADER -->
+        <!-- ================================================= -->
+
+        <div class="mb-10">
+
+            <p class="text-indigo-400 uppercase
+                      tracking-[0.2em] text-xs
+                      font-bold mb-3">
+
+                Final Step
+
+            </p>
+
+
+            <h1 class="font-space text-4xl md:text-5xl
+                       font-bold">
+
+                Checkout
+
+            </h1>
+
+
+            <p class="text-gray-500 mt-3">
+
+                Complete your details and place your order.
+
+            </p>
+
+        </div>
+
+
+
+        <!-- ================================================= -->
+        <!-- CHECKOUT GRID -->
+        <!-- ================================================= -->
+
+        <div class="grid lg:grid-cols-[1fr_400px]
+                    gap-8">
+
+
+            <!-- ================================================= -->
+            <!-- LEFT : CUSTOMER DETAILS -->
+            <!-- ================================================= -->
+
+            <div class="space-y-6">
+
+
+                <!-- ================================================= -->
+                <!-- CONTACT INFORMATION -->
+                <!-- ================================================= -->
+
+                <div class="glass rounded-2xl p-7">
+
+                    <div class="flex items-center gap-4 mb-7">
+
+                        <div
+                            class="w-11 h-11 rounded-xl
+                                   bg-indigo-500/10
+                                   flex items-center justify-center">
+
+                            <i class="fa-regular fa-user
+                                      text-indigo-400"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <h2 class="font-space text-xl font-bold">
+
+                                Contact Information
+
+                            </h2>
+
+                            <p class="text-xs text-gray-500 mt-1">
+
+                                We'll use this to contact you about your order.
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="grid md:grid-cols-2 gap-5">
+
+
+                        <!-- NAME -->
+
+                        <div class="md:col-span-2">
+
+                            <label class="block text-sm
+                                          text-gray-400 mb-2">
+
+                                Full Name
+
+                            </label>
+
+                            <input
+                                type="text"
+                                name="customer_name"
+                                placeholder="Enter your full name"
+                                class="input-field"
+                                value="{{ request.POST.customer_name|default:'' }}"
+                                required>
+
+                        </div>
+
+
+
+                        <!-- EMAIL -->
+
+                        <div>
+
+                            <label class="block text-sm
+                                          text-gray-400 mb-2">
+
+                                Email Address
+
+                            </label>
+
+                            <input
+                                type="email"
+                                name="email"
+                                placeholder="you@example.com"
+                                class="input-field"
+                                value="{{ request.POST.email|default:'' }}"
+                                required>
+
+                        </div>
+
+
+
+                        <!-- PHONE -->
+
+                        <div>
+
+                            <label class="block text-sm
+                                          text-gray-400 mb-2">
+
+                                Phone Number
+
+                            </label>
+
+                            <input
+                                type="tel"
+                                name="phone"
+                                placeholder="+91 XXXXX XXXXX"
+                                class="input-field"
+                                value="{{ request.POST.phone|default:'' }}"
+                                required>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- ================================================= -->
+                <!-- SAVED ADDRESSES -->
+                <!-- ================================================= -->
+
+                {% if addresses %}
+                <div class="glass rounded-2xl p-7">
+
+                    <div class="flex items-center justify-between gap-4 mb-7">
+
+                        <div class="flex items-center gap-4">
+
+                            <div
+                                class="w-11 h-11 rounded-xl
+                                       bg-cyan-500/10
+                                       flex items-center justify-center">
+
+                                <i class="fa-solid fa-bookmark
+                                          text-cyan-400"></i>
+
+                            </div>
+
+                            <div>
+
+                                <h2 class="font-space text-xl font-bold">
+                                    Saved Addresses
+                                </h2>
+
+                                <p class="text-xs text-gray-500 mt-1">
+                                    Select an address and we'll fill the delivery details for you.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <span class="hidden sm:inline-flex
+                                     text-xs text-cyan-300
+                                     border border-cyan-400/20
+                                     bg-cyan-400/5
+                                     px-3 py-1.5 rounded-full">
+                            {{ addresses|length }} saved
+                        </span>
+
+                    </div>
+
+
+                    <div class="space-y-3">
+
+                        {% for saved_address in addresses %}
+
+                        <button
+                            type="button"
+                            class="saved-address-card w-full text-left
+                                   rounded-2xl p-4
+                                   border border-white/10
+                                   bg-white/[0.02]
+                                   hover:bg-white/[0.05]
+                                   hover:border-cyan-400/30
+                                   transition-all duration-300
+                                   {% if saved_address.is_default %}
+                                   saved-address-selected
+                                   {% endif %}"
+                            data-address-id="{{ saved_address.id }}"
+                            data-full-name="{{ saved_address.full_name|escapejs }}"
+                            data-phone="{{ saved_address.phone|escapejs }}"
+                            data-address="{{ saved_address.address_line|escapejs }}"
+                            data-city="{{ saved_address.city|escapejs }}"
+                            data-state="{{ saved_address.state|escapejs }}"
+                            data-pincode="{{ saved_address.pincode|escapejs }}"
+                            data-landmark="{{ saved_address.landmark|escapejs }}">
+
+                            <div class="flex items-start gap-4">
+
+                                <div class="w-10 h-10 shrink-0 rounded-xl
+                                            bg-cyan-500/10
+                                            flex items-center justify-center">
+
+                                    <i class="fa-solid fa-location-dot
+                                              text-cyan-400"></i>
+
+                                </div>
+
+                                <div class="flex-1 min-w-0">
+
+                                    <div class="flex flex-wrap items-center gap-2">
+
+                                        <h3 class="font-semibold text-white">
+                                            {{ saved_address.full_name }}
+                                        </h3>
+
+                                        {% if saved_address.is_default %}
+                                        <span class="text-[10px] uppercase
+                                                     tracking-wider font-bold
+                                                     text-green-300
+                                                     border border-green-400/20
+                                                     bg-green-400/10
+                                                     px-2 py-1 rounded-full">
+                                            Default
+                                        </span>
+                                        {% endif %}
+
+                                    </div>
+
+                                    <p class="text-sm text-gray-400 mt-2 leading-6">
+                                        {{ saved_address.address_line }},
+                                        {{ saved_address.city }},
+                                        {{ saved_address.state }}
+                                        - {{ saved_address.pincode }}
+                                    </p>
+
+                                    {% if saved_address.landmark %}
+                                    <p class="text-xs text-gray-500 mt-1">
+                                        <i class="fa-solid fa-location-crosshairs mr-1"></i>
+                                        {{ saved_address.landmark }}
+                                    </p>
+                                    {% endif %}
+
+                                    <p class="text-xs text-gray-500 mt-2">
+                                        <i class="fa-solid fa-phone mr-1"></i>
+                                        {{ saved_address.phone }}
+                                    </p>
+
+                                </div>
+
+                                <div class="address-check shrink-0
+                                            w-8 h-8 rounded-full
+                                            border border-white/10
+                                            flex items-center justify-center
+                                            text-transparent
+                                            transition-all duration-300">
+
+                                    <i class="fa-solid fa-check text-sm"></i>
+
+                                </div>
+
+                            </div>
+
+                        </button>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <div class="mt-5 flex items-center gap-2
+                                text-xs text-gray-500">
+
+                        <i class="fa-solid fa-circle-info text-cyan-400/70"></i>
+
+                        You can still edit the fields below after selecting an address.
+
+                    </div>
+
+                </div>
+                {% endif %}
+
+
+                <!-- ================================================= -->
+                <!-- DELIVERY ADDRESS -->
+                <!-- ================================================= -->
+
+                <div class="glass rounded-2xl p-7">
+
+                    <div class="flex items-center gap-4 mb-7">
+
+                        <div
+                            class="w-11 h-11 rounded-xl
+                                   bg-purple-500/10
+                                   flex items-center justify-center">
+
+                            <i class="fa-solid fa-location-dot
+                                      text-purple-400"></i>
+
+                        </div>
+
+
+                        <div>
+
+                            <h2 class="font-space text-xl font-bold">
+
+                                Delivery Address
+
+                            </h2>
+
+                            <p class="text-xs text-gray-500 mt-1">
+
+                                Where should we deliver your order?
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="space-y-5">
+
+
+                        <!-- ADDRESS -->
+
+                        <div>
+
+                            <label class="block text-sm
+                                          text-gray-400 mb-2">
+
+                                Full Address
+
+                            </label>
+
+                            <textarea
+                                name="address"
+                                rows="4"
+                                placeholder="House / Flat No., Street, Area"
+                                class="input-field resize-none"
+                                required>{{ request.POST.address|default:'' }}</textarea>
+
+                        </div>
+
+
+
+                        <div class="grid md:grid-cols-2 gap-5">
+
+
+                            <!-- CITY -->
+
+                            <div>
+
+                                <label class="block text-sm
+                                              text-gray-400 mb-2">
+
+                                    City
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="city"
+                                    placeholder="Enter city"
+                                    class="input-field"
+                                    value="{{ request.POST.city|default:'' }}"
+                                    required>
+
+                            </div>
+
+
+
+                            <!-- STATE -->
+
+                            <div>
+
+                                <label class="block text-sm
+                                              text-gray-400 mb-2">
+
+                                    State
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="state"
+                                    placeholder="Enter state"
+                                    class="input-field"
+                                    value="{{ request.POST.state|default:'' }}"
+                                    required>
+
+                            </div>
+
+
+
+                            <!-- PINCODE -->
+
+                            <div>
+
+                                <label class="block text-sm
+                                              text-gray-400 mb-2">
+
+                                    Pincode
+
+                                </label>
+
+                                <input
+                                    type="text"
+                                    name="pincode"
+                                    placeholder="6-digit pincode"
+                                    maxlength="6"
+                                    class="input-field"
+                                    value="{{ request.POST.pincode|default:'' }}"
+                                    required>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================================================= -->
+            <!-- RIGHT : ORDER SUMMARY -->
+            <!-- ================================================= -->
+
+            <div>
+
+                <div class="glass rounded-2xl p-7
+                            lg:sticky lg:top-28">
+
+
+                    <!-- ORDER SUMMARY TITLE -->
+
+                    <h2 class="font-space text-2xl
+                               font-bold mb-7">
+
+                        Order Summary
+
+                    </h2>
+
+
+
+                    <!-- ================================================= -->
+                    <!-- PRODUCTS -->
+                    <!-- ================================================= -->
+
+                    <div class="space-y-2 mb-6">
+
+                        {% for item in items %}
+
+                        <div
+                            class="product-row rounded-xl
+                                   p-3 flex items-center gap-4">
+
+
+                            <!-- IMAGE -->
+
+                            <div
+                                class="w-16 h-16 shrink-0
+                                       rounded-xl bg-white/5
+                                       overflow-hidden
+                                       flex items-center justify-center">
+
+                                {% if item.product.image %}
+
+                                <img
+                                    src="{{ item.product.image }}"
+                                    alt="{{ item.product.name }}"
+                                    class="w-full h-full
+                                           object-contain p-2">
+
+                                {% else %}
+
+                                <i class="fa-solid fa-image
+                                          text-gray-600"></i>
+
+                                {% endif %}
+
+                            </div>
+
+
+
+                            <!-- DETAILS -->
+
+                            <div class="flex-1 min-w-0">
+
+                                <p class="font-semibold text-sm
+                                          truncate">
+
+                                    {{ item.product.name }}
+
+                                </p>
+
+                                <p class="text-xs text-gray-500 mt-1">
+
+                                    Qty: {{ item.quantity }}
+
+                                </p>
+
+                            </div>
+
+
+
+                            <!-- PRICE -->
+
+                            <span class="font-space font-bold
+                                         text-sm whitespace-nowrap">
+
+                                ${{ item.total_price|floatformat:2 }}
+
+                            </span>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+
+                    <!-- ================================================= -->
+                    <!-- PRICE BREAKDOWN -->
+                    <!-- ================================================= -->
+
+                    <div class="border-t border-white/10 pt-5">
+
+
+                        <!-- SUBTOTAL -->
+
+                        <div class="flex justify-between
+                                    text-sm mb-4">
+
+                            <span class="text-gray-500">
+
+                                Subtotal
+
+                            </span>
+
+                            <span class="font-space font-semibold">
+
+                                ${{ total|floatformat:2 }}
+
+                            </span>
+
+                        </div>
+
+
+
+                        <!-- SHIPPING -->
+
+                        <div class="flex justify-between
+                                    text-sm mb-4">
+
+                            <span class="text-gray-500">
+
+                                Shipping
+
+                            </span>
+
+                            <span class="text-green-400">
+
+                                FREE
+
+                            </span>
+
+                        </div>
+
+
+
+                        <!-- DISCOUNT -->
+
+                        <div
+                            id="coupon-discount-row"
+                            class="hidden flex justify-between
+                                   text-sm mb-6">
+
+                            <span class="text-gray-500">
+
+                                Discount
+
+                            </span>
+
+                            <span
+                                id="coupon-discount"
+                                class="text-emerald-400 font-semibold">
+
+                                -$0.00
+
+                            </span>
+
+                        </div>
+
+<!-- =========================================================
+     COUPON
+========================================================= -->
+
+                        <div class="mt-5 pt-5 border-t border-white/10">
+
+                            <div class="flex items-center gap-2 mb-3">
+                                <i class="fa-solid fa-ticket text-indigo-400"></i>
+
+                                <span class="text-sm font-semibold text-white">
+                                    Have a coupon?
+                                </span>
+                            </div>
+
+                            <div class="flex gap-2">
+
+                                <input
+                                    type="text"
+                                    id="coupon-code"
+                                    placeholder="Enter coupon code"
+                                    class="flex-1 min-w-0 rounded-xl
+                                        bg-slate-950
+                                        border border-slate-800
+                                        px-4 py-3
+                                        text-sm text-white
+                                        placeholder:text-slate-600
+                                        focus:outline-none
+                                        focus:border-indigo-400"
+                                >
+
+                                <button
+                                    type="button"
+                                    id="apply-coupon-btn"
+                                    class="rounded-xl
+                                        bg-indigo-600
+                                        hover:bg-indigo-500
+                                        px-5 py-3
+                                        text-sm font-bold
+                                        text-white
+                                        transition"
+                                >
+                                    Apply
+                                </button>
+
+                            </div>
+
+                            <p
+                                id="coupon-message"
+                                class="hidden mt-3 text-xs"
+                            ></p>
+
+                        </div>
+
+
+
+                        <!-- TOTAL -->
+
+                        <div
+                            class="border-t border-white/10
+                                   pt-5 mb-7
+                                   flex justify-between
+                                   items-end">
+
+                            <span class="font-semibold">
+
+                                Total
+
+                            </span>
+
+
+                            <span
+                                id="checkout-total"
+                                class="font-space text-3xl font-bold">
+
+                                ${{ total|floatformat:2 }}
+
+                            </span>
+
+                        </div>
+
+
+
+                        <!-- ================================================= -->
+                        <!-- PAYMENT METHOD -->
+                        <!-- ================================================= -->
+
+                        <div class="mt-8">
+
+                            <h3 class="text-xl font-bold
+                                       text-white mb-4">
+
+                                Payment Method
+
+                            </h3>
+
+
+                            <div class="grid grid-cols-1
+                                        md:grid-cols-2 gap-4">
+
+
+                                <!-- ================================================= -->
+                                <!-- CASH ON DELIVERY -->
+                                <!-- ================================================= -->
+
+                                <label class="cursor-pointer">
+
+                                    <input
+                                        type="radio"
+                                        name="payment_method"
+                                        value="COD"
+                                        class="payment-option hidden peer"
+                                        {% if request.POST.payment_method != "ONLINE" %}
+                                        checked
+                                        {% endif %}>
+
+
+                                    <div
+                                        class="payment-card
+                                               border border-gray-700
+                                               rounded-2xl
+                                               p-5
+                                               bg-gray-900/50">
+
+                                        <div class="flex items-center gap-4">
+
+
+                                            <div
+                                                class="w-12 h-12
+                                                       rounded-xl
+                                                       bg-green-500/10
+                                                       flex items-center
+                                                       justify-center">
+
+                                                <i
+                                                    class="fa-solid
+                                                          fa-money-bill-wave
+                                                          text-green-400
+                                                          text-xl"></i>
+
+                                            </div>
+
+
+                                            <div>
+
+                                                <h4 class="text-white
+                                                           font-bold">
+
+                                                    Cash on Delivery
+
+                                                </h4>
+
+
+                                                <p class="text-gray-400
+                                                          text-sm mt-1">
+
+                                                    Pay when your order arrives
+
+                                                </p>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </label>
+
+
+
+                                <!-- ================================================= -->
+                                <!-- ONLINE PAYMENT -->
+                                <!-- ================================================= -->
+
+                                <label class="cursor-pointer">
+
+                                    <input
+                                        type="radio"
+                                        name="payment_method"
+                                        value="ONLINE"
+                                        class="payment-option hidden peer"
+                                        {% if request.POST.payment_method == "ONLINE" %}
+                                        checked
+                                        {% endif %}>
+
+
+                                    <div
+                                        class="payment-card
+                                               border border-gray-700
+                                               rounded-2xl
+                                               p-5
+                                               bg-gray-900/50">
+
+                                        <div class="flex items-center gap-4">
+
+
+                                            <div
+                                                class="w-12 h-12
+                                                       rounded-xl
+                                                       bg-cyan-500/10
+                                                       flex items-center
+                                                       justify-center">
+
+                                                <i
+                                                    class="fa-solid
+                                                          fa-credit-card
+                                                          text-cyan-400
+                                                          text-xl"></i>
+
+                                            </div>
+
+
+                                            <div>
+
+                                                <h4 class="text-white
+                                                           font-bold">
+
+                                                    Online Payment
+
+                                                </h4>
+
+
+                                                <p class="text-gray-400
+                                                          text-sm mt-1">
+
+                                                    Pay securely online
+
+                                                </p>
+
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </label>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <!-- ================================================= -->
+                        <!-- PLACE ORDER -->
+                        <!-- ================================================= -->
+
+                        <button
+                            type="submit"
+                            id="place-order-btn"
+                            class="checkout-btn w-full
+                                bg-indigo-600
+                                hover:bg-indigo-500
+                                rounded-xl
+                                py-4
+                                font-bold
+                                flex items-center
+                                justify-center gap-3
+                                mt-8">
+
+                            <span id="place-order-text">
+                                Place Order
+                            </span>
+
+                            <i
+                                id="place-order-icon"
+                                class="fa-solid fa-arrow-right">
+                            </i>
+
+                        </button>
+
+
+
+                        <!-- ================================================= -->
+                        <!-- SECURITY -->
+                        <!-- ================================================= -->
+
+                        <div
+                            class="flex items-center
+                                   justify-center gap-2
+                                   text-xs text-gray-500 mt-5">
+
+                            <i class="fa-solid fa-shield-halved"></i>
+
+                            Your information is secure
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </form>
+
+</main>
+
+
+
+<!-- ===================================================== -->
+<!-- FOOTER -->
+<!-- ===================================================== -->
+
+<footer class="border-t border-white/10 mt-10">
+
+    <div class="max-w-7xl mx-auto px-6 py-10
+                flex flex-col md:flex-row
+                justify-between gap-5">
+
+
+        <div>
+
+            <div class="font-space text-xl
+                        font-bold mb-2">
+
+                ELECTRO<span class="text-indigo-400">
+                    CART
+                </span>
+
+            </div>
+
+
+            <p class="text-gray-500 text-sm">
+
+                Next-generation technology
+                for a smarter you.
+
+            </p>
+
+        </div>
+
+
+        <p class="text-gray-600 text-sm">
+
+            © 2026 ELECTROCART.
+            All rights reserved.
+
+        </p>
+
+    </div>
+
+</footer>
+
+<!-- Razorpay Checkout -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    /* =========================================================
+       SAVED ADDRESS SELECTION
+       ========================================================= */
+
+    const savedAddressCards =
+        document.querySelectorAll(".saved-address-card");
+
+    const savedAddressId =
+        document.getElementById("saved-address-id");
+
+    const nameField =
+        document.querySelector('input[name="customer_name"]');
+
+    const phoneField =
+        document.querySelector('input[name="phone"]');
+
+    const addressField =
+        document.querySelector('textarea[name="address"]');
+
+    const cityField =
+        document.querySelector('input[name="city"]');
+
+    const stateField =
+        document.querySelector('input[name="state"]');
+
+    const pincodeField =
+        document.querySelector('input[name="pincode"]');
+
+
+    function clearSavedAddressSelection() {
+
+        savedAddressCards.forEach(function (item) {
+            item.classList.remove("saved-address-selected");
+        });
+
+        if (savedAddressId) {
+            savedAddressId.value = "";
+        }
+    }
+
+    /* =========================================================
+   COUPON
+   ========================================================= */
+
+const couponCodeInput =
+    document.getElementById("coupon-code");
+
+const applyCouponBtn =
+    document.getElementById("apply-coupon-btn");
+
+const couponMessage =
+    document.getElementById("coupon-message");
+
+const couponDiscountRow =
+    document.getElementById("coupon-discount-row");
+
+const couponDiscount =
+    document.getElementById("coupon-discount");
+
+const checkoutTotal =
+    document.getElementById("checkout-total");
+
+
+if (applyCouponBtn) {
+
+    applyCouponBtn.addEventListener("click", function () {
+
+        const code =
+            couponCodeInput.value.trim();
+
+        if (!code) {
+
+            couponMessage.textContent =
+                "Please enter a coupon code.";
+
+            couponMessage.className =
+                "mt-3 text-xs text-red-400";
+
+            return;
+        }
+
+        applyCouponBtn.disabled = true;
+        applyCouponBtn.textContent = "Applying...";
+
+        const formData = new FormData();
+
+        formData.append("code", code);
+
+        fetch("{% url 'apply_coupon' %}", {
+
+            method: "POST",
+
+            headers: {
+                "X-CSRFToken":
+                    document.querySelector(
+                        "[name=csrfmiddlewaretoken]"
+                    ).value
+            },
+
+            body: formData
+
+        })
+
+        .then(response => response.json())
+
+        .then(data => {
+
+            if (data.success) {
+
+                couponMessage.textContent =
+                    data.message;
+
+                couponMessage.className =
+                    "mt-3 text-xs text-emerald-400";
+
+                couponDiscount.textContent =
+                    "-₹" + data.discount;
+
+                couponDiscountRow.classList.remove(
+                    "hidden"
+                );
+
+                if (checkoutTotal) {
+                    checkoutTotal.textContent =
+                        "₹" + data.final_total;
+                }
+
+            } else {
+
+                couponMessage.textContent =
+                    data.message;
+
+                couponMessage.className =
+                    "mt-3 text-xs text-red-400";
+
+                couponDiscountRow.classList.add(
+                    "hidden"
+                );
+            }
+
+        })
+
+        .catch(error => {
+
+            console.error(
+                "Coupon error:",
+                error
+            );
+
+            couponMessage.textContent =
+                "Something went wrong. Please try again.";
+
+            couponMessage.className =
+                "mt-3 text-xs text-red-400";
+        })
+
+        .finally(() => {
+
+            applyCouponBtn.disabled = false;
+            applyCouponBtn.textContent = "Apply";
+
+        });
+
+    });
+
+}
+
+
+    function selectSavedAddress(card) {
+
+        if (!card) {
+            return;
+        }
+
+        savedAddressCards.forEach(function (item) {
+            item.classList.remove("saved-address-selected");
+        });
+
+        card.classList.add("saved-address-selected");
+
+        if (savedAddressId) {
+            savedAddressId.value =
+                card.dataset.addressId || "";
+        }
+
+        if (nameField) {
+            nameField.value =
+                card.dataset.fullName || "";
+        }
+
+        if (phoneField) {
+            phoneField.value =
+                card.dataset.phone || "";
+        }
+
+        let fullAddress =
+            card.dataset.address || "";
+
+        const landmark =
+            card.dataset.landmark || "";
+
+        if (landmark) {
+            fullAddress += ", " + landmark;
+        }
+
+        if (addressField) {
+            addressField.value = fullAddress;
+        }
+
+        if (cityField) {
+            cityField.value =
+                card.dataset.city || "";
+        }
+
+        if (stateField) {
+            stateField.value =
+                card.dataset.state || "";
+        }
+
+        if (pincodeField) {
+            pincodeField.value =
+                card.dataset.pincode || "";
+        }
+    }
+
+
+    savedAddressCards.forEach(function (card) {
+
+        card.addEventListener("click", function () {
+            selectSavedAddress(card);
+        });
+
+    });
+
+
+    /* If the user manually edits any address/contact field after
+       selecting a saved address, switch to a custom address so the
+       backend does not overwrite those edits with the saved record. */
+
+    [
+        nameField,
+        phoneField,
+        addressField,
+        cityField,
+        stateField,
+        pincodeField
+    ].forEach(function (field) {
+
+        if (!field) {
+            return;
+        }
+
+        field.addEventListener("input", function () {
+
+            if (savedAddressId && savedAddressId.value) {
+                clearSavedAddressSelection();
+            }
+
+        });
+
+        field.addEventListener("change", function () {
+
+            if (savedAddressId && savedAddressId.value) {
+                clearSavedAddressSelection();
+            }
+
+        });
+
+    });
+
+
+    /* Automatically use the saved default address
+       on first checkout load, but respect an address
+       already selected/submitted by the user. */
+
+    if (savedAddressCards.length > 0) {
+
+        let cardToSelect = null;
+
+        if (savedAddressId && savedAddressId.value) {
+
+            savedAddressCards.forEach(function (card) {
+
+                if (
+                    card.dataset.addressId ===
+                    savedAddressId.value
+                ) {
+                    cardToSelect = card;
+                }
+
+            });
+
+        }
+
+        if (!cardToSelect) {
+
+            cardToSelect =
+                document.querySelector(
+                    ".saved-address-card.saved-address-selected"
+                );
+
+        }
+
+        if (cardToSelect) {
+            selectSavedAddress(cardToSelect);
+        }
+
+    }
+
+
+    /* =========================================================
+       EXISTING CHECKOUT / RAZORPAY FLOW
+       ========================================================= */
+
+    const checkoutForm = document.getElementById("checkout-form");
+    const placeOrderBtn = document.getElementById("place-order-btn");
+    const placeOrderText = document.getElementById("place-order-text");
+    const placeOrderIcon = document.getElementById("place-order-icon");
+
+    if (!checkoutForm) {
+        return;
+    }
+
+    checkoutForm.addEventListener("submit", function (event) {
+
+        /*
+         * If Razorpay order ID is available,
+         * this means the backend has created
+         * an ONLINE payment order.
+         */
+
+        const razorpayOrderId = "{{ razorpay_order_id|default:'' }}";
+
+        const razorpayKeyId = "{{ razorpay_key_id|default:'' }}";
+
+        const localOrderId = "{{ local_order_id|default:'' }}";
+
+        /*
+         * COD flow
+         *
+         * If there is no Razorpay order ID,
+         * allow the normal Django form submission.
+         */
+
+        if (!razorpayOrderId || !razorpayKeyId) {
+
+            placeOrderBtn.disabled = true;
+
+            placeOrderText.textContent = "Placing Order...";
+
+            if (placeOrderIcon) {
+                placeOrderIcon.className =
+                    "fa-solid fa-spinner fa-spin";
+            }
+
+            return;
+        }
+
+        /*
+         * ONLINE PAYMENT
+         *
+         * Stop normal form submission.
+         */
+
+        event.preventDefault();
+
+        placeOrderBtn.disabled = true;
+
+        placeOrderText.textContent = "Opening Payment...";
+
+        if (placeOrderIcon) {
+            placeOrderIcon.className =
+                "fa-solid fa-spinner fa-spin";
+        }
+
+        const options = {
+
+            key: razorpayKeyId,
+
+            amount: Math.round(
+                parseFloat("{{ total|default:'0'|floatformat:2 }}") * 100
+            ),
+
+            currency: "INR",
+
+            name: "ELECTROCART",
+
+            description: "ELECTROCART Order",
+
+            order_id: razorpayOrderId,
+
+            prefill: {
+                name: "{{ customer_name|escapejs }}",
+                email: "{{ customer_email|escapejs }}",
+                contact: "{{ customer_phone|escapejs }}"
+            },
+
+            notes: {
+                local_order_id: localOrderId
+            },
+
+            theme: {
+                color: "#6366f1"
+            },
+
+            handler: function (response) {
+
+                /*
+                 * Razorpay successfully completed
+                 * the payment.
+                 *
+                 * Now send payment details to
+                 * Django for server-side verification.
+                 */
+
+                placeOrderText.textContent =
+                    "Verifying Payment...";
+
+                if (placeOrderIcon) {
+                    placeOrderIcon.className =
+                        "fa-solid fa-spinner fa-spin";
+                }
+
+                /*
+                 * Create a hidden verification form.
+                 */
+
+                const verificationForm =
+                    document.createElement("form");
+
+                verificationForm.method = "POST";
+
+                verificationForm.action =
+                    "{% url 'verify_payment' %}";
+
+                /*
+                 * CSRF token
+                 */
+
+                const csrfInput =
+                    document.createElement("input");
+
+                csrfInput.type = "hidden";
+                csrfInput.name = "csrfmiddlewaretoken";
+
+                const csrfToken =
+                    checkoutForm.querySelector(
+                        'input[name="csrfmiddlewaretoken"]'
+                    ).value;
+
+                csrfInput.value = csrfToken;
+
+                verificationForm.appendChild(csrfInput);
+
+                /*
+                 * Local Django Order ID
+                 */
+
+                const orderInput =
+                    document.createElement("input");
+
+                orderInput.type = "hidden";
+                orderInput.name = "order_id";
+
+                orderInput.value = localOrderId;
+
+                verificationForm.appendChild(orderInput);
+
+                /*
+                 * Razorpay Payment ID
+                 */
+
+                const paymentInput =
+                    document.createElement("input");
+
+                paymentInput.type = "hidden";
+                paymentInput.name = "razorpay_payment_id";
+
+                paymentInput.value =
+                    response.razorpay_payment_id;
+
+                verificationForm.appendChild(paymentInput);
+
+                /*
+                 * Razorpay Order ID
+                 */
+
+                const razorpayOrderInput =
+                    document.createElement("input");
+
+                razorpayOrderInput.type = "hidden";
+                razorpayOrderInput.name =
+                    "razorpay_order_id";
+
+                razorpayOrderInput.value =
+                    response.razorpay_order_id;
+
+                verificationForm.appendChild(
+                    razorpayOrderInput
+                );
+
+                /*
+                 * Razorpay Signature
+                 */
+
+                const signatureInput =
+                    document.createElement("input");
+
+                signatureInput.type = "hidden";
+                signatureInput.name =
+                    "razorpay_signature";
+
+                signatureInput.value =
+                    response.razorpay_signature;
+
+                verificationForm.appendChild(
+                    signatureInput
+                );
+
+                document.body.appendChild(
+                    verificationForm
+                );
+
+                verificationForm.submit();
+            },
+
+            modal: {
+
+                ondismiss: function () {
+
+                    placeOrderBtn.disabled = false;
+
+                    placeOrderText.textContent =
+                        "Try Payment Again";
+
+                    if (placeOrderIcon) {
+                        placeOrderIcon.className =
+                            "fa-solid fa-credit-card";
+                    }
+                }
+            }
+        };
+
+        const razorpay =
+            new Razorpay(options);
+
+        razorpay.on(
+            "payment.failed",
+            async function (response) {
+
+                console.error(
+                    "Razorpay Payment Failed:",
+                    response.error
+                );
+
+                const csrfInput =
+                    checkoutForm.querySelector(
+                        'input[name="csrfmiddlewaretoken"]'
+                    );
+
+                const csrfToken =
+                    csrfInput ? csrfInput.value : "";
+
+                // Razorpay exposes the failed payment/order IDs inside
+                // response.error.metadata for payment.failed events.
+                // Use those values instead of assuming the success-handler
+                // response shape.
+                const failureMetadata =
+                    response.error && response.error.metadata
+                        ? response.error.metadata
+                        : {};
+
+                const failedPaymentId =
+                    failureMetadata.payment_id || "";
+
+                const failedRazorpayOrderId =
+                    failureMetadata.order_id || razorpayOrderId;
+
+                const failureData =
+                    new FormData();
+
+                failureData.append(
+                    "csrfmiddlewaretoken",
+                    csrfToken
+                );
+
+                failureData.append(
+                    "order_id",
+                    localOrderId
+                );
+
+                failureData.append(
+                    "razorpay_order_id",
+                    failedRazorpayOrderId
+                );
+
+                if (failedPaymentId) {
+                    failureData.append(
+                        "razorpay_payment_id",
+                        failedPaymentId
+                    );
+                }
+
+                placeOrderBtn.disabled = true;
+
+                placeOrderText.textContent =
+                    "Confirming Payment Failure...";
+
+                if (placeOrderIcon) {
+                    placeOrderIcon.className =
+                        "fa-solid fa-spinner fa-spin";
+                }
+
+                // Razorpay can take several seconds to expose the failed
+                // payment through its server API. Keep reconciling for about
+                // 20 seconds before giving control back to the customer.
+                let attempt = 0;
+                let lastMessage = "";
+                const maxAttempts = 14;
+                const retryDelay = 1500;
+
+                while (attempt < maxAttempts) {
+                    try {
+                        const response = await fetch(
+                            "{% url 'mark_payment_failed' %}",
+                            {
+                                method: "POST",
+                                headers: {
+                                    "X-CSRFToken": csrfToken,
+                                    "X-Requested-With":
+                                        "XMLHttpRequest"
+                                },
+                                body: failureData
+                            }
+                        );
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            alert(
+                                "Payment failed. Your stock and cart have been restored. You can try again."
+                            );
+
+                            window.location.reload();
+                            return;
+                        }
+
+                        lastMessage = data.message ||
+                            "Payment failure is still being confirmed.";
+
+                        // 409 means Razorpay has not exposed the final failed
+                        // state yet. Wait briefly and ask the server again.
+                        if (response.status !== 409) {
+                            break;
+                        }
+                    } catch (error) {
+                        console.error(
+                            "Payment failure reconciliation error:",
+                            error
+                        );
+
+                        lastMessage =
+                            "Unable to contact the payment server.";
+                    }
+
+                    attempt += 1;
+
+                    if (attempt < maxAttempts) {
+                        const remaining = maxAttempts - attempt;
+                        placeOrderText.textContent =
+                            `Confirming Payment Failure... (${remaining})`;
+
+                        await new Promise(function (resolve) {
+                            setTimeout(resolve, retryDelay);
+                        });
+                    }
+                }
+
+                // The payment may still be reconciled by the verified
+                // Razorpay webhook. Do not claim that the cart was lost.
+                placeOrderBtn.disabled = false;
+
+                placeOrderText.textContent =
+                    "Try Payment Again";
+
+                if (placeOrderIcon) {
+                    placeOrderIcon.className =
+                        "fa-solid fa-rotate-right";
+                }
+
+                alert(
+                    "Payment failed. Razorpay is still confirming the result. "
+                    + "Please wait a few seconds and then try again."
+                );
+
+                console.warn(
+                    "Payment failure reconciliation pending:",
+                    lastMessage
+                );
+            }
+        );
+
+        razorpay.open();
+    });
+});
+</script>
+
+</body>
+
+</html>

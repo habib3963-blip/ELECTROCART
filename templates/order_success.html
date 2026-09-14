@@ -1,0 +1,247 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Order Confirmed | ELECTROCART</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect"
+          href="https://fonts.googleapis.com">
+
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+    <style>
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+
+            background:
+                radial-gradient(
+                    circle at 50% 20%,
+                    rgba(99, 102, 241, 0.16),
+                    transparent 35%
+                ),
+                #050509;
+
+            color: #f8fafc;
+        }
+
+        .font-space {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .glass {
+            background: rgba(15, 15, 25, 0.72);
+            backdrop-filter: blur(18px);
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+
+    </style>
+
+</head>
+
+
+<body class="min-h-screen flex items-center justify-center px-6">
+
+
+    <div class="w-full max-w-2xl">
+
+
+        <!-- LOGO -->
+
+        <div class="text-center mb-10">
+
+            <a href="{% url 'home' %}"
+               class="font-space text-3xl font-bold">
+
+                ELECTRO<span class="text-indigo-400">CART</span>
+
+            </a>
+
+        </div>
+
+
+        <!-- SUCCESS CARD -->
+
+        <div class="glass rounded-3xl p-8 md:p-12 text-center">
+
+
+            <!-- ICON -->
+
+            <div
+                class="w-24 h-24 mx-auto mb-8
+                       rounded-full
+                       bg-green-500/10
+                       flex items-center justify-center">
+
+                <div
+                    class="w-16 h-16 rounded-full
+                           bg-green-500/15
+                           flex items-center justify-center">
+
+                    <i class="fa-solid fa-check
+                              text-3xl text-green-400"></i>
+
+                </div>
+
+            </div>
+
+
+            <!-- TITLE -->
+
+            <p class="text-green-400 uppercase
+                      tracking-[0.2em]
+                      text-xs font-bold mb-3">
+
+                Order Confirmed
+
+            </p>
+
+
+            <h1 class="font-space
+                       text-4xl md:text-5xl
+                       font-bold mb-4">
+
+                Thank You!
+
+            </h1>
+
+
+            <p class="text-gray-400
+                      max-w-lg mx-auto
+                      leading-relaxed">
+
+                Your order has been successfully placed.
+                We'll start processing it shortly.
+
+            </p>
+
+
+            <!-- ORDER ID -->
+
+            <div
+                class="mt-8 rounded-2xl
+                       bg-white/5
+                       border border-white/10
+                       p-5">
+
+                <p class="text-xs
+                          uppercase
+                          tracking-wider
+                          text-gray-500 mb-2">
+
+                    Order ID
+
+                </p>
+
+                <p class="font-space
+                          text-2xl
+                          font-bold
+                          text-indigo-400">
+
+                    #{{ order.id }}
+
+                </p>
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div
+                class="mt-5 flex items-center
+                       justify-center gap-3
+                       text-sm text-gray-400">
+
+                <i class="fa-solid fa-clock
+                          text-yellow-400"></i>
+
+                Order Status:
+
+                <span class="text-white font-semibold">
+
+                    {{ order.status }}
+
+                </span>
+
+            </div>
+
+
+            <!-- BUTTONS -->
+
+            <div
+                class="mt-10 flex flex-col
+                       sm:flex-row
+                       justify-center
+                       gap-4">
+
+
+                <a href="{% url 'home' %}"
+                   class="rounded-xl
+                          bg-indigo-600
+                          hover:bg-indigo-500
+                          px-7 py-4
+                          font-bold
+                          transition">
+
+                    <i class="fa-solid fa-house mr-2"></i>
+
+                    Continue Shopping
+
+                </a>
+
+
+                <a href="{% url 'cart' %}"
+                   class="rounded-xl
+                          bg-white/5
+                          hover:bg-white/10
+                          border border-white/10
+                          px-7 py-4
+                          font-bold
+                          transition">
+
+                    View Cart
+
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- FOOTER TEXT -->
+
+        <p class="text-center
+                  text-gray-600
+                  text-sm mt-8">
+
+            © 2026 ELECTROCART.
+            All rights reserved.
+
+        </p>
+
+
+    </div>
+
+
+</body>
+
+</html>
