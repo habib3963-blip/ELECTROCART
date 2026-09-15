@@ -193,52 +193,225 @@ function showVariantMessage(message, success = false) {
 function selectVariant(button) {
 
     const variantId = button.dataset.variantId;
+
     const price = button.dataset.price;
+    const originalPrice = button.dataset.originalPrice;
+    const discount = button.dataset.discount;
+
+    const hasOffer = button.dataset.offer === "true";
+    const offerName = button.dataset.offerName || "";
+
     const stock = parseInt(button.dataset.stock) || 0;
 
     const hiddenInput = document.getElementById("variant-id");
     const quantityInput = document.getElementById("quantity");
+
     const addButton = document.getElementById("add-to-cart-button");
     const buyButton = document.getElementById("buy-now-button");
+
     const priceElement = document.getElementById("product-price");
+    const originalPriceElement = document.getElementById(
+        "product-original-price"
+    );
+
+    const discountBadge = document.getElementById(
+        "product-discount-badge"
+    );
+
+    const offerNameElement = document.getElementById(
+        "product-offer-name"
+    );
+
     const stockText = document.getElementById("stock-text");
+
+
+    // --------------------------------------------------
+    // SELECTED VARIANT
+    // --------------------------------------------------
 
     if (hiddenInput) {
         hiddenInput.value = variantId;
     }
 
-    document.querySelectorAll("[data-variant-button]").forEach(item => {
+
+    // --------------------------------------------------
+    // RESET ALL VARIANT BUTTONS
+    // --------------------------------------------------
+
+    document.querySelectorAll(
+        "[data-variant-button]"
+    ).forEach(item => {
+
         item.classList.remove(
             "border-indigo-400",
             "bg-indigo-500/10",
             "text-white"
         );
-        item.classList.add("border-white/10", "text-gray-300");
+
+        item.classList.add(
+            "border-white/10",
+            "text-gray-300"
+        );
+
     });
 
-    button.classList.remove("border-white/10", "text-gray-300");
+
+    // --------------------------------------------------
+    // HIGHLIGHT SELECTED VARIANT
+    // --------------------------------------------------
+
+    button.classList.remove(
+        "border-white/10",
+        "text-gray-300"
+    );
+
     button.classList.add(
         "border-indigo-400",
         "bg-indigo-500/10",
         "text-white"
     );
 
+
+    // --------------------------------------------------
+    // PRICE
+    // --------------------------------------------------
+
     if (priceElement) {
         priceElement.textContent = `$${price}`;
     }
 
-    if (quantityInput) {
-        quantityInput.max = stock;
-        quantityInput.value = stock > 0 ? 1 : 0;
-    }
 
-    if (stockText) {
-        if (stock > 0) {
-            stockText.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-green-400 inline-block mr-3"></span><span class="text-green-400 font-semibold">In Stock</span><span class="text-gray-500 text-sm ml-2">(${stock} available)</span>`;
+    // --------------------------------------------------
+    // ORIGINAL PRICE + DISCOUNT
+    // --------------------------------------------------
+
+    if (originalPriceElement) {
+
+        if (hasOffer) {
+
+            originalPriceElement.textContent =
+                `$${originalPrice}`;
+
+            originalPriceElement.classList.remove(
+                "hidden"
+            );
+
         } else {
-            stockText.innerHTML = `<span class="w-2.5 h-2.5 rounded-full bg-red-400 inline-block mr-3"></span><span class="text-red-400 font-semibold">Out of Stock</span>`;
+
+            originalPriceElement.classList.add(
+                "hidden"
+            );
+
         }
     }
+
+
+    // --------------------------------------------------
+    // DISCOUNT BADGE
+    // --------------------------------------------------
+
+    if (discountBadge) {
+
+        if (hasOffer) {
+
+            discountBadge.textContent =
+                `${discount}% OFF`;
+
+            discountBadge.classList.remove(
+                "hidden"
+            );
+
+        } else {
+
+            discountBadge.classList.add(
+                "hidden"
+            );
+
+        }
+    }
+
+
+    // --------------------------------------------------
+    // OFFER NAME
+    // --------------------------------------------------
+
+    if (offerNameElement) {
+
+        if (hasOffer && offerName) {
+
+            offerNameElement.innerHTML =
+                `<i class="fa-solid fa-bolt mr-1"></i>${offerName}`;
+
+            offerNameElement.classList.remove(
+                "hidden"
+            );
+
+        } else {
+
+            offerNameElement.classList.add(
+                "hidden"
+            );
+
+        }
+    }
+
+
+    // --------------------------------------------------
+    // QUANTITY
+    // --------------------------------------------------
+
+    if (quantityInput) {
+
+        quantityInput.max = stock;
+
+        quantityInput.value =
+            stock > 0 ? 1 : 0;
+    }
+
+
+    // --------------------------------------------------
+    // STOCK
+    // --------------------------------------------------
+
+    if (stockText) {
+
+        if (stock > 0) {
+
+            stockText.innerHTML = `
+                <span
+                    class="w-2.5 h-2.5 rounded-full
+                           bg-green-400 inline-block mr-3">
+                </span>
+
+                <span class="text-green-400 font-semibold">
+                    In Stock
+                </span>
+
+                <span class="text-gray-500 text-sm ml-2">
+                    (${stock} available)
+                </span>
+            `;
+
+        } else {
+
+            stockText.innerHTML = `
+                <span
+                    class="w-2.5 h-2.5 rounded-full
+                           bg-red-400 inline-block mr-3">
+                </span>
+
+                <span class="text-red-400 font-semibold">
+                    Out of Stock
+                </span>
+            `;
+
+        }
+    }
+
+
+    // --------------------------------------------------
+    // BUTTONS
+    // --------------------------------------------------
 
     if (addButton) {
         addButton.disabled = stock <= 0;
@@ -248,7 +421,6 @@ function selectVariant(button) {
         buyButton.disabled = stock <= 0;
     }
 }
-
 
 function getCookie(name) {
 
@@ -680,21 +852,81 @@ function toggleWishlist(productId, button) {
 
 
             <!-- PRICE -->
-            <div class="flex items-end gap-4 mb-8">
+           
+    <div class="flex flex-col gap-2 mb-8">
 
-                <span id="product-price" class="font-space text-4xl font-bold">
-                    ${{ product.price }}
-                </span>
+        <div class="flex items-end gap-4 flex-wrap">
 
-                {% if product.badge == "Hot Deal" %}
-
-                    <span class="text-sm text-green-400 mb-2">
-                        Limited Time Deal
-                    </span>
-
+            <!-- Current / Sale Price -->
+            <span
+                id="product-price"
+                class="font-space text-4xl font-bold"
+            >
+                {% if product_pricing.offer %}
+                    ${{ product_pricing.sale_price }}
+                {% else %}
+                    ${{ product_pricing.original_price }}
                 {% endif %}
+            </span>
 
-            </div>
+            <!-- Original Price -->
+            <span
+                id="product-original-price"
+                class="
+                    text-lg
+                    text-gray-500
+                    line-through
+                    {% if not product_pricing.offer %}hidden{% endif %}
+                "
+            >
+                ${{ product_pricing.original_price }}
+            </span>
+
+            <!-- Discount Badge -->
+            <span
+                id="product-discount-badge"
+                class="
+                    text-xs
+                    font-bold
+                    px-3
+                    py-1.5
+                    rounded-full
+                    bg-green-500/10
+                    border
+                    border-green-400/20
+                    text-green-400
+                    {% if not product_pricing.offer %}hidden{% endif %}
+                "
+            >
+                {% if product_pricing.offer %}
+                    {{ product_pricing.discount_percentage }}% OFF
+                {% endif %}
+            </span>
+
+        </div>
+
+        <!-- Offer Name -->
+        <div
+            id="product-offer-name"
+            class="
+                text-sm
+                text-green-400
+                {% if not product_pricing.offer %}hidden{% endif %}
+            "
+        >
+            {% if product_pricing.offer %}
+                <i class="fa-solid fa-bolt mr-1"></i>
+                {{ product_pricing.offer.name }}
+            {% endif %}
+        </div>
+
+        {% if product.badge == "Hot Deal" %}
+            <span class="text-sm text-green-400">
+                Limited Time Deal
+            </span>
+        {% endif %}
+
+    </div>
 
 
             {% if has_variants %}
@@ -714,35 +946,82 @@ function toggleWishlist(productId, button) {
                     </div>
 
                     <div class="flex flex-wrap gap-3">
-                        {% for variant in variants %}
+
+                    {% for item in variant_pricing %}
+
+                        {% with variant=item.variant pricing=item.pricing %}
+
                             <button
                                 type="button"
                                 data-variant-button
                                 data-variant-id="{{ variant.id }}"
-                                data-price="{{ variant.price }}"
+
+                                data-price="{{ pricing.sale_price }}"
+                                data-original-price="{{ pricing.original_price }}"
+                                data-discount="{{ pricing.discount_percentage }}"
+
+                                data-offer="{% if pricing.offer %}true{% else %}false{% endif %}"
+                                data-offer-name="{% if pricing.offer %}{{ pricing.offer.name }}{% endif %}"
+
                                 data-stock="{{ variant.stock }}"
+
                                 onclick="selectVariant(this)"
-                                class="border border-white/10 bg-white/5 text-gray-300 hover:border-indigo-400/60 hover:bg-indigo-500/10 rounded-xl px-4 py-3 text-sm font-semibold transition"
+
+                                class="
+                                    border
+                                    border-white/10
+                                    bg-white/5
+                                    text-gray-300
+                                    hover:border-indigo-400/60
+                                    hover:bg-indigo-500/10
+                                    rounded-xl
+                                    px-4
+                                    py-3
+                                    text-sm
+                                    font-semibold
+                                    transition
+                                "
                             >
+
                                 {% if variant.color %}
                                     <span>{{ variant.color }}</span>
                                 {% endif %}
 
                                 {% if variant.storage %}
-                                    <span{% if variant.color %} class="text-gray-500 mx-1"{% endif %}>/</span>
+                                    <span
+                                        {% if variant.color %}
+                                            class="text-gray-500 mx-1"
+                                        {% endif %}
+                                    >
+                                        /
+                                    </span>
+
                                     <span>{{ variant.storage }}</span>
                                 {% endif %}
 
                                 {% if variant.attributes %}
-                                    {% for key, value in variant.attributes.items %}
-                                        <span class="text-gray-500 mx-1">·</span>
-                                        <span>{{ key }}: {{ value }}</span>
-                                    {% endfor %}
-                                {% endif %}
-                            </button>
-                        {% endfor %}
-                    </div>
 
+                                    {% for key, value in variant.attributes.items %}
+
+                                        <span class="text-gray-500 mx-1">
+                                            ·
+                                        </span>
+
+                                        <span>
+                                            {{ key }}: {{ value }}
+                                        </span>
+
+                                    {% endfor %}
+
+                                {% endif %}
+
+                            </button>
+
+                        {% endwith %}
+
+                    {% endfor %}
+
+                </div>
                     <input type="hidden" id="variant-id" name="variant_id" form="add-to-cart-form" value="">
 
                     <div id="variant-message" class="hidden text-xs font-semibold mt-4"></div>

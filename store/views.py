@@ -87,6 +87,7 @@ def _create_razorpay_order_safely(order_id, total):
     raise last_error
 
 
+
 from .models import (
     Category,
     Product,
@@ -100,6 +101,11 @@ from .models import (
     Address,
     Review,
     Coupon,
+)
+
+from .pricing import (
+    get_effective_price,
+    get_effective_unit_price,
 )
 
 
@@ -133,6 +139,42 @@ def calculate_coupon_discount(coupon, cart_total):
         Decimal("0.01")
     )
 
+
+
+def get_cart_pricing(cart_item):
+    """
+    Return the effective pricing for one cart item.
+
+    Variant price is the base price when a variant exists.
+    Product price is used for legacy/non-variant cart items.
+    Active ProductOffer is applied by the pricing service.
+    """
+    base_price = (
+        cart_item.variant.price
+        if cart_item.variant is not None
+        else cart_item.product.price
+    )
+
+    return get_effective_price(
+        cart_item.product,
+        base_price=base_price,
+    )
+
+
+def get_cart_subtotal(cart_items):
+    """
+    Calculate the cart subtotal using effective sale prices.
+    This subtotal is before any coupon discount.
+    """
+    subtotal = Decimal("0.00")
+
+    for cart_item in cart_items:
+        pricing = get_cart_pricing(cart_item)
+        subtotal += (
+            pricing["sale_price"] * cart_item.quantity
+        ).quantize(Decimal("0.01"))
+
+    return subtotal
 
 
 def get_valid_session_coupon(request, cart_total):
@@ -251,15 +293,21 @@ def apply_coupon(request):
             status=400
         )
 
-    cart_items = cart.items.select_related(
-        "product",
-        "variant"
+    cart_items = list(
+        cart.items.select_related("product", "variant")
     )
 
-    cart_total = Decimal("0.00")
+    if not cart_items:
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Your cart is empty."
+            },
+            status=400
+        )
 
-    for item in cart_items:
-        cart_total += item.total_price
+    # Coupon is calculated on the sale subtotal.
+    cart_total = get_cart_subtotal(cart_items)
 
     if cart_total < coupon.minimum_order_amount:
         return JsonResponse(
@@ -278,7 +326,9 @@ def apply_coupon(request):
         cart_total
     )
 
-    final_total = cart_total - discount
+    final_total = (
+        cart_total - discount
+    ).quantize(Decimal("0.01"))
 
     request.session["applied_coupon"] = coupon.code
     request.session["coupon_discount"] = str(discount)
@@ -295,10 +345,6 @@ def apply_coupon(request):
         }
     )
 
-
-# =========================================================
-# HOME
-# =========================================================
 
 def home(request):
     search_query = request.GET.get("search", "").strip()
@@ -427,9 +473,29 @@ def product_detail(request, pk):
     )
 
     # Active variants
-    variants = product.variants.filter(
-        is_active=True
-    ).order_by("color", "storage", "price")
+
+    variants = list(
+        product.variants.filter(
+            is_active=True
+        ).order_by("color", "storage", "price")
+    )
+
+    # Product-level pricing
+    product_pricing = get_effective_price(product)
+
+    # Variant-level pricing
+    variant_pricing = []
+
+    for variant in variants:
+        pricing = get_effective_price(
+            product,
+            base_price=variant.price,
+        )
+
+        variant_pricing.append({
+            "variant": variant,
+            "pricing": pricing,
+        })
 
     # ---------------------------------------------------------
     # RELATED PRODUCTS
@@ -523,9 +589,13 @@ def product_detail(request, pk):
     return render(request, "product_detail.html", {
         "product": product,
 
+        # Pricing
+        "product_pricing": product_pricing,
+        "variant_pricing": variant_pricing,
+
         # Variants
         "variants": variants,
-        "has_variants": variants.exists(),
+        "has_variants": bool(variants),
 
         # ⭐ Related Products
         "related_products": related_products,
@@ -974,48 +1044,75 @@ def add_to_cart(request, pk):
 # =========================================================
 
 def cart(request):
+    session_key = request.session.session_key
 
-    if not request.session.session_key:
-        return render(request, "cart.html", {
-            "cart": None,
-            "items": [],
-            "total": 0,
-        })
+    if not session_key:
+        request.session.create()
+        session_key = request.session.session_key
 
-    cart = Cart.objects.filter(
-        session_key=request.session.session_key
-    ).first()
-
-    if not cart:
-        return render(request, "cart.html", {
-            "cart": None,
-            "items": [],
-            "total": 0,
-        })
-
-    items = cart.items.select_related(
-        "product",
-        "variant"
+    cart, _ = Cart.objects.get_or_create(
+        session_key=session_key
     )
 
-    total = sum(
-        item.total_price
-        for item in items
+    items = list(
+        cart.items.select_related(
+            "product",
+            "variant"
+        )
     )
 
-    return render(request, "cart.html", {
-        "cart": cart,
-        "items": items,
-        "total": total,
-    })
+    # ---------------------------------------------------------
+    # EFFECTIVE SALE PRICING
+    # ---------------------------------------------------------
+    for item in items:
+        pricing = get_cart_pricing(item)
+
+        item.effective_unit_price = pricing["sale_price"]
+
+        item.effective_total_price = (
+            pricing["sale_price"] * item.quantity
+        ).quantize(Decimal("0.01"))
+
+        item.original_unit_price = pricing["original_price"]
+        item.discount_amount = pricing["discount_amount"]
+        item.discount_percentage = pricing["discount_percentage"]
+        item.offer = pricing["offer"]
+
+    # ---------------------------------------------------------
+    # CART SUBTOTAL
+    # ---------------------------------------------------------
+    subtotal = sum(
+        (item.effective_total_price for item in items),
+        Decimal("0.00")
+    ).quantize(Decimal("0.01"))
+
+    # ---------------------------------------------------------
+    # SERVER-SIDE COUPON REVALIDATION
+    # ---------------------------------------------------------
+    coupon, coupon_discount, final_total = (
+        get_valid_session_coupon(
+            request,
+            subtotal
+        )
+    )
+
+    return render(
+        request,
+        "cart.html",
+        {
+            "cart": cart,
+            "items": items,
+            "total": subtotal,
+            "coupon": coupon,
+            "coupon_discount": coupon_discount,
+            "final_total": final_total,
+        },
+    )
 
 
-# =========================================================
-# UPDATE CART QUANTITY
-# =========================================================
+
 
 def update_cart_quantity(request, item_id):
-
     # Security: quantity changes must be POST
     if request.method != "POST":
         return JsonResponse({
@@ -1043,11 +1140,7 @@ def update_cart_quantity(request, item_id):
 
     action = request.POST.get("action")
 
-    # Increase
     if action == "increase":
-
-        # Never exceed current stock. Variant stock is
-        # authoritative when this cart item has a variant.
         available_stock = (
             item.variant.stock
             if item.variant is not None
@@ -1056,55 +1149,57 @@ def update_cart_quantity(request, item_id):
 
         if item.quantity < available_stock:
             item.quantity += 1
+            item.save(update_fields=["quantity"])
 
-            item.save(
-                update_fields=["quantity"]
-            )
-
-    # Decrease
     elif action == "decrease":
-
         if item.quantity > 1:
             item.quantity -= 1
+            item.save(update_fields=["quantity"])
 
-            item.save(
-                update_fields=["quantity"]
-            )
-
-    # Invalid action
     else:
         return JsonResponse({
             "success": False,
             "message": "Invalid cart action."
         }, status=400)
 
-    # Cart total
-    cart_total = sum(
-        cart_item.total_price
-        for cart_item in item.cart.items.select_related(
+    # Recalculate using offer-aware prices.
+    cart_items = list(
+        item.cart.items.select_related(
             "product",
             "variant"
         )
     )
 
+    subtotal = get_cart_subtotal(cart_items)
+
+    # Revalidate coupon after quantity changes.
+    coupon, coupon_discount, final_total = (
+        get_valid_session_coupon(
+            request,
+            subtotal
+        )
+    )
+
+    current_pricing = get_cart_pricing(item)
+
+    item_total = (
+        current_pricing["sale_price"] * item.quantity
+    ).quantize(Decimal("0.01"))
+
     return JsonResponse({
         "success": True,
         "quantity": item.quantity,
-        "item_total": float(
-            item.total_price
-        ),
-        "cart_total": float(
-            cart_total
-        ),
+        "item_total": float(item_total),
+        "cart_total": float(subtotal),
+        "discount": float(coupon_discount),
+        "final_total": float(final_total),
+        "coupon": coupon.code if coupon else "",
     })
 
 
-# =========================================================
-# REMOVE FROM CART
-# =========================================================
+
 
 def remove_from_cart(request, item_id):
-
     # Security: removal must be POST
     if request.method != "POST":
         return JsonResponse({
@@ -1112,14 +1207,12 @@ def remove_from_cart(request, item_id):
             "message": "Invalid request method."
         }, status=405)
 
-    # Session check
     if not request.session.session_key:
         return JsonResponse({
             "success": False,
             "message": "Cart session not found."
         }, status=400)
 
-    # Only get item from current user's cart
     item = get_object_or_404(
         CartItem.objects.select_related(
             "cart",
@@ -1131,19 +1224,25 @@ def remove_from_cart(request, item_id):
     )
 
     cart = item.cart
-
-    # Delete item
     item.delete()
 
-    # Cart total
-    cart_total = sum(
-        cart_item.total_price
-        for cart_item in cart.items.select_related(
-            "product"
+    cart_items = list(
+        cart.items.select_related(
+            "product",
+            "variant"
         )
     )
 
-    # Cart count
+    subtotal = get_cart_subtotal(cart_items)
+
+    # Revalidate coupon after removing an item.
+    coupon, coupon_discount, final_total = (
+        get_valid_session_coupon(
+            request,
+            subtotal
+        )
+    )
+
     cart_count = sum(
         cart_item.quantity
         for cart_item in cart.items.all()
@@ -1151,16 +1250,14 @@ def remove_from_cart(request, item_id):
 
     return JsonResponse({
         "success": True,
-        "cart_total": float(
-            cart_total
-        ),
+        "cart_total": float(subtotal),
+        "discount": float(coupon_discount),
+        "final_total": float(final_total),
+        "coupon": coupon.code if coupon else "",
         "cart_count": cart_count,
     })
 
 
-# =========================================================
-# CHECKOUT
-# =========================================================
 
 
 def checkout(request):
@@ -1299,13 +1396,13 @@ def checkout(request):
         )
 
     # --------------------------------------------------
-    # CALCULATE TOTAL
+    # CALCULATE SALE-AWARE TOTAL
+    # --------------------------------------------------
+    # Product/variant price -> active ProductOffer -> sale price.
+    # Coupon is applied after the sale subtotal.
     # --------------------------------------------------
 
-    total = sum(
-        item.total_price
-        for item in items
-    )
+    total = get_cart_subtotal(items)
 
     # ==================================================
     # SERVER-SIDE COUPON VALIDATION
@@ -1785,6 +1882,7 @@ def checkout(request):
                     # Each exact inventory record is locked to prevent overselling.
 
                     locked_inventory = {}
+                    locked_unit_prices = {}
 
                     for cart_item in items:
 
@@ -1869,6 +1967,18 @@ def checkout(request):
                                 cart_item.quantity,
                             )
 
+                        # Calculate the offer-aware sale price from the
+                        # locked inventory price. This becomes the OrderItem
+                        # price snapshot for this purchase.
+                        effective_unit_price = get_effective_unit_price(
+                            product,
+                            base_price=unit_price,
+                        )
+
+                        locked_unit_prices[inventory_key] = (
+                            effective_unit_price
+                        )
+
                         if available_stock <= 0:
                             return render(
                                 request,
@@ -1906,25 +2016,21 @@ def checkout(request):
                     # RE-CALCULATE TOTAL FROM LOCKED INVENTORY
                     # --------------------------------------------------
 
-                    total = sum(
-                        (
-                            locked_inventory[
-                                (
-                                    "variant",
-                                    cart_item.variant_id,
-                                )
-                            ][0].price
+                    total = Decimal("0.00")
+
+                    for cart_item in items:
+                        inventory_key = (
+                            ("variant", cart_item.variant_id)
                             if cart_item.variant_id
-                            else locked_inventory[
-                                (
-                                    "product",
-                                    cart_item.product_id,
-                                )
-                            ][0].price
+                            else ("product", cart_item.product_id)
                         )
-                        * cart_item.quantity
-                        for cart_item in items
-                    )
+
+                        total += (
+                            locked_unit_prices[inventory_key]
+                            * cart_item.quantity
+                        ).quantize(Decimal("0.01"))
+
+                    total = total.quantize(Decimal("0.01"))
 
                     # --------------------------------------------------
                     # RE-VALIDATE COUPON FROM LOCKED CART TOTAL
@@ -2012,7 +2118,9 @@ def checkout(request):
                                 product=product,
                                 variant=variant,
                                 quantity=cart_item.quantity,
-                                price=variant.price,
+                                price=locked_unit_prices[
+                                    ("variant", cart_item.variant_id)
+                                ],
                             )
 
                             # Reduce exact variant stock.
@@ -2031,7 +2139,9 @@ def checkout(request):
                                 product=product,
                                 variant=None,
                                 quantity=cart_item.quantity,
-                                price=product.price,
+                                price=locked_unit_prices[
+                                    ("product", cart_item.product_id)
+                                ],
                             )
 
                             # Reduce legacy product stock.

@@ -240,6 +240,153 @@ class ProductVariant(models.Model):
 
 
 # =========================================================
+# PRODUCT OFFER
+# =========================================================
+
+class ProductOffer(models.Model):
+
+    DISCOUNT_TYPE_CHOICES = [
+        ("PERCENT", "Percentage"),
+        ("FIXED", "Fixed Amount"),
+    ]
+
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="offers",
+    )
+
+    name = models.CharField(
+        max_length=100
+    )
+
+    discount_type = models.CharField(
+        max_length=10,
+        choices=DISCOUNT_TYPE_CHOICES,
+        default="PERCENT",
+    )
+
+    discount_value = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+    )
+
+    valid_from = models.DateTimeField()
+
+    valid_until = models.DateTimeField()
+
+    is_active = models.BooleanField(
+        default=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.product.name} - {self.name}"
+
+    def clean(self):
+        from decimal import Decimal
+        from django.core.exceptions import ValidationError
+
+        # Discount value cannot be negative.
+        if self.discount_value < Decimal("0.00"):
+            raise ValidationError({
+                "discount_value": "Discount value cannot be negative."
+            })
+
+        # Percentage discount cannot exceed 100%.
+        if (
+            self.discount_type == "PERCENT"
+            and self.discount_value > Decimal("100.00")
+        ):
+            raise ValidationError({
+                "discount_value": "Percentage discount cannot exceed 100%."
+            })
+
+        # Offer end date must be after start date.
+        if (
+            self.valid_from
+            and self.valid_until
+            and self.valid_until <= self.valid_from
+        ):
+            raise ValidationError({
+                "valid_until": "Offer end date must be after start date."
+            })
+
+    def is_valid(self):
+        from django.utils import timezone
+
+        now = timezone.now()
+
+        return (
+            self.is_active
+            and self.valid_from <= now <= self.valid_until
+        )
+
+    def calculate_discount(self, price):
+        from decimal import Decimal
+
+        price = Decimal(price)
+
+        if price <= Decimal("0.00"):
+            return Decimal("0.00")
+
+        if not self.is_valid():
+            return Decimal("0.00")
+
+        if self.discount_type == "PERCENT":
+            discount = (
+                price * self.discount_value
+            ) / Decimal("100")
+        else:
+            discount = self.discount_value
+
+        # Discount can never exceed product price.
+        discount = min(discount, price)
+
+        return discount.quantize(
+            Decimal("0.01")
+        )
+
+    def get_sale_price(self, price):
+        from decimal import Decimal
+
+        price = Decimal(price)
+
+        discount = self.calculate_discount(price)
+
+        return (
+            price - discount
+        ).quantize(Decimal("0.01"))
+
+    def get_discount_percentage(self, price):
+        from decimal import Decimal
+
+        price = Decimal(price)
+
+        if price <= Decimal("0.00"):
+            return Decimal("0.00")
+
+        discount = self.calculate_discount(price)
+
+        return (
+            (discount / price) * Decimal("100")
+        ).quantize(Decimal("0.01"))
+
+
+
+
+        
+# =========================================================
 # WISHLIST
 # =========================================================
 

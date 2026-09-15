@@ -5,14 +5,16 @@ from django import forms
 from .models import (
     Category,
     Product,
-    ProductVariant,
     ProductImage,
+    ProductVariant,
+    ProductOffer,
+    Wishlist,
     Cart,
     CartItem,
-    Wishlist,
     Order,
     OrderItem,
     Payment,
+    Address,
     Review,
     Coupon,
 )
@@ -775,6 +777,30 @@ class CouponAdmin(admin.ModelAdmin):
     )
 
 
+@admin.register(ProductOffer)
+class ProductOfferAdmin(admin.ModelAdmin):
+    list_display = (
+        "name",
+        "product",
+        "discount_type",
+        "discount_value",
+        "valid_from",
+        "valid_until",
+        "is_active",
+    )
 
+    list_filter = (
+        "discount_type",
+        "is_active",
+    )
+
+    search_fields = (
+        "name",
+        "product__name",
+    )
+
+    ordering = (
+        "-created_at",
+    )
 
 
