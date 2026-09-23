@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
-
+from .invoice_pdf import invoice_pdf_response
 
 import json
 import re
@@ -4578,3 +4578,21 @@ def edit_address(request, address_id):
         },
     )
 
+
+def download_invoice(request, order_id):
+    if not request.session.session_key:
+        return redirect("home")
+
+    order = get_object_or_404(
+        Order.objects.select_related(
+            "payment",
+            "coupon",
+        ).prefetch_related(
+            "items__product",
+            "items__variant",
+        ),
+        id=order_id,
+        session_key=request.session.session_key,
+    )
+
+    return invoice_pdf_response(order)

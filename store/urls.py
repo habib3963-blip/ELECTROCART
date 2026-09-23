@@ -154,6 +154,12 @@ urlpatterns = [
         name="order_detail"
     ),
 
+    path(
+        "order/<int:order_id>/invoice/",
+        views.download_invoice,
+        name="download_invoice",
+    ),
+
 
     # =========================================================
     # ACCOUNT / AUTHENTICATION
