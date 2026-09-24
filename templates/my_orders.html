@@ -149,7 +149,162 @@
 
             </p>
 
+
         </div>
+
+        <!-- ORDER SEARCH & FILTERS -->
+
+<div class="glass rounded-2xl p-5 mb-8">
+
+    <form method="GET"
+          action="{% url 'my_orders' %}"
+          class="flex flex-col lg:flex-row gap-4">
+
+        <!-- SEARCH -->
+
+        <div class="flex-1 relative">
+
+            <i class="fa-solid fa-magnifying-glass
+                      absolute left-4 top-1/2
+                      -translate-y-1/2
+                      text-gray-500"></i>
+
+            <input
+                type="text"
+                name="search"
+                value="{{ search_query }}"
+                placeholder="Search by Order ID or customer name..."
+                class="w-full rounded-xl
+                       bg-white/5
+                       border border-white/10
+                       pl-11 pr-4 py-3
+                       text-white
+                       placeholder-gray-500
+                       outline-none
+                       focus:border-indigo-500
+                       transition"
+            >
+
+        </div>
+
+
+        <!-- STATUS -->
+
+        <div class="lg:w-64">
+
+            <select
+                name="status"
+                class="w-full rounded-xl
+                       bg-white/5
+                       border border-white/10
+                       px-4 py-3
+                       text-white
+                       outline-none
+                       focus:border-indigo-500
+                       transition">
+
+                <option value=""
+                        class="bg-gray-900">
+                    All Orders
+                </option>
+
+                <option value="Pending"
+                        class="bg-gray-900"
+                        {% if status_filter == "Pending" %}selected{% endif %}>
+                    Pending
+                </option>
+
+                <option value="Confirmed"
+                        class="bg-gray-900"
+                        {% if status_filter == "Confirmed" %}selected{% endif %}>
+                    Confirmed
+                </option>
+
+                <option value="Processing"
+                        class="bg-gray-900"
+                        {% if status_filter == "Processing" %}selected{% endif %}>
+                    Processing
+                </option>
+
+                <option value="Shipped"
+                        class="bg-gray-900"
+                        {% if status_filter == "Shipped" %}selected{% endif %}>
+                    Shipped
+                </option>
+
+                <option value="Out for Delivery"
+                        class="bg-gray-900"
+                        {% if status_filter == "Out for Delivery" %}selected{% endif %}>
+                    Out for Delivery
+                </option>
+
+                <option value="Delivered"
+                        class="bg-gray-900"
+                        {% if status_filter == "Delivered" %}selected{% endif %}>
+                    Delivered
+                </option>
+
+                <option value="Cancelled"
+                        class="bg-gray-900"
+                        {% if status_filter == "Cancelled" %}selected{% endif %}>
+                    Cancelled
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- APPLY -->
+
+        <button
+            type="submit"
+            class="inline-flex
+                   items-center
+                   justify-center
+                   gap-2
+                   rounded-xl
+                   bg-indigo-600
+                   hover:bg-indigo-500
+                   px-6 py-3
+                   font-semibold
+                   transition">
+
+            <i class="fa-solid fa-filter text-sm"></i>
+
+            Apply
+
+        </button>
+
+
+        <!-- CLEAR -->
+
+        {% if search_query or status_filter %}
+
+            <a href="{% url 'my_orders' %}"
+               class="inline-flex
+                      items-center
+                      justify-center
+                      gap-2
+                      rounded-xl
+                      border border-white/10
+                      bg-white/5
+                      hover:bg-white/10
+                      px-6 py-3
+                      font-semibold
+                      transition">
+
+                <i class="fa-solid fa-xmark text-sm"></i>
+
+                Clear
+
+            </a>
+
+        {% endif %}
+
+    </form>
+
+</div>
 
 
         {% if orders %}
@@ -215,7 +370,7 @@
 
                                         <i class="fa-solid fa-clock"></i>
 
-                                        {{ order.status }}
+                                        Pending
 
                                     </span>
 
@@ -233,7 +388,25 @@
 
                                         <i class="fa-solid fa-circle-check"></i>
 
-                                        {{ order.status }}
+                                        Confirmed
+
+                                    </span>
+
+
+                                {% elif order.status == "Processing" %}
+
+                                    <span class="inline-flex
+                                                 items-center gap-2
+                                                 px-4 py-2
+                                                 rounded-full
+                                                 bg-indigo-500/10
+                                                 text-indigo-400
+                                                 text-sm
+                                                 font-semibold">
+
+                                        <i class="fa-solid fa-gear"></i>
+
+                                        Processing
 
                                     </span>
 
@@ -251,7 +424,25 @@
 
                                         <i class="fa-solid fa-truck"></i>
 
-                                        {{ order.status }}
+                                        Shipped
+
+                                    </span>
+
+
+                                {% elif order.status == "Out for Delivery" %}
+
+                                    <span class="inline-flex
+                                                 items-center gap-2
+                                                 px-4 py-2
+                                                 rounded-full
+                                                 bg-orange-500/10
+                                                 text-orange-400
+                                                 text-sm
+                                                 font-semibold">
+
+                                        <i class="fa-solid fa-truck-fast"></i>
+
+                                        Out for Delivery
 
                                     </span>
 
@@ -269,12 +460,12 @@
 
                                         <i class="fa-solid fa-check"></i>
 
-                                        {{ order.status }}
+                                        Delivered
 
                                     </span>
 
 
-                                {% else %}
+                                {% elif order.status == "Cancelled" %}
 
                                     <span class="inline-flex
                                                  items-center gap-2
@@ -287,11 +478,31 @@
 
                                         <i class="fa-solid fa-xmark"></i>
 
+                                        Cancelled
+
+                                    </span>
+
+
+                                {% else %}
+
+                                    <span class="inline-flex
+                                                 items-center gap-2
+                                                 px-4 py-2
+                                                 rounded-full
+                                                 bg-gray-500/10
+                                                 text-gray-400
+                                                 text-sm
+                                                 font-semibold">
+
+                                        <i class="fa-solid fa-circle-question"></i>
+
                                         {{ order.status }}
 
                                     </span>
 
                                 {% endif %}
+
+                            </div>
 
                             </div>
 
@@ -425,6 +636,7 @@
                                     sm:justify-between
                                     gap-4">
 
+                            <!-- ORDER DATE -->
 
                             <p class="text-sm
                                       text-gray-500">
@@ -435,17 +647,82 @@
                             </p>
 
 
-                            <a href="{% url 'order_detail' order.id %}"
-                                class="inline-flex
-                                        items-center
-                                        justify-center
-                                        gap-2
-                                        rounded-xl
-                                        bg-indigo-600
-                                        hover:bg-indigo-500
-                                        px-5 py-3
-                                        font-semibold
-                                        transition">
+                            <!-- ACTIONS -->
+
+                            <div class="flex flex-col
+                                        sm:flex-row
+                                        gap-3
+                                        w-full
+                                        sm:w-auto">
+
+                                <!-- REORDER -->
+
+                                <form method="POST"
+                                      action="{% url 'reorder_order' order.id %}"
+                                      class="w-full sm:w-auto">
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="w-full
+                                               sm:w-auto
+                                               inline-flex
+                                               items-center
+                                               justify-center
+                                               gap-2
+                                               rounded-xl
+                                               border border-indigo-400/20
+                                               bg-indigo-500/10
+                                               hover:bg-indigo-500/20
+                                               px-5 py-3
+                                               font-semibold
+                                               transition">
+
+                                        <i class="fa-solid fa-rotate-right text-sm"></i>
+
+                                        Reorder
+
+                                    </button>
+
+                                </form>
+
+
+                                <!-- TRACK ORDER -->
+
+                                <a href="{% url 'order_detail' order.id %}"
+                                   class="inline-flex
+                                          items-center
+                                          justify-center
+                                          gap-2
+                                          rounded-xl
+                                          border border-white/10
+                                          bg-white/5
+                                          hover:bg-white/10
+                                          px-5 py-3
+                                          font-semibold
+                                          transition">
+
+                                    <i class="fa-solid fa-location-dot text-sm"></i>
+
+                                    Track Order
+
+                                </a>
+
+
+                                <!-- VIEW DETAILS -->
+
+                                <a href="{% url 'order_detail' order.id %}"
+                                   class="inline-flex
+                                          items-center
+                                          justify-center
+                                          gap-2
+                                          rounded-xl
+                                          bg-indigo-600
+                                          hover:bg-indigo-500
+                                          px-5 py-3
+                                          font-semibold
+                                          transition">
 
                                     View Details
 
@@ -453,13 +730,11 @@
 
                                 </a>
 
+                            </div>
+
                         </div>
 
-
-                    </div>
-
-
-                {% endfor %}
+                    {% endfor %}
 
 
             </div>

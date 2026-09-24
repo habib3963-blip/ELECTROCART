@@ -11,6 +11,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth import update_session_auth_hash
 from .invoice_pdf import invoice_pdf_response
+from django.contrib import messages
+
 
 import json
 import re
@@ -3656,18 +3658,59 @@ def my_orders(request):
     if not request.session.session_key:
         return render(request, "my_orders.html", {
             "orders": [],
+            "search_query": "",
+            "status_filter": "",
         })
 
-    orders = Order.objects.filter(
-        session_key=request.session.session_key
-    ).select_related(
-        "payment"
-    ).order_by("-created_at")
+    search_query = request.GET.get("search", "").strip()
+    status_filter = request.GET.get("status", "").strip()
+
+    orders = (
+        Order.objects
+        .filter(
+            session_key=request.session.session_key
+        )
+        .select_related("payment")
+        .order_by("-created_at")
+    )
+
+    # SEARCH
+    if search_query:
+        from django.db.models import Q
+
+        search_filter = Q(
+            customer_name__icontains=search_query
+        )
+
+        # Allow searching by Order ID
+        if search_query.isdigit():
+            search_filter |= Q(
+                id=int(search_query)
+            )
+
+        orders = orders.filter(search_filter)
+
+    # STATUS FILTER
+    valid_statuses = {
+        "Pending",
+        "Confirmed",
+        "Processing",
+        "Shipped",
+        "Out for Delivery",
+        "Delivered",
+        "Cancelled",
+    }
+
+    if status_filter in valid_statuses:
+        orders = orders.filter(
+            status=status_filter
+        )
 
     return render(request, "my_orders.html", {
         "orders": orders,
+        "search_query": search_query,
+        "status_filter": status_filter,
     })
-
 
 # =========================================================
 # ORDER DETAIL
@@ -3692,6 +3735,206 @@ def order_detail(request, order_id):
     return render(request, "order_detail.html", {
         "order": order,
     })
+
+
+# =========================================================
+# SECURE REORDER
+# =========================================================
+
+def reorder_order(request, order_id):
+
+    # Reorder must be POST
+    if request.method != "POST":
+        return redirect("my_orders")
+
+    # Session security
+    if not request.session.session_key:
+        return redirect("home")
+
+    try:
+        with transaction.atomic():
+
+            # -------------------------------------------------
+            # GET CURRENT USER'S ORDER
+            # -------------------------------------------------
+
+            order = (
+                Order.objects
+                .prefetch_related(
+                    "items__product",
+                    "items__variant"
+                )
+                .get(
+                    id=order_id,
+                    session_key=request.session.session_key
+                )
+            )
+
+            order_items = list(
+                order.items.all()
+            )
+
+            if not order_items:
+                messages.error(
+                    request,
+                    "This order has no items to reorder."
+                )
+
+                return redirect("my_orders")
+
+            # -------------------------------------------------
+            # GET / CREATE CURRENT SESSION CART
+            # -------------------------------------------------
+
+            cart, created = Cart.objects.get_or_create(
+                session_key=request.session.session_key
+            )
+
+            # -------------------------------------------------
+            # VALIDATE EVERYTHING FIRST
+            # -------------------------------------------------
+
+            reorder_items = []
+
+            for order_item in order_items:
+
+                product = (
+                    Product.objects
+                    .select_for_update()
+                    .filter(
+                        pk=order_item.product_id,
+                        is_active=True
+                    )
+                    .first()
+                )
+
+                if not product:
+
+                    messages.error(
+                        request,
+                        "One or more products are no longer available."
+                    )
+
+                    return redirect("my_orders")
+
+                # ---------------------------------------------
+                # VARIANT PRODUCT
+                # ---------------------------------------------
+
+                if order_item.variant_id:
+
+                    variant = (
+                        ProductVariant.objects
+                        .select_for_update()
+                        .filter(
+                            pk=order_item.variant_id,
+                            product_id=product.id,
+                            is_active=True
+                        )
+                        .first()
+                    )
+
+                    if not variant:
+
+                        messages.error(
+                            request,
+                            f"{product.name} variant is no longer available."
+                        )
+
+                        return redirect("my_orders")
+
+                    available_stock = variant.stock
+
+                # ---------------------------------------------
+                # LEGACY PRODUCT WITHOUT VARIANT
+                # ---------------------------------------------
+
+                else:
+
+                    variant = None
+                    available_stock = product.stock
+
+                # -------------------------------------------------
+                # STOCK VALIDATION
+                # -------------------------------------------------
+
+                if available_stock < order_item.quantity:
+
+                    messages.error(
+                        request,
+                        f"{product.name} does not have enough stock."
+                    )
+
+                    return redirect("my_orders")
+
+                # -------------------------------------------------
+                # STORE VALIDATED ITEM
+                # -------------------------------------------------
+
+                reorder_items.append(
+                    (
+                        product,
+                        variant,
+                        order_item.quantity
+                    )
+                )
+
+            # -------------------------------------------------
+            # ADD ITEMS TO CART
+            # -------------------------------------------------
+
+            for product, variant, quantity in reorder_items:
+
+                cart_item, created = CartItem.objects.get_or_create(
+                    cart=cart,
+                    product=product,
+                    variant=variant
+                )
+
+                if created:
+
+                    cart_item.quantity = quantity
+
+                else:
+
+                    available_stock = (
+                        variant.stock
+                        if variant is not None
+                        else product.stock
+                    )
+
+                    new_quantity = (
+                        cart_item.quantity + quantity
+                    )
+
+                    if new_quantity > available_stock:
+
+                        messages.error(
+                            request,
+                            f"{product.name} cannot be reordered because "
+                            f"the cart quantity would exceed available stock."
+                        )
+
+                        return redirect("my_orders")
+
+                    cart_item.quantity = new_quantity
+
+                cart_item.save()
+
+        # -------------------------------------------------
+        # SUCCESS
+        # -------------------------------------------------
+
+        messages.success(
+            request,
+            "Previous order added to your cart successfully."
+        )
+
+        return redirect("cart")
+
+    except Order.DoesNotExist:
+
+        return redirect("my_orders")
 
 
 

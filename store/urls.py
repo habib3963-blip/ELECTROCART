@@ -149,6 +149,12 @@ urlpatterns = [
     ),
 
     path(
+        "orders/<int:order_id>/reorder/",
+        views.reorder_order,
+        name="reorder_order"
+    ),
+
+    path(
         "order/<int:order_id>/",
         views.order_detail,
         name="order_detail"

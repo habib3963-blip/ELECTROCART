@@ -1566,27 +1566,64 @@
                                 p-4">
 
                         <div class="flex
-                                    items-start
-                                    gap-3">
+                items-start
+                gap-3">
 
-                            <i class="fa-solid fa-circle-info
-                                      text-yellow-400
-                                      mt-1"></i>
+        <i class="fa-solid fa-circle-info
+                  text-yellow-400
+                  mt-1"></i>
 
-                            <p class="text-sm
-                                      text-gray-400
-                                      leading-relaxed">
+        <p class="text-sm
+                  text-gray-400
+                  leading-relaxed">
 
-                                Your order is currently
-                                <span class="text-white font-semibold">
-                                    {{ order.get_status_display }}
-                                </span>.
-                                We'll keep you updated as
-                                the order progresses.
+            {% if order.status == "Pending" %}
 
-                            </p>
+                Your order has been placed successfully
+                and is waiting for confirmation.
 
-                        </div>
+            {% elif order.status == "Confirmed" %}
+
+                Your order has been confirmed
+                and will be prepared shortly.
+
+            {% elif order.status == "Processing" %}
+
+                Your order is currently being prepared
+                for shipment.
+
+            {% elif order.status == "Shipped" %}
+
+                Your order has been shipped
+                and is on the way.
+
+            {% elif order.status == "Out for Delivery" %}
+
+                Your order is out for delivery
+                and should reach you soon.
+
+            {% elif order.status == "Delivered" %}
+
+                Your order has been delivered successfully.
+                We hope you enjoy your purchase.
+
+            {% elif order.status == "Cancelled" %}
+
+                This order has been cancelled
+                and will not proceed through delivery.
+
+            {% else %}
+
+                Your order is currently
+                <span class="text-white font-semibold">
+                    {{ order.get_status_display }}
+                </span>.
+
+            {% endif %}
+
+        </p>
+
+    </div>
 
                     </div>
 
