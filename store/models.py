@@ -558,6 +558,37 @@ class Order(models.Model):
         blank=True
     )
 
+    # =====================================================
+    # COURIER / SHIPMENT TRACKING
+    # =====================================================
+
+    shiprocket_order_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        unique=True
+    )
+
+    shiprocket_shipment_id = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        unique=True
+    )
+
+    courier_name = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True
+    )
+
+    awb_number = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        unique=True
+    )
+
     total_amount = models.DecimalField(
         max_digits=10,
         decimal_places=2
@@ -598,6 +629,10 @@ class Order(models.Model):
     created_at = models.DateTimeField(
         auto_now_add=True
     )
+
+    def generate_tracking_id(self):
+        return f"EC-{self.id:06d}"
+
 
     def clean(self):
 

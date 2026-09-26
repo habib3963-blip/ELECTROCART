@@ -3934,7 +3934,7 @@ def reorder_order(request, order_id):
 
     except Order.DoesNotExist:
 
-        return redirect("my_orders")
+        return redirect("my_orders")    
 
 
 
@@ -3972,24 +3972,23 @@ def cancel_order(request, order_id):
                 .get(order=order)
             )
 
-            # ALREADY CANCELLED
-            if order.status == "Cancelled":
+            # =================================================
+            # CANCELLATION STATUS RULE
+            # =================================================
+
+            # Cancellation is allowed ONLY before shipment
+            allowed_cancel_statuses = [
+                "Pending",
+                "Confirmed",
+                "Processing",
+            ]
+
+            if order.status not in allowed_cancel_statuses:
                 return redirect(
                     "order_detail",
                     order_id=order.id
                 )
-
-            # DELIVERY ALREADY STARTED / COMPLETED
-            if order.status in [
-                "Shipped",
-                "Out for Delivery",
-                "Delivered",
-            ]:
-                return redirect(
-                    "order_detail",
-                    order_id=order.id
-                )
-
+                
             # ONLINE PAID ORDER
             # Refund integration is not implemented yet.
             if (

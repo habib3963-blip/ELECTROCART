@@ -470,6 +470,7 @@ class OrderAdmin(admin.ModelAdmin):
         "total_amount",
         "status",
         "tracking_id",
+        "awb_number",
         "payment_method",
         "payment_status",
         "created_at",
@@ -496,6 +497,9 @@ class OrderAdmin(admin.ModelAdmin):
         "phone",
         "session_key",
         "tracking_id",
+        "shiprocket_order_id",
+        "shiprocket_shipment_id",
+        "awb_number",
     )
 
     # -----------------------------------------------------
@@ -545,6 +549,10 @@ class OrderAdmin(admin.ModelAdmin):
                     "phone",
                     "status",
                     "tracking_id",
+                    "shiprocket_order_id",
+                    "shiprocket_shipment_id",
+                    "courier_name",
+                    "awb_number",
                 )
             },
         ),
@@ -583,6 +591,17 @@ class OrderAdmin(admin.ModelAdmin):
             },
         ),
     )
+
+    # -----------------------------------------------------
+    # AUTO-GENERATE TRACKING ID WHEN ORDER IS SHIPPED
+    # -----------------------------------------------------
+
+    def save_model(self, request, obj, form, change):
+        if obj.status == "Shipped" and not obj.tracking_id:
+            obj.tracking_id = f"EC-{obj.id:06d}"
+
+        super().save_model(request, obj, form, change)
+
 
 
 # =========================================================
