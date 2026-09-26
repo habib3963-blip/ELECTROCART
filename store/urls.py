@@ -67,6 +67,12 @@ urlpatterns = [
         name="apply_coupon"
     ),
 
+    path(
+        "cart/remove-coupon/",
+        views.remove_coupon,
+        name="remove_coupon"
+    ),
+
 
     # =========================================================
     # WISHLIST

@@ -348,6 +348,60 @@ def apply_coupon(request):
     )
 
 
+
+def remove_coupon(request):
+    if request.method != "POST":
+        return JsonResponse(
+            {
+                "success": False,
+                "message": "Invalid request method."
+            },
+            status=405
+        )
+
+    request.session.pop("applied_coupon", None)
+    request.session.pop("coupon_discount", None)
+    request.session.modified = True
+
+    # Recalculate current cart total
+    if not request.session.session_key:
+        return JsonResponse({
+            "success": True,
+            "cart_total": "0.00",
+            "discount": "0.00",
+            "final_total": "0.00",
+        })
+
+    cart = Cart.objects.filter(
+        session_key=request.session.session_key
+    ).first()
+
+    if not cart:
+        return JsonResponse({
+            "success": True,
+            "cart_total": "0.00",
+            "discount": "0.00",
+            "final_total": "0.00",
+        })
+
+    cart_items = list(
+        cart.items.select_related(
+            "product",
+            "variant"
+        )
+    )
+
+    cart_total = get_cart_subtotal(cart_items)
+
+    return JsonResponse({
+        "success": True,
+        "message": "Coupon removed successfully.",
+        "cart_total": str(cart_total),
+        "discount": "0.00",
+        "final_total": str(cart_total),
+    })
+
+
 def home(request):
     search_query = request.GET.get("search", "").strip()
     category_name = request.GET.get("category", "").strip()
@@ -2073,17 +2127,72 @@ def checkout(request):
                     total = total.quantize(Decimal("0.01"))
 
                     # --------------------------------------------------
-                    # RE-VALIDATE COUPON FROM LOCKED CART TOTAL
+                    # RE-VALIDATE + LOCK COUPON FROM LOCKED CART TOTAL
                     # --------------------------------------------------
-                    # This is the authoritative calculation used for the
-                    # Order and Razorpay amount. Never trust the browser
-                    # displayed total or the session discount value.
+                    # The coupon row is locked so concurrent checkouts
+                    # cannot exceed the coupon usage limit.
+
                     coupon, discount, final_total = (
                         get_valid_session_coupon(
                             request,
                             total
                         )
                     )
+
+                    if coupon:
+
+                        locked_coupon = (
+                            Coupon.objects
+                            .select_for_update()
+                            .filter(
+                                pk=coupon.pk,
+                                is_active=True,
+                                valid_from__lte=timezone.now(),
+                                valid_until__gte=timezone.now(),
+                            )
+                            .first()
+                        )
+
+                        if not locked_coupon:
+                            request.session.pop("applied_coupon", None)
+                            request.session.pop("coupon_discount", None)
+
+                            coupon = None
+                            discount = Decimal("0.00")
+                            final_total = total
+
+                        elif (
+                            locked_coupon.usage_limit is not None
+                            and locked_coupon.used_count >= locked_coupon.usage_limit
+                        ):
+                            request.session.pop("applied_coupon", None)
+                            request.session.pop("coupon_discount", None)
+
+                            coupon = None
+                            discount = Decimal("0.00")
+                            final_total = total
+
+                        elif total < locked_coupon.minimum_order_amount:
+                            request.session.pop("applied_coupon", None)
+                            request.session.pop("coupon_discount", None)
+
+                            coupon = None
+                            discount = Decimal("0.00")
+                            final_total = total
+
+                        else:
+                            # Use the locked coupon for the authoritative calculation.
+                            coupon = locked_coupon
+
+                            discount = calculate_coupon_discount(
+                                coupon,
+                                total
+                            )
+
+                            final_total = (
+                                total - discount
+                            ).quantize(Decimal("0.01"))
+
 
                     # --------------------------------------------------
                     # CREATE ORDER
@@ -2105,6 +2214,20 @@ def checkout(request):
                         discount_amount=discount,
                         status="Pending",
                     )
+
+                    # --------------------------------------------------
+                    # CONSUME COUPON USAGE
+                    # --------------------------------------------------
+
+                    if coupon:
+                        coupon.used_count += 1
+
+                        coupon.save(
+                            update_fields=[
+                                "used_count",
+                                "updated_at",
+                            ]
+                        )
 
                     # --------------------------------------------------
                     # CREATE PAYMENT

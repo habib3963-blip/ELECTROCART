@@ -134,16 +134,33 @@ function updateQuantity(itemId, action, button) {
             const couponMessage =
                 document.getElementById("coupon-message");
 
+            const removeCouponButton =
+                document.getElementById("remove-coupon-btn");
+
             if (data.coupon) {
+
                 if (couponInput) {
                     couponInput.value = data.coupon;
                 }
-            } else if (couponInput && couponInput.value) {
-                couponInput.value = "";
+
+                if (removeCouponButton) {
+                    removeCouponButton.classList.remove("hidden");
+                }
+
+            } else {
+
+                if (couponInput) {
+                    couponInput.value = "";
+                }
+
+                if (removeCouponButton) {
+                    removeCouponButton.classList.add("hidden");
+                }
 
                 if (couponMessage) {
                     couponMessage.textContent =
                         "Coupon was removed because the cart changed.";
+
                     couponMessage.className =
                         "text-xs mt-3 text-gray-400";
                 }
@@ -218,16 +235,33 @@ function removeFromCart(itemId, button) {
             const couponMessage =
                 document.getElementById("coupon-message");
 
+            const removeCouponButton =
+                document.getElementById("remove-coupon-btn");
+
             if (data.coupon) {
+
                 if (couponInput) {
                     couponInput.value = data.coupon;
                 }
-            } else if (couponInput && couponInput.value) {
-                couponInput.value = "";
+
+                if (removeCouponButton) {
+                    removeCouponButton.classList.remove("hidden");
+                }
+
+            } else {
+
+                if (couponInput) {
+                    couponInput.value = "";
+                }
+
+                if (removeCouponButton) {
+                    removeCouponButton.classList.add("hidden");
+                }
 
                 if (couponMessage) {
                     couponMessage.textContent =
                         "Coupon was removed because the cart changed.";
+
                     couponMessage.className =
                         "text-xs mt-3 text-gray-400";
                 }
@@ -310,6 +344,13 @@ function applyCoupon() {
             message.className = "text-xs mt-3 text-green-400";
             input.value = data.coupon;
 
+            const removeButton =
+                document.getElementById("remove-coupon-btn");
+
+            if (removeButton) {
+                removeButton.classList.remove("hidden");
+            }
+
         } else {
             message.textContent =
                 data.message || "Unable to apply coupon.";
@@ -326,6 +367,105 @@ function applyCoupon() {
     .finally(() => {
         button.disabled = false;
         button.classList.remove("opacity-60", "cursor-not-allowed");
+    });
+}
+
+
+function removeCoupon() {
+
+    const button =
+        document.getElementById("remove-coupon-btn");
+
+    const input =
+        document.getElementById("coupon-code");
+
+    const message =
+        document.getElementById("coupon-message");
+
+    if (!button || !input || !message) {
+        return;
+    }
+
+    button.disabled = true;
+    button.classList.add(
+        "opacity-60",
+        "cursor-not-allowed"
+    );
+
+    message.textContent = "Removing coupon...";
+    message.className =
+        "text-xs mt-3 text-gray-500";
+
+    fetch("{% url 'remove_coupon' %}", {
+        method: "POST",
+        headers: {
+            "X-Requested-With": "XMLHttpRequest",
+            "X-CSRFToken": getCookie("csrftoken"),
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+
+        if (data.success) {
+
+            const subtotalElement =
+                document.getElementById("cart-subtotal");
+
+            const discountElement =
+                document.getElementById("cart-discount");
+
+            const totalElement =
+                document.getElementById("cart-total");
+
+            if (subtotalElement) {
+                subtotalElement.textContent =
+                    "₹" + Number(data.cart_total).toFixed(2);
+            }
+
+            if (discountElement) {
+                discountElement.textContent =
+                    "₹0.00";
+            }
+
+            if (totalElement) {
+                totalElement.textContent =
+                    "₹" + Number(data.final_total).toFixed(2);
+            }
+
+            input.value = "";
+
+            message.textContent =
+                data.message || "Coupon removed successfully.";
+
+            message.className =
+                "text-xs mt-3 text-gray-400";
+
+            button.classList.add("hidden");
+        }
+
+    })
+    .catch(error => {
+
+        console.error(
+            "Coupon remove error:",
+            error
+        );
+
+        message.textContent =
+            "Something went wrong. Please try again.";
+
+        message.className =
+            "text-xs mt-3 text-red-400";
+
+    })
+    .finally(() => {
+
+        button.disabled = false;
+
+        button.classList.remove(
+            "opacity-60",
+            "cursor-not-allowed"
+        );
     });
 }
 
@@ -893,12 +1033,28 @@ function getCookie(name) {
                             type="button"
                             onclick="applyCoupon()"
                             class="px-4 py-3 rounded-xl
-                                   bg-indigo-600
-                                   hover:bg-indigo-500
-                                   text-sm font-bold
-                                   transition
-                                   whitespace-nowrap">
+                                bg-indigo-600
+                                hover:bg-indigo-500
+                                text-sm font-bold
+                                transition
+                                whitespace-nowrap">
                             Apply
+                        </button>
+
+                        <button
+                            id="remove-coupon-btn"
+                            type="button"
+                            onclick="removeCoupon()"
+                            class="{% if not coupon %}hidden{% endif %}
+                                px-4 py-3 rounded-xl
+                                bg-red-500/10
+                                border border-red-400/20
+                                text-red-400
+                                hover:bg-red-500/20
+                                text-sm font-bold
+                                transition
+                                whitespace-nowrap">
+                            Remove
                         </button>
                     </div>
 
