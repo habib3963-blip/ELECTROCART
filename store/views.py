@@ -356,10 +356,16 @@ def home(request):
     rating = request.GET.get("rating", "").strip()
     sort = request.GET.get("sort", "").strip()
 
+    # ---------------------------------------------------------
+    # BASE PRODUCT QUERY
+    # ---------------------------------------------------------
     products = Product.objects.filter(
         is_active=True
     ).select_related("category")
 
+    # ---------------------------------------------------------
+    # SEARCH
+    # ---------------------------------------------------------
     if search_query:
         from django.db.models import Q
 
@@ -369,45 +375,77 @@ def home(request):
             Q(category__name__icontains=search_query)
         )
 
+    # ---------------------------------------------------------
+    # CATEGORY FILTER
+    # ---------------------------------------------------------
     if category_name:
         products = products.filter(
             category__name__iexact=category_name
         )
-    
-    if min_price:
-        try:
-            products = products.filter(price__gte=float(min_price))
-        except (TypeError, ValueError):
-            pass
 
-    if max_price:
-        try:
-            products = products.filter(price__lte=float(max_price))
-        except (TypeError, ValueError):
-            pass
+    # ---------------------------------------------------------
+    # PRICE FILTERS
+    # Use Decimal for money values.
+    # ---------------------------------------------------------
+    try:
+        if min_price:
+            min_price_decimal = Decimal(min_price)
 
-    if rating:
-        try:
-            products = products.filter(rating__gte=float(rating))
-        except (TypeError, ValueError):
-            pass
+            if min_price_decimal >= Decimal("0.00"):
+                products = products.filter(
+                    price__gte=min_price_decimal
+                )
+    except (TypeError, ValueError, ArithmeticError):
+        pass
+
+    try:
+        if max_price:
+            max_price_decimal = Decimal(max_price)
+
+            if max_price_decimal >= Decimal("0.00"):
+                products = products.filter(
+                    price__lte=max_price_decimal
+                )
+    except (TypeError, ValueError, ArithmeticError):
+        pass
+
+    # ---------------------------------------------------------
+    # RATING FILTER
+    # ---------------------------------------------------------
+    allowed_ratings = {
+        "2",
+        "3",
+        "4",
+    }
+
+    if rating in allowed_ratings:
+        products = products.filter(
+            rating__gte=Decimal(rating)
+        )
 
     # ---------------------------------------------------------
     # SORTING
-    # Apply sorting only after the product queryset exists
-    # and all active filters have been applied.
     # ---------------------------------------------------------
-    if sort == "price_asc":
-        products = products.order_by("price")
+    allowed_sorts = {
+        "price_asc",
+        "price_desc",
+        "rating",
+        "newest",
+    }
 
-    elif sort == "price_desc":
-        products = products.order_by("-price")
+    if sort in allowed_sorts:
 
-    elif sort == "rating":
-        products = products.order_by("-rating")
+        if sort == "price_asc":
+            products = products.order_by("price")
 
-    elif sort == "newest":
-        products = products.order_by("-created_at")
+        elif sort == "price_desc":
+            products = products.order_by("-price")
+
+        elif sort == "rating":
+            products = products.order_by("-rating")
+
+        elif sort == "newest":
+            products = products.order_by("-created_at")
 
     categories = Category.objects.all()
 
