@@ -134,9 +134,12 @@ class ProductImageInline(admin.TabularInline):
 class ProductAdmin(admin.ModelAdmin):
 
     list_display = (
+        "product_code",
         "name",
+        "brand",
         "category",
         "price",
+        "mrp",
         "rating",
         "reviews",
         "stock",
@@ -145,18 +148,22 @@ class ProductAdmin(admin.ModelAdmin):
     )
 
     list_filter = (
+        "brand",
         "category",
         "badge",
         "is_active",
     )
 
     search_fields = (
+        "product_code",
         "name",
+        "brand__name",
         "description",
     )
 
     list_editable = (
         "price",
+        "mrp",
         "stock",
         "is_active",
     )

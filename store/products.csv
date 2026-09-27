@@ -1,0 +1,6 @@
+product_code,name,brand,category,description,mrp,price,stock,badge,is_active,image
+EC-001,Sony WH-1000XM5,Sony,Headphones,Premium wireless noise cancelling headphones,34990,28990,25,Best Seller,True,https://example.com/sony.jpgEC-002,Apple AirPods Pro 2,Apple,Headphones,Premium wireless earbuds,24900,22900,30,Popular,True,https://example.com/airpods.jpg
+EC-002,Apple AirPods Pro 2,Apple,Headphones,Premium wireless earbuds,24900,22900,30,Popular,True,https://example.com/airpods.jpg
+EC-003,Samsung Galaxy S25,Samsung,Smartphones,Flagship smartphone with premium performance,84999,79999,20,New,True,https://example.com/s25.jpg
+EC-004,Logitech G502 X,Logitech,Gaming,High performance gaming mouse,9995,7495,40,Hot Deal,True,https://example.com/g502.jpg
+EC-005,Anker 737 Power Bank,Anker,Power Banks,High capacity fast charging power bank,14999,11999,35,Popular,True,https://example.com/anker.jpg

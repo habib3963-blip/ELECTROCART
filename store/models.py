@@ -82,6 +82,13 @@ class Product(models.Model):
         max_length=200
     )
 
+    product_code = models.CharField(
+        max_length=50,
+        unique=True,
+        blank=True,
+        null=True
+    )
+
     brand = models.ForeignKey(
         Brand,
         on_delete=models.PROTECT,
@@ -99,6 +106,13 @@ class Product(models.Model):
     price = models.DecimalField(
         max_digits=10,
         decimal_places=2
+    )
+
+    mrp = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True
     )
 
     rating = models.DecimalField(
