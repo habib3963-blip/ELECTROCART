@@ -4,6 +4,7 @@ from django import forms
 
 from .models import (
     Category,
+    Brand,
     Product,
     ProductImage,
     ProductVariant,
@@ -37,6 +38,37 @@ class CategoryAdmin(admin.ModelAdmin):
     search_fields = (
         "name",
     )
+
+    ordering = (
+        "name",
+    )
+
+
+# =========================================================
+# BRAND ADMIN
+# =========================================================
+
+@admin.register(Brand)
+class BrandAdmin(admin.ModelAdmin):
+
+    list_display = (
+        "name",
+        "is_active",
+        "created_at",
+        "updated_at",
+    )
+
+    list_filter = (
+        "is_active",
+    )
+
+    search_fields = (
+        "name",
+    )
+
+    prepopulated_fields = {
+        "slug": ("name",)
+    }
 
     ordering = (
         "name",

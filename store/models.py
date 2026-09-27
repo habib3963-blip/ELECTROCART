@@ -23,6 +23,48 @@ class Category(models.Model):
 
 
 # =========================================================
+# BRAND
+# =========================================================
+
+class Brand(models.Model):
+
+    name = models.CharField(
+        max_length=100,
+        unique=True
+    )
+
+    slug = models.SlugField(
+        max_length=120,
+        unique=True,
+        blank=True
+    )
+
+    logo = models.URLField(
+        max_length=500,
+        blank=True
+    )
+
+    description = models.TextField(
+        blank=True
+    )
+
+    is_active = models.BooleanField(
+        default=True
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )
+
+    def __str__(self):
+        return self.name
+
+
+# =========================================================
 # PRODUCT
 # =========================================================
 
@@ -38,6 +80,14 @@ class Product(models.Model):
 
     name = models.CharField(
         max_length=200
+    )
+
+    brand = models.ForeignKey(
+        Brand,
+        on_delete=models.PROTECT,
+        related_name="products",
+        null=True,
+        blank=True,
     )
 
     category = models.ForeignKey(
