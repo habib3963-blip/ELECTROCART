@@ -1163,10 +1163,38 @@ function getCookie(name) {
                                 Price
                             </span>
 
-                            <span class="font-heading text-xl font-bold text-white">
-                                ${{ product.price }}
-                            </span>
+                            {% if product.pricing.offer %}
+                                <div class="flex items-center gap-2 flex-wrap">
 
+                                    <span class="font-heading text-xl font-bold text-white">
+                                        ₹{{ product.pricing.sale_price|floatformat:2 }}
+                                    </span>
+
+                                    <span class="text-xs text-slate-500 line-through">
+                                        ₹{{ product.pricing.original_price|floatformat:2 }}
+                                    </span>
+
+                                </div>
+
+                                <div class="flex items-center gap-2 mt-1">
+
+                                    <span class="text-[10px] font-bold text-emerald-400">
+                                        {{ product.pricing.discount_percentage|floatformat:0 }}% OFF
+                                    </span>
+
+                                    <span class="text-[9px] text-slate-500">
+                                        {{ product.pricing.offer.name }}
+                                    </span>
+
+                                </div>
+
+                            {% else %}
+
+                                <span class="font-heading text-xl font-bold text-white">
+                                    ₹{{ product.pricing.sale_price|floatformat:2 }}
+                                </span>
+
+                            {% endif %}
                         </div>
 
                         <button

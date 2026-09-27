@@ -503,6 +503,15 @@ def home(request):
 
     categories = Category.objects.all()
 
+    # ---------------------------------------------------------
+    # EFFECTIVE PRODUCT PRICING
+    # Attach active offer pricing for Home cards.
+    # ---------------------------------------------------------
+    for product in products:
+        product.pricing = get_effective_price(product)
+
+    categories = Category.objects.all()
+
     return render(request, "home.html", {
         "products": products,
         "categories": categories,
@@ -566,6 +575,12 @@ def product_detail(request, pk):
         key=lambda item: previously_viewed_ids.index(item.id)
     )
 
+    # ---------------------------------------------------------
+    # EFFECTIVE PRICING FOR RECENTLY VIEWED PRODUCTS
+    # ---------------------------------------------------------
+    for recent in recently_viewed_products:
+        recent.pricing = get_effective_price(recent)
+
     # Active variants
 
     variants = list(
@@ -605,6 +620,13 @@ def product_detail(request, pk):
         .select_related("category")
         .order_by("-created_at")[:6]
     )
+
+    # ---------------------------------------------------------
+    # EFFECTIVE PRICING FOR RELATED PRODUCTS
+    # ---------------------------------------------------------
+    for related in related_products:
+        related.pricing = get_effective_price(related)
+
 
     # ---------------------------------------------------------
     # REVIEWS
