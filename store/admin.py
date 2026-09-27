@@ -19,6 +19,8 @@ from .models import (
     Coupon,
 )
 
+from .views import recalculate_product_rating
+
 
 # =========================================================
 # CATEGORY ADMIN
@@ -766,6 +768,27 @@ class ReviewAdmin(admin.ModelAdmin):
             },
         ),
     )
+
+    def save_model(self, request, obj, form, change):
+        """
+        Save review and recalculate product rating
+        whenever approval status changes.
+        """
+
+        old_approved = None
+
+        if change and obj.pk:
+            old_review = Review.objects.get(pk=obj.pk)
+            old_approved = old_review.is_approved
+
+        super().save_model(request, obj, form, change)
+
+        if (
+            not change
+            or old_approved != obj.is_approved
+        ):
+            recalculate_product_rating(obj.product)
+
 
 
 @admin.register(Coupon)

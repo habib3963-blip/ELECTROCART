@@ -179,6 +179,45 @@ def get_cart_subtotal(cart_items):
     return subtotal
 
 
+def recalculate_product_rating(product):
+    """
+    Recalculate product rating and review count
+    using only approved reviews.
+    """
+
+    approved_reviews = Review.objects.filter(
+        product=product,
+        is_approved=True
+    )
+
+    review_count = approved_reviews.count()
+
+    if review_count:
+        rating_total = sum(
+            review.rating
+            for review in approved_reviews
+        )
+
+        average_rating = round(
+            rating_total / review_count,
+            1
+        )
+    else:
+        average_rating = 0
+
+    product.rating = average_rating
+    product.reviews = review_count
+
+    product.save(
+        update_fields=[
+            "rating",
+            "reviews",
+        ]
+    )
+
+    return average_rating, review_count
+
+
 def get_valid_session_coupon(request, cart_total):
     """
     Re-validate the coupon stored in the session against the current
@@ -878,35 +917,7 @@ def submit_review(request, pk):
             # UPDATE PRODUCT RATING
             # --------------------------------------------------
 
-            approved_reviews = Review.objects.filter(
-                product=product,
-                is_approved=True,
-            )
-
-            review_count = approved_reviews.count()
-
-            if review_count:
-                rating_total = sum(
-                    review_obj.rating
-                    for review_obj in approved_reviews
-                )
-
-                average_rating = round(
-                    rating_total / review_count,
-                    1
-                )
-            else:
-                average_rating = 0
-
-            product.rating = average_rating
-            product.reviews = review_count
-
-            product.save(
-                update_fields=[
-                    "rating",
-                    "reviews",
-                ]
-            )
+            recalculate_product_rating(product)
 
     except IntegrityError:
 
