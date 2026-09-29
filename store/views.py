@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse, HttpResponse
 from django.db import transaction, IntegrityError
+from django.db.models import Prefetch
 from django.conf import settings
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
@@ -93,6 +94,7 @@ def _create_razorpay_order_safely(order_id, total):
 from .models import (
     Category,
     Product,
+    ProductImage,
     ProductVariant,
     Wishlist,
     Cart,
@@ -454,7 +456,17 @@ def home(request):
     # ---------------------------------------------------------
     products = Product.objects.filter(
         is_active=True
-    ).select_related("category")
+    ).select_related("category").prefetch_related(
+        Prefetch(
+            "images",
+            queryset=ProductImage.objects.order_by(
+                "-is_primary",
+                "sort_order",
+                "id"
+            ),
+            to_attr="home_images"
+        )
+    )
 
     # ---------------------------------------------------------
     # SEARCH

@@ -1,0 +1,9 @@
+product_code,name,value,sort_order
+EC-001,Connectivity,Bluetooth 5.2,1
+EC-001,Battery Life,Up to 30 Hours,2
+EC-001,Noise Cancellation,Active ANC,3
+EC-001,Weight,250g,4
+EC-002,Connectivity,Bluetooth 5.3,1
+EC-002,Battery Life,Up to 6 Hours,2
+EC-002,Noise Cancellation,Active ANC,3
+EC-002,Water Resistance,IPX4,4

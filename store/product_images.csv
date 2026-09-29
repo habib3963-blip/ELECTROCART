@@ -1,0 +1,7 @@
+product_code,image_url,alt_text,is_primary,sort_order
+EC-001,https://media.istockphoto.com/id/1440767716/photo/selective-focus-shot-of-a-hand-holding-a-pair-of-sony-wh-1000xm3-headphones-outdoors.webp?s=2048x2048&w=is&k=20&c=oIaXS-8LRmqpFNHGkZpDCIBkHrAQkcpTLAEUmC-CGnI=,Sony WH-1000XM5 Front,True,1
+EC-001,https://m.media-amazon.com/images/I/61weobdjeIL._SL1000_.jpg,Sony WH-1000XM5 Side,False,2
+EC-001,https://m.media-amazon.com/images/I/416I5zaGzJL._SL1500_.jpg,Sony WH-1000XM5 Back,False,3
+EC-002,https://cdn.jiostore.online/v2/jmd-asp/jdprod/wrkr/products/pictures/item/free/resize-w:450/apple/493839243/2/XTxnHo8Ge_-3eLBzQpeX8-apple-airpods-pro-2ndgen-493839243-i-3-1200Wx1200H.jpeg,Apple AirPods Pro 2 Front,True,1
+EC-002,https://cdn.jiostore.online/v2/jmd-asp/jdprod/wrkr/products/pictures/item/free/resize-w:450/apple/493839243/1/007Zrz3bRh-sy8puH5kFl-apple-airpods-pro-2ndgen-493839243-i-2-1200Wx1200H.jpeg,Apple AirPods Pro 2 Case,False,2
+EC-002,https://cdn.jiostore.online/v2/jmd-asp/jdprod/wrkr/products/pictures/item/free/resize-w:450/apple/493839243/4/WoSbZFGaRY-Yk5Z4FaNvK-apple-airpods-pro-2ndgen-493839243-i-5-1200Wx1200H.jpeg,Apple AirPods Pro 2 Side,False,3

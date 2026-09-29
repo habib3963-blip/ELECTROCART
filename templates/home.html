@@ -1086,12 +1086,51 @@ function getCookie(name) {
 
                 <div class="relative h-56 bg-slate-950 overflow-hidden">
 
-                    <img
-                        src="{{ product.image|default:'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=700&q=85' }}"
-                        alt="{{ product.name }}"
-                        class="w-full h-full object-cover
-                               group-hover:scale-105
-                               transition-transform duration-500">
+                    {% with primary_image=product.home_images.0 %}
+
+                        {% if primary_image %}
+
+                            {% if primary_image.image_file %}
+
+                                <img
+                                    src="{{ primary_image.image_file.url }}"
+                                    alt="{{ primary_image.alt_text|default:product.name }}"
+                                    class="w-full h-full object-cover
+                                           group-hover:scale-105
+                                           transition-transform duration-500">
+
+                            {% elif primary_image.image_url %}
+
+                                <img
+                                    src="{{ primary_image.image_url }}"
+                                    alt="{{ primary_image.alt_text|default:product.name }}"
+                                    class="w-full h-full object-cover
+                                           group-hover:scale-105
+                                           transition-transform duration-500">
+
+                            {% endif %}
+
+                        {% elif product.image %}
+
+                            <img
+                                src="{{ product.image }}"
+                                alt="{{ product.name }}"
+                                class="w-full h-full object-cover
+                                       group-hover:scale-105
+                                       transition-transform duration-500">
+
+                        {% else %}
+
+                            <img
+                                src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=700&q=85"
+                                alt="{{ product.name }}"
+                                class="w-full h-full object-cover
+                                       group-hover:scale-105
+                                       transition-transform duration-500">
+
+                        {% endif %}
+
+                    {% endwith %}
 
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950/50 to-transparent"></div>
 
