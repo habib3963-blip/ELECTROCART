@@ -247,7 +247,25 @@ Never commit real passwords, API keys, tokens, or other secrets to GitHub. ---
 
 📁 Project Structure
 
-ELECTROCART/ │ ├── accounts/ │ ├── store/ │   ├── models.py │   ├── views.py │   ├── admin.py │   ├── migrations/ │   │ │   ├── management/ │   │   └── commands/ │   │ │   ├── products.csv │   ├── product_images.csv │   ├── product_variants.csv │   └── product_specifications.csv │ ├── templates/ ├── static/ ├── media/ │ ├── manage.py ├── db.sqlite3 └── README.md
+ELECTROCART/ 
+│ ├── accounts/
+│ ├── store/ 
+│   ├── models.py 
+│   ├── views.py 
+│   ├── admin.py 
+│   ├── migrations/ 
+│   │ │   ├── management/
+│   │   └── commands/
+│   │ │   ├── products.csv
+│   ├── product_images.csv
+│   ├── product_variants.csv
+│   └── product_specifications.csv
+│ ├── templates/ 
+├── static/ 
+├── media/
+│ ├── manage.py
+├── db.sqlite3
+└── README.md
 
 The structure will evolve as additional catalogue automation and integration modules are introduced. ---
 
